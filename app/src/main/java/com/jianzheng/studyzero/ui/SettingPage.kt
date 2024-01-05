@@ -1,7 +1,9 @@
 package com.jianzheng.studyzero.ui
 
 import android.content.Context
+import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,16 +30,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
+import androidx.room.Room
+import com.jianzheng.studyzero.data.EsmDatabase
+import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
+import java.util.Calendar
 import kotlin.coroutines.CoroutineContext
 
 val mediumPadding = 12.dp
 
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun SettingPage(
     modifier: Modifier = Modifier
@@ -46,6 +55,12 @@ fun SettingPage(
         LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val userId = remember {
         mutableStateOf(sharedPreferences.getString("UID", "null"))
+    }
+    val todayCount = remember {
+        mutableStateOf(sharedPreferences.getInt("today_count", 0))
+    }
+    val totalCount = remember {
+        mutableStateOf(sharedPreferences.getInt("total_count", 0))
     }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
@@ -61,7 +76,11 @@ fun SettingPage(
                 showDialog = showDialog
             )
         } else {
-            PermissionSetting(userId)
+            PermissionSetting(
+                userId = userId,
+                todayCount = todayCount,
+                totalCount = totalCount
+            )
         }
         TestingPage(
             userId = userId,
@@ -72,10 +91,12 @@ fun SettingPage(
 
 }
 
+@RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun PermissionSetting(
     userId: MutableState<String?>,
-//    modifier: Modifier = Modifier
+    todayCount: MutableState<Int>,
+    totalCount: MutableState<Int>
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -90,31 +111,10 @@ fun PermissionSetting(
             MyPermissionManager.checkUserStatPermission(context)
         }
         if (notificationAllowed and overlayAllowed and usageStatAllowed) {
-            Text(
-                text = "Welcome, ${userId.value}!",
-                style = MaterialTheme.typography.headlineSmall
-            )
-            Divider()
-            Text(
-                text = "App has been running for x day(s).",
-                style = MaterialTheme.typography.bodyLarge
-            )
-            Text(
-                text = "You have made:",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = "X report(s) today,",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Text(
-                text = "X report(s) in total.",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Divider()
-            Text(
-                    text = "Thanks for your input!",
-            style = MaterialTheme.typography.headlineSmall,
+            WelcomeInfo(
+                userId = userId,
+                todayCount = todayCount,
+                totalCount = totalCount
             )
         } else {
             Text(
@@ -158,6 +158,52 @@ fun PermissionSetting(
     }
 }
 
+@Composable
+fun WelcomeInfo(
+    userId: MutableState<String?>,
+    todayCount: MutableState<Int>,
+    totalCount: MutableState<Int>
+) {
+    val context = LocalContext.current
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ){
+        Text(
+            text = "Welcome, ${userId.value}!",
+            style = MaterialTheme.typography.headlineSmall
+        )
+        Divider()
+        Text(
+            text = "App is running.",
+            style = MaterialTheme.typography.bodyLarge
+        )
+//        Text(
+//            text = "App has been running for x day(s).",
+//            style = MaterialTheme.typography.bodyLarge
+//        )
+//        Text(
+//            text = "You have made:",
+//            style = MaterialTheme.typography.bodyLarge,
+//        )
+//        Text(
+//            text = "${todayCount.value} report(s) today,",
+//            style = MaterialTheme.typography.bodyLarge,
+//        )
+//        Text(
+//            text = "${totalCount.value} report(s) in total.",
+//            style = MaterialTheme.typography.bodyLarge,
+//        )
+
+        Divider()
+        Text(
+            text = "Thanks for your input!",
+            style = MaterialTheme.typography.headlineSmall,
+        )
+    }
+
+}
+
 
 @Composable
 fun LoginButton(
@@ -181,7 +227,7 @@ fun AuthCard(
     buttonText: String = "Allow"
 ) {
     Row(
-        modifier = Modifier.padding(10.dp, 5.dp), verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -215,4 +261,14 @@ fun <T> usePollState(
         }
     }
     return mutableState
+}
+
+private fun todayStarts(): Long {
+    val startOfDayCalendar = Calendar.getInstance().apply {
+        set(Calendar.HOUR_OF_DAY, 0)
+        set(Calendar.MINUTE, 0)
+        set(Calendar.SECOND, 0)
+        set(Calendar.MILLISECOND, 0)
+    }
+    return startOfDayCalendar.timeInMillis
 }

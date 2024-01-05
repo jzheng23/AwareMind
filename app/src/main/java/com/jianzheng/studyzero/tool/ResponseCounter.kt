@@ -13,7 +13,11 @@ class ResponseCounter(context: Context) {
 
     fun responsePlusOne(tag: String) {
         val retrievedValue = sharedPreferences.getInt(tag, 0)
+        val todayCount = sharedPreferences.getInt("today_count", 0)
+        val totalCount = sharedPreferences.getInt("total_count", 0)
         editor.putInt(tag, retrievedValue + 1)
+            .putInt("today_count",todayCount + 1)
+            .putInt("total_count",totalCount + 1)
             .apply()
         Log.d("unlock", "$tag is ${retrievedValue + 1}")
     }
@@ -40,6 +44,7 @@ class ResponseCounter(context: Context) {
             .putInt("30Met", 0)
             .putInt("randomMet", 0)
             .putInt("testMet", 0)
+            .putInt("today_count", 0)
             .apply()
         Log.d("unlock", "counter of responses is reset")
     }

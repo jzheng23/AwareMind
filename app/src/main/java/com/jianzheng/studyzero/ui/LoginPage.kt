@@ -71,9 +71,7 @@ fun saveUserId(
 
 fun validateUid(userId: String?): Boolean {
     val pattern = "^[A-Za-z]{2}\\d{3}$"
-    // Step 2: Compile the regex
     val regex = pattern.toRegex()
-    // Step 3: Check the string
     return if (userId == null) {
         false
     } else {

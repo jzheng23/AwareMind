@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDelayManager
+import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 
 @Composable
@@ -94,6 +95,15 @@ fun TestingPage(
                 },
                 buttonText = "Change"
             )
+            Divider()
+            AuthCard(
+                title = "Usage",
+                desc = "Get usage in last 10 seconds",
+                onAuthClick = {
+                    MyUsageManager.getUsageEvents(context)
+                },
+                buttonText = "Get"
+            )
         }
     }
 }
@@ -121,7 +131,7 @@ fun SwitchCard(
     desc: String,
 ) {
     Row(
-        modifier = Modifier.padding(10.dp, 5.dp), verticalAlignment = Alignment.CenterVertically
+        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(

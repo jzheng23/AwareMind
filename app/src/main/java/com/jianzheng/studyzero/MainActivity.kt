@@ -3,9 +3,11 @@ package com.jianzheng.studyzero
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Surface
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -19,10 +21,12 @@ import com.jianzheng.studyzero.ui.SettingPage
 import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 import java.util.Calendar
 import java.util.concurrent.TimeUnit
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     private val unlockReceiver = UnlockReceiver()
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -75,10 +79,11 @@ class MainActivity : ComponentActivity() {
 
     private fun getInitialDelay(): Long {
         val currentDate = Calendar.getInstance()
+        val randomInt = Random.nextInt(0, 60)
         val dueDate = Calendar.getInstance().apply {
             // Set time to 4 AM
             set(Calendar.HOUR_OF_DAY, 4)
-            set(Calendar.MINUTE, 0)
+            set(Calendar.MINUTE, randomInt)
             set(Calendar.SECOND, 0)
             // If it's after or equal 4 AM, schedule for the next day
             if (before(currentDate)) {

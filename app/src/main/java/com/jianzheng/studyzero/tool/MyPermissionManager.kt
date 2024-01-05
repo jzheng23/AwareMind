@@ -1,16 +1,18 @@
 package com.jianzheng.studyzero.tool
 
+import android.app.AppOpsManager
 import android.content.Context
+import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
+import android.os.Build
 import android.provider.Settings
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 
 object MyPermissionManager {
 
     private var isUserStatAllowed = true
-    fun checkNotificationPermission(context: Context): Boolean {
-        return NotificationManagerCompat.from(context).areNotificationsEnabled()
-    }
 
     fun grantNotificationPermission(context: Context) {
         val intent = Intent()
@@ -20,9 +22,6 @@ object MyPermissionManager {
         context.startActivity(intent)
     }
 
-    fun checkOverlayPermission(context: Context): Boolean {
-        return Settings.canDrawOverlays(context)
-    }
 
     fun grantOverlayPermission(context: Context) {
         val intent = Intent(
@@ -32,23 +31,17 @@ object MyPermissionManager {
         context.startActivity(intent)
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     fun checkUserStatPermission(context: Context): Boolean {
-        return isUserStatAllowed
+        val appOpsManager = context.getSystemService(APP_OPS_SERVICE) as AppOpsManager
+        val mode = appOpsManager.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(), context.packageName)
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 
     fun grantUserStatPermission(context: Context) {
-
-//        if (checkNotificationPermission(context)) {
-//            appScope.launchTry(Dispatchers.IO) {
-//                val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-//                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                // android.content.ActivityNotFoundException
-//                // https://bugly.qq.com/v2/crash-reporting/crashes/d0ce46b353/113010?pid=1
-//                context.startActivity(intent)
-//            }
-//        } else {
-//            ToastUtils.showShort("必须先开启[通知权限]")
-//        }
+        val intent = Intent( Settings.ACTION_USAGE_ACCESS_SETTINGS )
+        context.startActivity(intent)
     }
 }
 
