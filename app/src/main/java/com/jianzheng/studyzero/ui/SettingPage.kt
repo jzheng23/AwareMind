@@ -3,6 +3,7 @@ package com.jianzheng.studyzero.ui
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -19,10 +20,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -30,12 +31,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
-import androidx.room.Room
-import com.jianzheng.studyzero.data.EsmDatabase
-import com.jianzheng.studyzero.service.MyForegroundService
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
@@ -162,9 +160,14 @@ fun PermissionSetting(
 fun WelcomeInfo(
     userId: MutableState<String?>,
     todayCount: MutableState<Int>,
-    totalCount: MutableState<Int>
+    totalCount: MutableState<Int>,
 ) {
     val context = LocalContext.current
+    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+    val sharedPrefsViewModel: SharedPrefsViewModel = viewModel(
+        factory = SharedPrefsViewModelFactory(sharedPreferences))
+    val todayCount = sharedPrefsViewModel.sharedPrefValue
+    Log.d("liveCounter", "Compose: today is ${todayCount.value}")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
@@ -174,26 +177,26 @@ fun WelcomeInfo(
             style = MaterialTheme.typography.headlineSmall
         )
         Divider()
-        Text(
-            text = "App is running.",
-            style = MaterialTheme.typography.bodyLarge
-        )
 //        Text(
-//            text = "App has been running for x day(s).",
+//            text = "App is running.",
 //            style = MaterialTheme.typography.bodyLarge
 //        )
-//        Text(
-//            text = "You have made:",
-//            style = MaterialTheme.typography.bodyLarge,
-//        )
-//        Text(
-//            text = "${todayCount.value} report(s) today,",
-//            style = MaterialTheme.typography.bodyLarge,
-//        )
-//        Text(
-//            text = "${totalCount.value} report(s) in total.",
-//            style = MaterialTheme.typography.bodyLarge,
-//        )
+        Text(
+            text = "App has been running for x day(s).",
+            style = MaterialTheme.typography.bodyLarge
+        )
+        Text(
+            text = "You have made:",
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            text = "${todayCount.value} report(s) today,",
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            text = "${totalCount.value} report(s) in total.",
+            style = MaterialTheme.typography.bodyLarge,
+        )
 
         Divider()
         Text(
