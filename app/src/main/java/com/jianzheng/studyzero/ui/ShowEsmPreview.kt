@@ -88,7 +88,10 @@ fun SubmitButtonPreview() {
 }
 
 @Composable
-fun ShowEsmPreview(modifier: Modifier = Modifier) {
+fun ShowEsmPreview(
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
     val mediumPadding = dimensionResource(id = R.dimen.padding_medium)
     Column(
         verticalArrangement = Arrangement.Center,
@@ -99,12 +102,14 @@ fun ShowEsmPreview(modifier: Modifier = Modifier) {
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = modifier
+                .padding(horizontal = mediumPadding)
         ) {
-            ShowInstruction()
+            ShowInstruction(modifier = Modifier.weight(1f))
             DismissButton(
-                onDismiss = { },
-                modifier = modifier
+                onDismiss = onClick,
+                modifier = Modifier.width(48.dp)
             )
         }
         //show question 1
@@ -135,7 +140,10 @@ fun ShowQuestionPreview(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .padding(horizontal = mediumPadding, vertical = mediumPadding / 4)
+                .padding(
+                    horizontal = mediumPadding,
+                    vertical = mediumPadding / 4
+                )
         ) {
             Text(
                 stringResource(questionString),

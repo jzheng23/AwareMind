@@ -189,7 +189,7 @@ fun ShowEsm(
             ShowInstruction(modifier = Modifier.weight(1f))
             DismissButton(
                 onDismiss = onClick,
-                modifier = Modifier.width(40.dp)
+                modifier = Modifier.width(48.dp)
             )
         }
         //show question 1
@@ -230,7 +230,9 @@ fun ShowInstruction(
             )
         ),
         modifier = modifier
-            .padding(top = mediumPadding / 2)
+            .padding(
+                top = mediumPadding / 2,
+            )
     )
 }
 
@@ -358,7 +360,7 @@ fun DismissButton(
             onDismiss()
             MyDelayManager.recycleTrigger()
         },
-        modifier = modifier
+        modifier = modifier.padding(end = 4.dp)
     ) {
         Icon(
             imageVector = Icons.Filled.Close,
