@@ -101,6 +101,10 @@ fun TestingPage(
                 desc = "Get usage in last 10 seconds",
                 onAuthClick = {
                     MyUsageManager.getUsageEvents(context)
+                    Handler(Looper.getMainLooper()).post {
+                        val toast = Toast.makeText(context, "Usage uploaded!", Toast.LENGTH_SHORT)
+                        toast.show()
+                    }
                 },
                 buttonText = "Get"
             )
