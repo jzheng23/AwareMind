@@ -31,11 +31,21 @@ object MyPermissionManager {
         context.startActivity(intent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
+
     fun checkUserStatPermission(context: Context): Boolean {
         val appOpsManager = context.getSystemService(APP_OPS_SERVICE) as AppOpsManager
-        val mode = appOpsManager.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_GET_USAGE_STATS,
-            android.os.Process.myUid(), context.packageName)
+
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOpsManager.unsafeCheckOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), context.packageName
+            )
+        } else {
+            appOpsManager.checkOpNoThrow(
+            AppOpsManager.OPSTR_GET_USAGE_STATS,
+            android.os.Process.myUid(), context.packageName
+        )
+        }
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
