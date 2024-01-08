@@ -21,7 +21,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,8 +89,8 @@ fun SubmitButtonPreview() {
 
 @Composable
 fun ShowEsmPreview(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    modifier: Modifier = Modifier
 ) {
     val mediumPadding = dimensionResource(id = R.dimen.padding_medium)
     Column(
@@ -129,7 +129,7 @@ fun ShowQuestionPreview(
 ) {
     val options: List<Int> = listOf(1, 2, 3, 4, 5)
     val labels: List<String> = listOf("Strongly disagree", "", "Neutral", "", "Strongly agree")
-    val selectedValue = remember { mutableStateOf(0) }
+    val selectedValue = remember { mutableIntStateOf(0) }
     Card(
         modifier = modifier
             .fillMaxWidth()
