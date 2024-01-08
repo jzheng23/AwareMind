@@ -4,9 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
-import android.widget.ToggleButton
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,7 +12,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
@@ -79,10 +76,14 @@ fun TestingPage(
             )
             Divider()
             AuthCard(
-                title = "Triggers",
-                desc = "Reset triggers",
+                title = "New Day",
+                desc = "Simulating a new day starts",
                 onAuthClick = {
-                    resetTriggerFunction(context)
+                    newDayFunction(context)
+                    Handler(Looper.getMainLooper()).post {
+                        val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
+                        toast.show()
+                    }
                 },
                 buttonText = "Reset"
             )
@@ -112,14 +113,20 @@ fun TestingPage(
     }
 }
 
+fun newDayFunction(context: Context) {
+    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+    val editor = sharedPreferences.edit()
+    val dayCount = sharedPreferences.getInt("day_count", 0)
+    editor.putInt("day_count", dayCount + 1)
+        .apply()
+    MyUsageManager.getUsageEvents(context)
+    resetTriggerFunction(context)
+}
+
 fun resetTriggerFunction(context: Context) {
     val responseCounter = ResponseCounter(context)
     responseCounter.resetCounter()
     MyDelayManager.resetTriggerList()
-    Handler(Looper.getMainLooper()).post {
-        val toast = Toast.makeText(context, "Triggers reset!", Toast.LENGTH_SHORT)
-        toast.show()
-    }
 }
 
 fun testFunction(context: Context) {
@@ -167,7 +174,10 @@ fun SwitchMinimalExample(
                 .apply()
             MyDelayManager.init(context)
             resetTriggerFunction(context)
-            Log.d("testing", "testing is $it")
+            val triggerType = if (it) "testing" else "real"
+            val toast = Toast.makeText(context, "Using $triggerType triggers", Toast.LENGTH_SHORT)
+            Handler(Looper.getMainLooper()).post { toast.show() }
+            Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
         }
     )
 }

@@ -1,5 +1,6 @@
 package com.jianzheng.studyzero.ui
 
+import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.provider.Settings
@@ -54,12 +55,6 @@ fun SettingPage(
     val userId = remember {
         mutableStateOf(sharedPreferences.getString("UID", "null"))
     }
-    val todayCount = remember {
-        mutableStateOf(sharedPreferences.getInt("today_count", 0))
-    }
-    val totalCount = remember {
-        mutableStateOf(sharedPreferences.getInt("total_count", 0))
-    }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
         modifier = Modifier
@@ -76,8 +71,6 @@ fun SettingPage(
         } else {
             PermissionSetting(
                 userId = userId,
-                todayCount = todayCount,
-                totalCount = totalCount
             )
         }
         TestingPage(
@@ -93,8 +86,6 @@ fun SettingPage(
 @Composable
 fun PermissionSetting(
     userId: MutableState<String?>,
-    todayCount: MutableState<Int>,
-    totalCount: MutableState<Int>
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -111,8 +102,6 @@ fun PermissionSetting(
         if (notificationAllowed and overlayAllowed and usageStatAllowed) {
             WelcomeInfo(
                 userId = userId,
-                todayCount = todayCount,
-                totalCount = totalCount
             )
         } else {
             Text(
@@ -159,14 +148,14 @@ fun PermissionSetting(
 @Composable
 fun WelcomeInfo(
     userId: MutableState<String?>,
-    todayCount: MutableState<Int>,
-    totalCount: MutableState<Int>,
 ) {
-    val context = LocalContext.current
-    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+    val context = LocalContext.current.applicationContext as Application
+//    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val sharedPrefsViewModel: SharedPrefsViewModel = viewModel(
-        factory = SharedPrefsViewModelFactory(sharedPreferences))
-    val todayCount = sharedPrefsViewModel.sharedPrefValue
+        factory = SharedPrefsViewModelFactory(context))
+    val todayCount = sharedPrefsViewModel.todayCount.observeAsState()
+    val totalCount = sharedPrefsViewModel.totalCount.observeAsState()
+    val dayCount = sharedPrefsViewModel.dayCount.observeAsState()
     Log.d("liveCounter", "Compose: today is ${todayCount.value}")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -182,7 +171,7 @@ fun WelcomeInfo(
 //            style = MaterialTheme.typography.bodyLarge
 //        )
         Text(
-            text = "App has been running for x day(s).",
+            text = "App has been running for ${dayCount.value} day(s).",
             style = MaterialTheme.typography.bodyLarge
         )
         Text(
