@@ -150,7 +150,7 @@ fun SwitchCard(
 @Composable
 fun SwitchMinimalExample(
 ) {
-    var checked by remember { mutableStateOf(true) }
+    var checked by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
