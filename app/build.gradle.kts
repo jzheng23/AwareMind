@@ -14,9 +14,9 @@ android {
     defaultConfig {
         applicationId = "com.jianzheng.studyzero"
         minSdk = 26
-        targetSdk = 33
-        versionCode = 12
-        versionName = "2.0"
+        targetSdk = 34
+        versionCode = 13
+        versionName = "2.01"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -61,7 +61,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
 //    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2" )
+    implementation("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:2023.03.00"))
     implementation("androidx.compose.ui:ui")
@@ -74,8 +74,8 @@ dependencies {
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
-    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation ("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
     implementation("com.google.firebase:firebase-database")
     implementation("com.google.code.gson:gson:2.10.1")

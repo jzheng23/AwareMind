@@ -6,13 +6,9 @@ import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat.getSystemService
+
 
 object MyPermissionManager {
-
-    private var isUserStatAllowed = true
 
     fun grantNotificationPermission(context: Context) {
         val intent = Intent()
@@ -42,15 +38,15 @@ object MyPermissionManager {
             )
         } else {
             appOpsManager.checkOpNoThrow(
-            AppOpsManager.OPSTR_GET_USAGE_STATS,
-            android.os.Process.myUid(), context.packageName
-        )
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), context.packageName
+            )
         }
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
     fun grantUserStatPermission(context: Context) {
-        val intent = Intent( Settings.ACTION_USAGE_ACCESS_SETTINGS )
+        val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
         context.startActivity(intent)
     }
 }

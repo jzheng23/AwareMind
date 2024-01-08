@@ -16,8 +16,8 @@ class ResponseCounter(context: Context) {
         val todayCount = sharedPreferences.getInt("today_count", 0)
         val totalCount = sharedPreferences.getInt("total_count", 0)
         editor.putInt(tag, retrievedValue + 1)
-            .putInt("today_count",todayCount + 1)
-            .putInt("total_count",totalCount + 1)
+            .putInt("today_count", todayCount + 1)
+            .putInt("total_count", totalCount + 1)
             .apply()
         Log.d("liveCounter", "Response counter: today is $todayCount, total is $totalCount")
     }
@@ -31,7 +31,7 @@ class ResponseCounter(context: Context) {
     }
 
     fun checkRandomComplete(): Boolean {
-        Log.d("testing","length of random trigger: $lengthOfTriggerList")
+        Log.d("testing", "length of random trigger: $lengthOfTriggerList")
         return sharedPreferences.getInt("randomMet", 0) >= lengthOfTriggerList
     }
 

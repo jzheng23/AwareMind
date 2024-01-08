@@ -18,8 +18,8 @@ class UnlockReceiver : BroadcastReceiver() {
                     val serviceIntent = Intent(context, OverlayService::class.java).apply {
                         putExtra("tag", "none")
                     }
-                    context?.stopService(serviceIntent)
-                    Log.d("delayTime","unlocked: ${System.currentTimeMillis()}")
+                    context.stopService(serviceIntent)
+                    Log.d("delayTime", "unlocked: ${System.currentTimeMillis()}")
                     MyDelayManager.delayService(context)
                 }
             }

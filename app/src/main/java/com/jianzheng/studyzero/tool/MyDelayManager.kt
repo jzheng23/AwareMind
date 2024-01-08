@@ -14,10 +14,11 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object MyDelayManager {
-    private val longTriggerList = mutableListOf(5, 8, 12, 18, 27, 41, 62, 95, 144, 220, 335, 510, 776)
+    private val longTriggerList =
+        mutableListOf(5, 8, 12, 18, 27, 41, 62, 95, 144, 220, 335, 510, 776)
     private val shortTriggerList = mutableListOf(1, 5, 8)
     private lateinit var originalTriggerList: MutableList<Int>
-    private lateinit var triggerList : MutableList<Int>
+    private lateinit var triggerList: MutableList<Int>
     private var extraTriggerThirty = 30L //30 minutes for real 30 seconds for testing
     private var extraTriggerTwenty = 20L
     private var triggerIndex: Int = 0
@@ -26,7 +27,7 @@ object MyDelayManager {
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
 
-    fun init(context: Context){
+    fun init(context: Context) {
         val sharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         if (
@@ -35,8 +36,7 @@ object MyDelayManager {
             originalTriggerList = shortTriggerList
             extraTriggerThirty = 30L //30 minutes for real 30 seconds for testing
             extraTriggerTwenty = 20L
-        }
-        else {//not testing
+        } else {//not testing
             originalTriggerList = longTriggerList
             extraTriggerThirty = 30L * 60 //30 minutes for real 30 seconds for testing
             extraTriggerTwenty = 20L * 60
@@ -49,11 +49,16 @@ object MyDelayManager {
         myWorkManager = WorkManager.getInstance(context)
         val responseCounter = ResponseCounter(context)
         val currentTimeMillis = System.currentTimeMillis()
-        Log.d("delayTime","passed in myDelayManager: $currentTimeMillis")
+        Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
         if (!responseCounter.checkRandomComplete()) {
             val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
                 .setInitialDelay(triggerList[triggerIndex].toLong(), TimeUnit.SECONDS)
-                .setInputData(workDataOf("tag" to context.getString(R.string.random_met), "unlock" to currentTimeMillis))
+                .setInputData(
+                    workDataOf(
+                        "tag" to context.getString(R.string.random_met),
+                        "unlock" to currentTimeMillis
+                    )
+                )
                 .build()
             myWorkManager.enqueue(triggerRequest)
             randomRequestID = triggerRequest.id
@@ -67,7 +72,12 @@ object MyDelayManager {
             val twentyTriggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
 //                .setInitialDelay(extraTriggerTwenty, TimeUnit.MINUTES)
                 .setInitialDelay(extraTriggerTwenty, TimeUnit.SECONDS)
-                .setInputData(workDataOf("tag" to context.getString(R.string._20met),"unlock" to currentTimeMillis))
+                .setInputData(
+                    workDataOf(
+                        "tag" to context.getString(R.string._20met),
+                        "unlock" to currentTimeMillis
+                    )
+                )
                 .build()
             myWorkManager.enqueue(twentyTriggerRequest)
             twentyRequestID = twentyTriggerRequest.id
@@ -76,7 +86,12 @@ object MyDelayManager {
             val thirtyTriggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
 //                .setInitialDelay(extraTriggerThirty, TimeUnit.MINUTES)
                 .setInitialDelay(extraTriggerThirty, TimeUnit.SECONDS)
-                .setInputData(workDataOf("tag" to context.getString(R.string._30met), "unlock" to currentTimeMillis))
+                .setInputData(
+                    workDataOf(
+                        "tag" to context.getString(R.string._30met),
+                        "unlock" to currentTimeMillis
+                    )
+                )
                 .build()
             myWorkManager.enqueue(thirtyTriggerRequest)
             thirtyRequestID = thirtyTriggerRequest.id

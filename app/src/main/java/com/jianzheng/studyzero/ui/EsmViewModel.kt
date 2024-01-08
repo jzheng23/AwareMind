@@ -47,7 +47,7 @@ class EsmViewModel(
         uploadToFirebase(responseDao.getLastResponse())
         Log.d("data", "data saved")
         Handler(Looper.getMainLooper()).post {
-            val toast = Toast.makeText(context,"Submitted successfully!", Toast.LENGTH_SHORT)
+            val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
             toast.show()
         }
     }
@@ -57,18 +57,7 @@ class EsmViewModel(
             val uid = sharedPreferences.getString("UID", "null")
             myRef.child(uid.toString()).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
-        } else Log.d("userId","invalid user id")
-    }
-
-    fun getAnswer(index: Int): Int {
-        return uiState.value.answer[index]
-    }
-
-    fun resetAnswers() {
-        Log.d("ViewModel", "Reset")
-        _uiState.update { currentState ->
-            currentState.copy(answer = listOf(0, 0))
-        }
+        } else Log.d("userId", "invalid user id")
     }
 
 

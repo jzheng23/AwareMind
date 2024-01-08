@@ -89,23 +89,23 @@ fun UseIdInputField(
     val context = LocalContext.current
     userId.value?.let { it ->
         TextField(
-        value = it,
-        onValueChange = { userId.value = it },
-        label = { Text("User ID") },
-        singleLine = true,
-        keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Done
-        ),
-        keyboardActions = KeyboardActions(
-            onDone = {
-                showDialog.value = false
-                saveUserId(
-                    userId,
-                    context
-                )
-            }
+            value = it,
+            onValueChange = { userId.value = it },
+            label = { Text("User ID") },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ),
+            keyboardActions = KeyboardActions(
+                onDone = {
+                    showDialog.value = false
+                    saveUserId(
+                        userId,
+                        context
+                    )
+                }
+            )
         )
-    )
     }
     Button(
         onClick = {

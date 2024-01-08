@@ -22,9 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -38,7 +38,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
-import java.util.Calendar
 import kotlin.coroutines.CoroutineContext
 
 val mediumPadding = 12.dp
@@ -152,7 +151,8 @@ fun WelcomeInfo(
     val context = LocalContext.current.applicationContext as Application
 //    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val sharedPrefsViewModel: SharedPrefsViewModel = viewModel(
-        factory = SharedPrefsViewModelFactory(context))
+        factory = SharedPrefsViewModelFactory(context)
+    )
     val todayCount = sharedPrefsViewModel.todayCount.observeAsState()
     val totalCount = sharedPrefsViewModel.totalCount.observeAsState()
     val dayCount = sharedPrefsViewModel.dayCount.observeAsState()
@@ -160,7 +160,7 @@ fun WelcomeInfo(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
-    ){
+    ) {
         Text(
             text = "Welcome, ${userId.value}!",
             style = MaterialTheme.typography.headlineSmall

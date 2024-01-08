@@ -11,11 +11,11 @@ class MyTriggerWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, para
     //    val inputData = params.inputData
     override fun doWork(): Result {
         val tag = inputData.getString("tag")
-        val currentTimeMillis = inputData.getLong("unlock",System.currentTimeMillis())
+        val currentTimeMillis = inputData.getLong("unlock", System.currentTimeMillis())
         val serviceIntent = Intent(applicationContext, OverlayService::class.java).apply {
             putExtra("tag", tag)
             putExtra("unlock", currentTimeMillis)
-            Log.d("delayTime","passed in myWorker: $currentTimeMillis")
+            Log.d("delayTime", "passed in myWorker: $currentTimeMillis")
         }
         Log.d("unlock", "triggered by $tag")
         applicationContext.startService(serviceIntent)
