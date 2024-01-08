@@ -52,7 +52,7 @@ fun SettingPage(
     val sharedPreferences =
         LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val userId = remember {
-        mutableStateOf(sharedPreferences.getString("UID", "null"))
+        mutableStateOf(sharedPreferences.getString("UID", ""))
     }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
@@ -62,7 +62,7 @@ fun SettingPage(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (userId.value == "null") {
+        if (userId.value == "") {
             Text("Please login")
             LoginButton(
                 showDialog = showDialog

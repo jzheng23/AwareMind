@@ -28,7 +28,7 @@ import androidx.compose.ui.window.Dialog
 @Preview
 @Composable
 fun LoginPage(
-    userId: MutableState<String?> = mutableStateOf("null"),
+    userId: MutableState<String?> = mutableStateOf(""),
     showDialog: MutableState<Boolean> = mutableStateOf(true)
 ) {
     Dialog(
@@ -114,7 +114,8 @@ fun UseIdInputField(
                 userId,
                 context
             )
-        }
+        },
+        enabled = (userId.value != "")
     ) {
         Text("Confirm")
     }
