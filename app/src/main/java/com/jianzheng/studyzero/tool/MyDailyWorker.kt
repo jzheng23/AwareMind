@@ -1,6 +1,7 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
+import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
@@ -10,6 +11,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         uploadData(context)
         resetTriggerList(context)
         dayCountPlusOne(context)
+        Log.d("workManager","Do work la!")
         return Result.success()
     }
 

@@ -45,7 +45,7 @@ class EsmViewModel(
         val newResponse = uiState.value.toResponse(delay, startingTime)
         responseDao.insert(newResponse)
         uploadToFirebase(responseDao.getLastResponse())
-        Log.d("data", "data saved")
+        Log.d("data", "${responseDao.getLastResponse().startingTime}")
         Handler(Looper.getMainLooper()).post {
             val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
             toast.show()

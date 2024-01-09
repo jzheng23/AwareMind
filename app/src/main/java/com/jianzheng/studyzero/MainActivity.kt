@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -70,11 +71,17 @@ class MainActivity : ComponentActivity() {
             .setInitialDelay(getInitialDelay(), TimeUnit.MILLISECONDS)
             .build()
 
+        val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.MINUTES)
+            .setInitialDelay(5000, TimeUnit.MILLISECONDS)
+            .build()
+
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "daily_maintenance",
-            ExistingPeriodicWorkPolicy.KEEP, // KEEP or REPLACE
-            workRequest
+            ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+//            workRequest
+            workRequestTest
         )
+        Log.d("workManager","scheduled!")
     }
 
     private fun getInitialDelay(): Long {

@@ -34,6 +34,7 @@ class MyForegroundService : Service() {
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val db =
             Room.databaseBuilder(applicationContext, EsmDatabase::class.java, "response_database")
+                .fallbackToDestructiveMigration()
                 .build()
         responseDao = db.responseDao()
         createNotificationChannel()

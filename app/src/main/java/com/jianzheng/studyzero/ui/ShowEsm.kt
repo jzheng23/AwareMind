@@ -69,6 +69,7 @@ fun ShowOverlay(
     val context = LocalContext.current
     val db =
         Room.databaseBuilder(context, EsmDatabase::class.java, "response_database")
+            .fallbackToDestructiveMigration()
             .build()
     val responseDao = db.responseDao()
     val myViewModel = EsmViewModel(responseDao, context)

@@ -31,11 +31,16 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
+import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
+import java.util.concurrent.TimeUnit
 
 @Composable
 fun TestingPage(
@@ -114,13 +119,21 @@ fun TestingPage(
 }
 
 fun newDayFunction(context: Context) {
-    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    val dayCount = sharedPreferences.getInt("day_count", 0)
-    editor.putInt("day_count", dayCount + 1)
-        .apply()
-    MyUsageManager.getUsageEvents(context)
-    resetTriggerFunction(context)
+//    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+//    val editor = sharedPreferences.edit()
+//    val dayCount = sharedPreferences.getInt("day_count", 0)
+//    editor.putInt("day_count", dayCount + 1)
+//        .apply()
+//    MyUsageManager.getUsageEvents(context)
+//    resetTriggerFunction(context)
+    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.MINUTES)
+        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+        .build()
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "daily_maintenance_test",
+        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+        workRequestTest
+    )
 }
 
 fun resetTriggerFunction(context: Context) {
