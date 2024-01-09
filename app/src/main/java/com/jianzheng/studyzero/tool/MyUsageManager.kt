@@ -12,10 +12,9 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-object MyUsageManager {
-    fun getUsageEvents(context: Context) {
+class MyUsageManager {
+    fun getUsageEvents(context: Context, currentTime:Long) {
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
-        val currentTime = System.currentTimeMillis()
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
         val usageEvents = usageStatsManager.queryEvents(currentTime - dayInMillisTest, currentTime)
@@ -30,11 +29,11 @@ object MyUsageManager {
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         val uid = sharedPreferences.getString("UID", "null")
         val dayCount = sharedPreferences.getInt("day_count", -1)
-        Log.d("workManager","day count is $dayCount")
         if (sharedPreferences.getBoolean("UID_valid", false)) {//only upload for authenticated users
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
                 var i = 0
+                Log.d("workManager","day count is $dayCount")
                 while (usageEvents.hasNextEvent()) {
                     usageEvents.getNextEvent(usageEvent)
 //            eventsList.add(UsageEventModel(usageEvent.packageName,usageEvent.timeStamp))

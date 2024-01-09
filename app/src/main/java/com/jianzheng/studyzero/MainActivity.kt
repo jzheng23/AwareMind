@@ -71,15 +71,15 @@ class MainActivity : ComponentActivity() {
             .setInitialDelay(getInitialDelay(), TimeUnit.MILLISECONDS)
             .build()
 
-        val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.MINUTES)
-            .setInitialDelay(5000, TimeUnit.MILLISECONDS)
-            .build()
+//        val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.MINUTES)
+//            .setInitialDelay(5000, TimeUnit.MILLISECONDS)
+//            .build()
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "daily_maintenance",
-            ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
-//            workRequest
-            workRequestTest
+            ExistingPeriodicWorkPolicy.KEEP, // KEEP or REPLACE
+            workRequest
+//            workRequestTest
         )
         Log.d("workManager","scheduled!")
     }

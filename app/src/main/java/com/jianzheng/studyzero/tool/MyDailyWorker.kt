@@ -11,7 +11,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         uploadData(context)
         resetTriggerList(context)
         dayCountPlusOne(context)
-        Log.d("workManager","Do work la!")
+        Log.d("dayCount","Do work la!")
         return Result.success()
     }
 
@@ -21,10 +21,12 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         val dayCount = sharedPreferences.getInt("day_count", 0)
         editor.putInt("day_count", dayCount + 1)
             .apply()
+        Log.d("dayCount","day ${dayCount+1}")
     }
 
     private fun uploadData(context: Context) {
-        MyUsageManager.getUsageEvents(context)
+        val myUsageManager = MyUsageManager()
+        myUsageManager.getUsageEvents(context, System.currentTimeMillis())
     }
 
     private fun resetTriggerList(context: Context) {

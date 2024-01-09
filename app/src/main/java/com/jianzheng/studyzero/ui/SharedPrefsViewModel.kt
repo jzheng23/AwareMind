@@ -28,7 +28,6 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
         }
 
     init {
-
         _todayCount.value = sharedPreferences.getInt("today_count", 0)
         _totalCount.value = sharedPreferences.getInt("total_count", 0)
         _dayCount.value = sharedPreferences.getInt("day_count", 0)

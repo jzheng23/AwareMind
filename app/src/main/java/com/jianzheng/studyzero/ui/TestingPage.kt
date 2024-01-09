@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
@@ -106,7 +108,8 @@ fun TestingPage(
                 title = "Usage",
                 desc = "Get usage in last 10 seconds",
                 onAuthClick = {
-                    MyUsageManager.getUsageEvents(context)
+                    val myUsageManager = MyUsageManager()
+                    myUsageManager.getUsageEvents(context, System.currentTimeMillis())
                     Handler(Looper.getMainLooper()).post {
                         val toast = Toast.makeText(context, "Usage uploaded!", Toast.LENGTH_SHORT)
                         toast.show()
@@ -126,7 +129,7 @@ fun newDayFunction(context: Context) {
 //        .apply()
 //    MyUsageManager.getUsageEvents(context)
 //    resetTriggerFunction(context)
-    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.MINUTES)
+    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(15, TimeUnit.MINUTES)
         .setInitialDelay(1000, TimeUnit.MILLISECONDS)
         .build()
     WorkManager.getInstance(context).enqueueUniquePeriodicWork(
@@ -134,6 +137,11 @@ fun newDayFunction(context: Context) {
         ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
         workRequestTest
     )
+//    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
+//        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+//        .build()
+//    WorkManager.getInstance(context).enqueue(workRequestOneTime)
+    Log.d("dayCount","new day reset")
 }
 
 fun resetTriggerFunction(context: Context) {
