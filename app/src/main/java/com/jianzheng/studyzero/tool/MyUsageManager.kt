@@ -14,6 +14,9 @@ import kotlinx.coroutines.launch
 
 class MyUsageManager {
     fun getUsageEvents(context: Context, currentTime:Long) {
+
+        val currentTimeString = getDateTime(currentTime)
+        Log.d("usageManager","get usage events called @ $currentTimeString")
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
@@ -33,7 +36,7 @@ class MyUsageManager {
             val scope = CoroutineScope(Dispatchers.IO)
             scope.launch {
                 var i = 0
-                Log.d("workManager","day count is $dayCount")
+                Log.d("usageManager","day count is $dayCount")
                 while (usageEvents.hasNextEvent()) {
                     usageEvents.getNextEvent(usageEvent)
 //            eventsList.add(UsageEventModel(usageEvent.packageName,usageEvent.timeStamp))
@@ -42,8 +45,11 @@ class MyUsageManager {
                         .child("app").setValue(usageEvent.packageName)
                     myRef.child(uid.toString()).child(dayCount.toString()).child(i.toString())
                         .child("time").setValue(getDateTime(usageEvent.timeStamp))
+                    Log.d("usageManager","package name ${usageEvent.packageName}, time ${getDateTime(usageEvent.timeStamp)}")
                     i++
                 }
+                if (i == 0)
+                    Log.d("usageManager","no usage to be upload")
             }
         }
         writeLocalFile() //write local files for all users

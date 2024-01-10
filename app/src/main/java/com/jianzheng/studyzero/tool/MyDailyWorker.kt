@@ -4,14 +4,19 @@ import android.content.Context
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
     override fun doWork(): Result {
         val context: Context = applicationContext
-        uploadData(context)
+        CoroutineScope(Dispatchers.IO).launch {
+            uploadData(context)
+            dayCountPlusOne(context)
+        }
         resetTriggerList(context)
-        dayCountPlusOne(context)
-        Log.d("dayCount","Do work la!")
+        Log.d("workManager","Do work la!")
         return Result.success()
     }
 
@@ -21,7 +26,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         val dayCount = sharedPreferences.getInt("day_count", 0)
         editor.putInt("day_count", dayCount + 1)
             .apply()
-        Log.d("dayCount","day ${dayCount+1}")
+        Log.d("workManager","day ${dayCount+1}")
     }
 
     private fun uploadData(context: Context) {

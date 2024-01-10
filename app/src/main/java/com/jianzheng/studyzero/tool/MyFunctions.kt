@@ -6,6 +6,6 @@ import java.util.Locale
 
 fun getDateTime(timeInMillis: Long): String {
     val date = Date(timeInMillis)
-    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.getDefault())
     return formatter.format(date)
 }
