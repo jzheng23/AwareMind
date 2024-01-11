@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
 
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "daily_maintenance",
-            ExistingPeriodicWorkPolicy.KEEP, // KEEP or REPLACE
+            ExistingPeriodicWorkPolicy.UPDATE, // KEEP or UPDATE
             workRequest
 //            workRequestTest
         )
@@ -88,8 +88,8 @@ class MainActivity : ComponentActivity() {
         val currentDate = Calendar.getInstance()
         val randomInt = Random.nextInt(0, 60)
         val dueDate = Calendar.getInstance().apply {
-            // Set time to 4 AM
-            set(Calendar.HOUR_OF_DAY, 4)
+            // Set time to 10 AM for testing, 10 AM for real
+            set(Calendar.HOUR_OF_DAY, 10)
             set(Calendar.MINUTE, randomInt)
             set(Calendar.SECOND, 0)
             // If it's after or equal 4 AM, schedule for the next day
@@ -97,6 +97,7 @@ class MainActivity : ComponentActivity() {
                 add(Calendar.HOUR_OF_DAY, 24)
             }
         }
+        Log.d("workManager","Set at 10 AM")
         return dueDate.timeInMillis - currentDate.timeInMillis
     }
 

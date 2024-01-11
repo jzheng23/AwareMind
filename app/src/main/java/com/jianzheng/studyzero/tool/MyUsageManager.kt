@@ -44,6 +44,8 @@ class MyUsageManager {
                     myRef.child(uid.toString()).child(dayCount.toString()).child(i.toString())
                         .child("app").setValue(usageEvent.packageName)
                     myRef.child(uid.toString()).child(dayCount.toString()).child(i.toString())
+                        .child("page").setValue(usageEvent.className)
+                    myRef.child(uid.toString()).child(dayCount.toString()).child(i.toString())
                         .child("time").setValue(getDateTime(usageEvent.timeStamp))
                     Log.d("usageManager","package name ${usageEvent.packageName}, time ${getDateTime(usageEvent.timeStamp)}")
                     i++
