@@ -6,6 +6,7 @@ import android.os.Build
 import android.provider.Settings
 import android.util.Log
 import androidx.annotation.RequiresApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -27,13 +29,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.NotificationManagerCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
+import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.isActive
@@ -72,6 +79,8 @@ fun SettingPage(
                 userId = userId,
             )
         }
+        UmdLogo()
+        ContactInfo()
         TestingPage(
             userId = userId,
             modifier = modifier,
@@ -79,6 +88,19 @@ fun SettingPage(
         )
     }
 
+}
+
+@Composable
+fun ContactInfo() {
+    Text("Please contact jzheng23@umd.edu")
+}
+
+@Composable
+fun UmdLogo() {
+    Image(
+        painterResource(id = R.drawable.umd_logo),
+        contentDescription = null,
+    )
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -253,4 +275,20 @@ fun <T> usePollState(
         }
     }
     return mutableState
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@Preview
+@Composable
+fun SettingPagePreview() {
+    StudyZeroTheme(isOverlay = true) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+            color = Color.White.copy(alpha = 0.5f),
+//            onClick = onClick
+        ) {
+            SettingPage()
+        }
+    }
 }

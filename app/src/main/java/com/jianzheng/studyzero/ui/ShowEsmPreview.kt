@@ -109,7 +109,7 @@ fun ShowEsmPreview(
             ShowInstruction(modifier = Modifier.weight(1f))
             DismissButton(
                 onDismiss = onClick,
-                modifier = Modifier.width(48.dp)
+                modifier = Modifier//.width(40.dp)
             )
         }
         //show question 1

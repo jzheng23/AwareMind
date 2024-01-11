@@ -191,7 +191,7 @@ fun ShowEsm(
             ShowInstruction(modifier = Modifier.weight(1f))
             DismissButton(
                 onDismiss = onClick,
-                modifier = Modifier.width(48.dp)
+                modifier = Modifier//.width(40.dp)
             )
         }
         //show question 1
@@ -368,7 +368,7 @@ fun DismissButton(
             imageVector = Icons.Filled.Close,
             contentDescription = "Dismiss",
             modifier = modifier
-                .size(48.dp)
+                .size(40.dp)
                 .background(
                     color = MaterialTheme.colorScheme.surfaceVariant,
                     shape = RoundedCornerShape(10.dp)
