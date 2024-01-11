@@ -23,6 +23,10 @@ import com.jianzheng.studyzero.receiver.UnlockReceiver
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
+import com.jianzheng.studyzero.tool.createSharedPreference
+import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
+import com.jianzheng.studyzero.tool.startEverything
+import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.SettingPage
 import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 import java.util.Calendar
@@ -52,85 +56,10 @@ class MainActivity : ComponentActivity() {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
         registerReceiver(unlockReceiver, filter)
-        //start foreground service
-        val myForegroundServiceIntent = Intent(this, MyForegroundService::class.java)
-        ContextCompat.startForegroundService(this, myForegroundServiceIntent)
 
-        //start room TODO maybe not needed?
-//        val db = Room.databaseBuilder(applicationContext, EsmDatabase::class.java,"response_database").build()
-//        val responseDao = db.responseDao()
-//        GlobalScope.launch(Dispatchers.IO) {
-//            responseDao.insert(Response(id = 1, delay = 0, answer1 = 9, answer2 = 9, startingTime = 0, submittingTime = 0))
-//        }
-
-        //init sharedPreference, TODO maybe not needed?
-        val sharedPreferences =
-            this.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        if (sharedPreferences.getBoolean("first_run", true)) createSharedPreference()
-
-        MyDelayManager.init(this)
-        scheduleDailyMaintenance()
-
-// ...
-// Initialize Firebase Auth
         auth = Firebase.auth
-    }
 
-    private fun scheduleDailyMaintenance() {
-        val initialDelay = 5_000L
-        val myWorkManager = WorkManager.getInstance(this)
-
-        val workRequest = PeriodicWorkRequestBuilder<MyDailyWorker>(24, TimeUnit.HOURS)
-            // Additional configuration (like constraints)
-            .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
-            .build()
-        myWorkManager.enqueueUniquePeriodicWork(
-            "daily_maintenance",
-            ExistingPeriodicWorkPolicy.UPDATE, // KEEP or UPDATE
-            workRequest
-//            workRequestTest
-        )
-        val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
-        val workState = workInfo.get()?.state
-        Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
-
-//        val workRequestTest = OneTimeWorkRequestBuilder<MyDailyWorker>()
-//            .setInitialDelay(initialDelay * 5, TimeUnit.MILLISECONDS)
-//            .build()
-//        myWorkManager.enqueue(workRequestTest)
-//        val workInfoTest = myWorkManager.getWorkInfoById(workRequestTest.id)
-//        val workStateTest = workInfoTest.get()?.state
-//        Log.d("workManager", "scheduled test! $workStateTest id ${workRequestTest.id}")
-    }
-
-    private fun getInitialDelay(): Long {
-        val currentDate = Calendar.getInstance()
-        val hourInt = 11
-        val randomInt = Random.nextInt(0, 60)
-        val dueDate = Calendar.getInstance().apply {
-            // Set time to 10 AM for testing, 10 AM for real
-            set(Calendar.HOUR_OF_DAY, hourInt)
-            set(Calendar.MINUTE, randomInt)
-            set(Calendar.SECOND, 0)
-            // If it's after or equal 4 AM, schedule for the next day
-            if (before(currentDate)) {
-                add(Calendar.HOUR_OF_DAY, 24)
-            }
-        }
-        Log.d("workManager", "Set at $hourInt:$randomInt")
-        return dueDate.timeInMillis - currentDate.timeInMillis
-    }
-
-    private fun createSharedPreference() {
-        val sharedPreferences = getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-
-        // Open the editor to make changes
-        val editor = sharedPreferences.edit()
-
-        // Put values
-        editor.putBoolean("first_run", false)
-            .putString("UID", "null")
-            .apply()
+        startEverything(this)
     }
 
     override fun onDestroy() {
