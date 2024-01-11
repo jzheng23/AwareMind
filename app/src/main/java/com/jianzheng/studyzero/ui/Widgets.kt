@@ -1,0 +1,121 @@
+package com.jianzheng.studyzero.ui
+
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.jianzheng.studyzero.tool.MyDelayManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.withContext
+import kotlin.coroutines.CoroutineContext
+
+
+@Composable
+fun AuthCard(
+    title: String,
+    desc: String,
+    onAuthClick: () -> Unit,
+    buttonText: String = "Allow",
+    buttonEnabled: Boolean = true
+) {
+    Row(
+        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title, fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = desc, fontSize = 14.sp
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Button(
+            onClick = onAuthClick,
+            enabled = buttonEnabled
+            ) {
+            Text(text = buttonText)
+        }
+    }
+}
+
+@Composable
+fun <T> usePollState(
+    context: CoroutineContext = Dispatchers.Default,
+    interval: Long = 1000L,
+    getter: () -> T,
+): MutableState<T> {
+    val mutableState = remember { mutableStateOf(getter()) }
+    LaunchedEffect(Unit) {
+        withContext(context) {
+            while (isActive) {
+                delay(interval)
+                mutableState.value = getter()
+            }
+        }
+    }
+    return mutableState
+}
+
+
+@Composable
+fun SwitchCard(
+    title: String,
+    desc: String,
+    onCheckedChange: (Boolean) -> Unit
+) {
+    Row(
+        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(
+                text = title, fontSize = 18.sp
+            )
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = desc, fontSize = 14.sp
+            )
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        SwitchMinimalExample(onCheckedChange)
+    }
+}
+
+@Composable
+fun SwitchMinimalExample(
+    onCheckedChange: (Boolean) -> Unit
+) {
+    var checked by remember { mutableStateOf(false) }
+
+    Switch(
+        checked = checked,
+        onCheckedChange = {
+            checked = it
+            onCheckedChange(it)
+        }
+    )
+}

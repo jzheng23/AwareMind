@@ -6,6 +6,7 @@ import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import androidx.core.app.NotificationManagerCompat
 
 
 object MyPermissionManager {
@@ -49,5 +50,10 @@ object MyPermissionManager {
         val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
         context.startActivity(intent)
     }
+
+    fun checkAllPermissions(context: Context): Boolean =
+        (NotificationManagerCompat.from(context).areNotificationsEnabled()
+                and Settings.canDrawOverlays(context)
+                and checkUserStatPermission(context))
 }
 

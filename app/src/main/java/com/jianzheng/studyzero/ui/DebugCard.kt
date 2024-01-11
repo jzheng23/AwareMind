@@ -8,32 +8,19 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
@@ -45,7 +32,7 @@ import com.jianzheng.studyzero.tool.ResponseCounter
 import java.util.concurrent.TimeUnit
 
 @Composable
-fun TestingPage(
+fun DebugCard(
     userId: MutableState<String?>,
     modifier: Modifier,
     showDialog: MutableState<Boolean>
@@ -75,6 +62,19 @@ fun TestingPage(
             SwitchCard(
                 title = "Trigger list for testing",
                 desc = "Use testing triggers?",
+                onCheckedChange = {
+                    val sharedPreferences =
+                        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+                    val editor = sharedPreferences.edit()
+                    editor.putBoolean("using_testing_triggers", it)
+                        .apply()
+                    MyDelayManager.init(context)
+                    resetTriggerFunction(context)
+                    val triggerType = if (it) "testing" else "real"
+                    val toast = Toast.makeText(context, "Using $triggerType triggers", Toast.LENGTH_SHORT)
+                    Handler(Looper.getMainLooper()).post { toast.show() }
+                    Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
+                }
             )
             Divider()
             AuthCard(
@@ -150,50 +150,4 @@ fun testFunction(context: Context) {
         putExtra("tag", "testMet")
     }
     context.startService(serviceIntent)
-}
-
-@Composable
-fun SwitchCard(
-    title: String,
-    desc: String,
-) {
-    Row(
-        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title, fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(2.dp))
-            Text(
-                text = desc, fontSize = 14.sp
-            )
-        }
-        Spacer(modifier = Modifier.width(10.dp))
-        SwitchMinimalExample()
-    }
-}
-
-@Composable
-fun SwitchMinimalExample(
-) {
-    var checked by remember { mutableStateOf(false) }
-    val context = LocalContext.current
-    val sharedPreferences =
-        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    Switch(
-        checked = checked,
-        onCheckedChange = {
-            checked = it
-            editor.putBoolean("using_testing_triggers", it)
-                .apply()
-            MyDelayManager.init(context)
-            resetTriggerFunction(context)
-            val triggerType = if (it) "testing" else "real"
-            val toast = Toast.makeText(context, "Using $triggerType triggers", Toast.LENGTH_SHORT)
-            Handler(Looper.getMainLooper()).post { toast.show() }
-            Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
-        }
-    )
 }

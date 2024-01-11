@@ -1,0 +1,87 @@
+package com.jianzheng.studyzero.ui
+
+import android.content.Context
+import android.provider.Settings
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
+import androidx.core.app.NotificationManagerCompat
+import androidx.navigation.NavController
+import com.jianzheng.studyzero.tool.MyPermissionManager
+import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
+
+@Composable
+fun SettingsScreen(
+    navController: NavController
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(mediumPadding),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        val context = LocalContext.current
+        val sharedPreferences =
+            LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        val userId = remember {
+            mutableStateOf(sharedPreferences.getString("UID", ""))
+        }
+        val notificationAllowed by usePollState {
+            NotificationManagerCompat.from(context).areNotificationsEnabled()
+        }
+        val overlayAllowed by usePollState { Settings.canDrawOverlays(context) }
+        val usageStatAllowed by usePollState {
+            MyPermissionManager.checkUserStatPermission(context)
+        }
+        Text(
+                text = "Permission setting",
+                style = MaterialTheme.typography.headlineSmall,
+                textAlign = TextAlign.Center
+            )
+        if (!notificationAllowed) {
+            AuthCard(
+                title = "Notification",
+                desc = "To keep the app alive.",
+                onAuthClick = {
+                    MyPermissionManager.grantNotificationPermission(context)
+                },
+            )
+            Divider()
+        }
+
+        if (!overlayAllowed) {
+            AuthCard(
+                title = "Overlay",
+                desc = "To show the survey.",
+                onAuthClick = {
+                    MyPermissionManager.grantOverlayPermission(context)
+                },
+            )
+            Divider()
+        }
+
+        if (!usageStatAllowed) {
+            AuthCard(
+                title = "App usage",
+                desc = "To access app usage history.",
+                onAuthClick = {
+                    MyPermissionManager.grantUserStatPermission(context)
+                },
+            )
+        }
+
+    }
+}
