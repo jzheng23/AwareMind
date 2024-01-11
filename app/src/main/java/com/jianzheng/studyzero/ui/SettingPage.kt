@@ -61,6 +61,9 @@ fun SettingPage(
     val userId = remember {
         mutableStateOf(sharedPreferences.getString("UID", ""))
     }
+    val isTester = remember {
+        mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
+    }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
         modifier = Modifier
@@ -79,20 +82,21 @@ fun SettingPage(
                 userId = userId,
             )
         }
-        UmdLogo()
-        ContactInfo()
+
+//        if (isTester.value) {
+//
+//        }
         TestingPage(
             userId = userId,
             modifier = modifier,
             showDialog = showDialog
         )
     }
-
 }
 
 @Composable
 fun ContactInfo() {
-    Text("Please contact jzheng23@umd.edu")
+    Text("By jzheng23@umd.edu")
 }
 
 @Composable
@@ -106,7 +110,7 @@ fun UmdLogo() {
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 fun PermissionSetting(
-    userId: MutableState<String?>,
+    userId: MutableState<String?> = mutableStateOf(""),
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -134,7 +138,7 @@ fun PermissionSetting(
         if (!notificationAllowed) {
             AuthCard(
                 title = "Notification",
-                desc = "Notifications keep the app alive.",
+                desc = "To keep the app alive.",
                 onAuthClick = {
                     MyPermissionManager.grantNotificationPermission(context)
                 },
@@ -145,7 +149,7 @@ fun PermissionSetting(
         if (!overlayAllowed) {
             AuthCard(
                 title = "Overlay",
-                desc = "To show the survey without minimizing the current app.",
+                desc = "To show the survey.",
                 onAuthClick = {
                     MyPermissionManager.grantOverlayPermission(context)
                 },
@@ -168,7 +172,7 @@ fun PermissionSetting(
 
 @Composable
 fun WelcomeInfo(
-    userId: MutableState<String?>,
+    userId: MutableState<String?> = mutableStateOf(""),
 ) {
     val context = LocalContext.current.applicationContext as Application
 //    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
@@ -214,6 +218,8 @@ fun WelcomeInfo(
             text = "Thanks for your input!",
             style = MaterialTheme.typography.headlineSmall,
         )
+        UmdLogo()
+        ContactInfo()
     }
 
 }
@@ -288,7 +294,13 @@ fun SettingPagePreview() {
             color = Color.White.copy(alpha = 0.5f),
 //            onClick = onClick
         ) {
-            SettingPage()
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center,
+            ) {
+                UmdLogo()
+                ContactInfo()
+            }
         }
     }
 }

@@ -59,14 +59,21 @@ fun saveUserId(
     userId: MutableState<String?>,
     context: Context
 ) {
+    var isTester = false
     val userIdIsValidate: Boolean = validateUid(userId.value)
+    if (userIdIsValidate) isTester = isTester(userId.value)
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.putString("UID", userId.value)
         .putBoolean("UID_valid", userIdIsValidate)
+        .putBoolean("is_tester", isTester)
         .apply()
     Log.d("userId", "UID is ${userId.value}, and it is $userIdIsValidate")
+}
+
+fun isTester(userId: String?): Boolean {
+    return userId?.startsWith("te", ignoreCase = true) ?: false
 }
 
 fun validateUid(userId: String?): Boolean {

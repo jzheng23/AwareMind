@@ -62,11 +62,6 @@ fun TestingPage(
             modifier = modifier
                 .padding(mediumPadding)
         ) {
-            Text(
-                text = "Only for testing",
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
-            )
             Text("User ID is ${userId.value}, upload is ${validateUid(userId.value)}")
             AuthCard(
                 title = "ESM",
@@ -79,7 +74,7 @@ fun TestingPage(
             Divider()
             SwitchCard(
                 title = "Trigger list for testing",
-                desc = "Using triggers for testing (shorter and fewer)?",
+                desc = "Use testing triggers?",
             )
             Divider()
             AuthCard(
