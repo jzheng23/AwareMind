@@ -11,8 +11,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.room.Room
 import com.jianzheng.studyzero.MainActivity
-import com.jianzheng.studyzero.data.EsmDatabase
-import com.jianzheng.studyzero.data.ResponseDao
+import com.jianzheng.studyzero.data.response.ResponseDatabase
+import com.jianzheng.studyzero.data.response.ResponseDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -33,7 +33,7 @@ class MyForegroundService : Service() {
 //        Log.d("fore", "onCreate")
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
         val db =
-            Room.databaseBuilder(applicationContext, EsmDatabase::class.java, "response_database")
+            Room.databaseBuilder(applicationContext, ResponseDatabase::class.java, "response_database")
                 .fallbackToDestructiveMigration()
                 .build()
         responseDao = db.responseDao()

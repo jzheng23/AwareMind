@@ -1,4 +1,4 @@
-package com.jianzheng.studyzero.data
+package com.jianzheng.studyzero.data.response
 
 data class ResponseNoId(
     val delay: Long,

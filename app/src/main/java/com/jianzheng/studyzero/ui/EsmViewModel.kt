@@ -8,11 +8,11 @@ import android.util.Log
 import android.widget.Toast
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
-import com.jianzheng.studyzero.data.EsmUiState
-import com.jianzheng.studyzero.data.Response
-import com.jianzheng.studyzero.data.ResponseDao
-import com.jianzheng.studyzero.data.ResponseNoId
-import com.jianzheng.studyzero.data.toResponse
+import com.jianzheng.studyzero.data.response.EsmUiState
+import com.jianzheng.studyzero.data.response.Response
+import com.jianzheng.studyzero.data.response.ResponseDao
+import com.jianzheng.studyzero.data.response.ResponseNoId
+import com.jianzheng.studyzero.data.response.toResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -52,7 +52,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import androidx.room.Room
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.data.EsmDatabase
+import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.ResponseCounter
@@ -68,7 +68,7 @@ fun ShowOverlay(
 ) {
     val context = LocalContext.current
     val db =
-        Room.databaseBuilder(context, EsmDatabase::class.java, "response_database")
+        Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
             .fallbackToDestructiveMigration()
             .build()
     val responseDao = db.responseDao()

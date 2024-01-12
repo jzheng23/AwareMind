@@ -1,4 +1,4 @@
-package com.jianzheng.studyzero.data
+package com.jianzheng.studyzero.data.response
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

@@ -1,9 +1,9 @@
-package com.jianzheng.studyzero.data
+package com.jianzheng.studyzero.data.response
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 
 @Database(entities = [Response::class], version = 2, exportSchema = false)
-abstract class EsmDatabase : RoomDatabase() {
+abstract class ResponseDatabase : RoomDatabase() {
     abstract fun responseDao(): ResponseDao
 }
