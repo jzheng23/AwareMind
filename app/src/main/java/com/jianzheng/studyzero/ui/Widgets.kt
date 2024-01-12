@@ -42,7 +42,7 @@ fun AuthCard(
     buttonEnabled: Boolean = true
 ) {
     Row(
-        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(
@@ -89,7 +89,7 @@ fun SwitchCard(
     onCheckedChange: (Boolean) -> Unit
 ) {
     Row(
-        modifier = Modifier.padding(5.dp), verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
             Text(

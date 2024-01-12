@@ -34,11 +34,11 @@ fun SettingsScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val context = LocalContext.current
-        val sharedPreferences =
-            LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val userId = remember {
-            mutableStateOf(sharedPreferences.getString("UID", ""))
-        }
+//        val sharedPreferences =
+//            LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+//        val userId = remember {
+//            mutableStateOf(sharedPreferences.getString("UID", ""))
+//        }
         val notificationAllowed by usePollState {
             NotificationManagerCompat.from(context).areNotificationsEnabled()
         }
@@ -46,11 +46,14 @@ fun SettingsScreen(
         val usageStatAllowed by usePollState {
             MyPermissionManager.checkUserStatPermission(context)
         }
+        val accessibilityAllowed by usePollState {
+            MyPermissionManager.checkAccessibilityPermission(context)
+        }
         Text(
-                text = "Permission setting",
-                style = MaterialTheme.typography.headlineSmall,
-                textAlign = TextAlign.Center
-            )
+            text = "Permission setting",
+            style = MaterialTheme.typography.headlineSmall,
+            textAlign = TextAlign.Center
+        )
         if (!notificationAllowed) {
             AuthCard(
                 title = "Notification",
@@ -59,10 +62,10 @@ fun SettingsScreen(
                     MyPermissionManager.grantNotificationPermission(context)
                 },
             )
-            Divider()
         }
 
         if (!overlayAllowed) {
+            Divider()
             AuthCard(
                 title = "Overlay",
                 desc = "To show the survey.",
@@ -70,10 +73,11 @@ fun SettingsScreen(
                     MyPermissionManager.grantOverlayPermission(context)
                 },
             )
-            Divider()
+
         }
 
         if (!usageStatAllowed) {
+            Divider()
             AuthCard(
                 title = "App usage",
                 desc = "To access app usage history.",
@@ -83,5 +87,15 @@ fun SettingsScreen(
             )
         }
 
+        if (!accessibilityAllowed) {
+            Divider()
+            AuthCard(
+                title = "Accessibility",
+                desc = "To record taps and scrolls.",
+                onAuthClick = {
+                    MyPermissionManager.grantAccessibilityPermission(context)
+                }
+            )
+        }
     }
 }

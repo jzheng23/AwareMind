@@ -7,6 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.jianzheng.studyzero.service.MyAccessibilityService
 import com.jianzheng.studyzero.service.MyForegroundService
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -26,6 +27,12 @@ fun startEverything(context: Context) {
     createSharedPreference(context)
     MyDelayManager.init(context)
     scheduleDailyMaintenance(context)
+    startMyAccessibilityService(context)
+}
+
+fun startMyAccessibilityService(context: Context) {
+    val myAccessibilityService = Intent(context, MyAccessibilityService::class.java)
+    context.startService(myAccessibilityService)
 }
 
 fun startMyForegroundService(context: Context){

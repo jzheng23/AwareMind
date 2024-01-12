@@ -29,7 +29,8 @@ import androidx.compose.ui.window.Dialog
 @Composable
 fun LoginPage(
     userId: MutableState<String?> = mutableStateOf(""),
-    showDialog: MutableState<Boolean> = mutableStateOf(true)
+    showDialog: MutableState<Boolean> = mutableStateOf(true),
+    isTester: MutableState<Boolean> = mutableStateOf(true),
 ) {
     Dialog(
         onDismissRequest = {
@@ -48,7 +49,8 @@ fun LoginPage(
             ) {
                 UseIdInputField(
                     userId,
-                    showDialog
+                    showDialog,
+                    isTester
                 )
             }
         }
@@ -57,18 +59,19 @@ fun LoginPage(
 
 fun saveUserId(
     userId: MutableState<String?>,
+    isTester: MutableState<Boolean>,
     context: Context
 ) {
     val userIdIsValidate: Boolean = validateUid(userId.value)
-    val isTester: Boolean = isTester(userId.value)
+    isTester.value = isTester(userId.value)
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.putString("UID", userId.value)
         .putBoolean("UID_valid", userIdIsValidate)
-        .putBoolean("is_tester", isTester)
+        .putBoolean("is_tester", isTester.value)
         .apply()
-    Log.d("userId", "UID is ${userId.value}, and it is $userIdIsValidate")
+    Log.d("userId", "UID is ${userId.value}, and tester? ${isTester.value}")
 }
 
 fun isTester(userId: String?): Boolean {
@@ -89,7 +92,8 @@ fun validateUid(userId: String?): Boolean {
 @Composable
 fun UseIdInputField(
     userId: MutableState<String?>,
-    showDialog: MutableState<Boolean>
+    showDialog: MutableState<Boolean>,
+    isTester: MutableState<Boolean>
 ) {
     //var userId by remember { mutableStateOf("") }
     val context = LocalContext.current
@@ -107,7 +111,8 @@ fun UseIdInputField(
                     showDialog.value = false
                     saveUserId(
                         userId,
-                        context
+                        isTester,
+                        context,
                     )
                 }
             )
@@ -118,7 +123,8 @@ fun UseIdInputField(
             showDialog.value = false
             saveUserId(
                 userId,
-                context
+                isTester,
+                context,
             )
         },
         enabled = (userId.value != "")

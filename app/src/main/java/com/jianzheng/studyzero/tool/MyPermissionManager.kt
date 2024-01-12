@@ -1,12 +1,17 @@
 package com.jianzheng.studyzero.tool
 
 import android.app.AppOpsManager
+import android.content.ComponentName
 import android.content.Context
+import android.content.Context.ACCESSIBILITY_SERVICE
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
 import android.os.Build
 import android.provider.Settings
+import android.util.Log
+import android.view.accessibility.AccessibilityManager
 import androidx.core.app.NotificationManagerCompat
+import com.jianzheng.studyzero.service.MyAccessibilityService
 
 
 object MyPermissionManager {
@@ -51,9 +56,24 @@ object MyPermissionManager {
         context.startActivity(intent)
     }
 
+    fun grantAccessibilityPermission(context: Context) {
+        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        context.startActivity(intent)
+    }
+
+    fun checkAccessibilityPermission(context: Context):Boolean{
+        val serviceName = ComponentName(context, MyAccessibilityService::class.java)
+        val enabledServices = Settings.Secure.getString(
+            context.contentResolver,
+            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+        )
+        return enabledServices?.contains(serviceName.flattenToString()) ?: false
+    }
+
     fun checkAllPermissions(context: Context): Boolean =
         (NotificationManagerCompat.from(context).areNotificationsEnabled()
                 and Settings.canDrawOverlays(context)
-                and checkUserStatPermission(context))
+                and checkUserStatPermission(context)
+                and checkAccessibilityPermission(context))
 }
 

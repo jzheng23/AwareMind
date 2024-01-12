@@ -4,10 +4,13 @@ import android.app.Application
 import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
@@ -52,12 +55,13 @@ fun HomeScreen(
     val userId = remember {
         mutableStateOf(sharedPreferences.getString("UID", ""))
     }
-    val isTester = remember {
+    val isTester by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
     }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
         modifier = Modifier
+            .verticalScroll(rememberScrollState())
             .fillMaxSize()
             .padding(mediumPadding),
         verticalArrangement = Arrangement.Center,
@@ -90,7 +94,7 @@ fun HomeScreen(
                 buttonText = "Start",
                 buttonEnabled = !showPermissionCard
             )
-            WelcomeInfo(userId)
+            WelcomeInfo(userId, showDialog)
 
         }
         if (isTester.value) {
@@ -120,6 +124,7 @@ fun UmdLogo() {
 @Composable
 fun WelcomeInfo(
     userId: MutableState<String?> = mutableStateOf(""),
+    showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current.applicationContext as Application
     val sharedPrefsViewModel: SharedPrefsViewModel = viewModel(
@@ -135,7 +140,8 @@ fun WelcomeInfo(
     ) {
         Text(
             text = "Welcome, ${userId.value}!",
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.clickable { showDialog.value = true }
         )
         Divider()
         Text(

@@ -11,37 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 
-//@Composable
-//fun HomeScreen(navController: NavController) {
-//    Column(
-//        verticalArrangement = Arrangement.SpaceBetween,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ){
-//        Text("Home")
-//        Button(onClick = { navController.navigate(AppRoutes.SETTINGS) }){
-//            Text("Setting")
-//        }
-//    }
-//
-//}
-//
-//@Composable
-//fun SettingsScreen(navController: NavController) {
-//    Column(
-//        verticalArrangement = Arrangement.SpaceBetween,
-//        horizontalAlignment = Alignment.CenterHorizontally
-//    ){
-//        Text("Setting")
-//        Button(onClick = { navController.navigate(AppRoutes.HOME) }){
-//            Text("Home")
-//        }
-//    }
-//}
-//
-//@Composable
-//fun HelpScreen(navController: NavController) {
-//    Text("Help")
-//}
+
 
 object AppRoutes {
     const val HOME = "home"

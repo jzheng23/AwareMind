@@ -29,6 +29,7 @@ import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
+import com.jianzheng.studyzero.tool.startMyAccessibilityService
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -111,6 +112,14 @@ fun DebugCard(
                     }
                 },
                 buttonText = "Get"
+            )
+            Divider()
+            AuthCard(
+                title = "Input",
+                desc = "Start recording inputs",
+                onAuthClick = {
+                    startMyAccessibilityService(context)
+                }
             )
         }
     }

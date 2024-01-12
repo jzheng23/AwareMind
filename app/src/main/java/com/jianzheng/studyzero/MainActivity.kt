@@ -1,12 +1,19 @@
 package com.jianzheng.studyzero
 
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
+import android.util.Log
+import android.view.accessibility.AccessibilityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
 import com.google.firebase.auth.FirebaseAuth
 import com.jianzheng.studyzero.receiver.UnlockReceiver
+import com.jianzheng.studyzero.service.MyAccessibilityService
 import com.jianzheng.studyzero.ui.AppNavigation
 
 class MainActivity : ComponentActivity() {
@@ -22,24 +29,18 @@ class MainActivity : ComponentActivity() {
             AppNavigation()  // This sets up the entire navigation for your app
         }
 
-//        setContent {
-//            StudyZeroTheme {
-//                Surface {
-//                    SettingPage()
-//                }
-//            }
+//        val serviceName = ComponentName(this, MyAccessibilityService::class.java)
+//        val enabledServices = Settings.Secure.getString(
+//            contentResolver,
+//            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
+//        )
+//        val isYourServiceEnabled = enabledServices?.contains(serviceName.flattenToString()) ?: false
+//
+//        Log.d("permissionSettings","a11y is enabled: $isYourServiceEnabled")
+//        if (!isYourServiceEnabled) {
+//            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+//            startActivity(intent)
 //        }
-//
-//        //register receiver
-//        val filter = IntentFilter().apply {
-//            addAction(Intent.ACTION_USER_PRESENT)
-//            addAction(Intent.ACTION_SCREEN_OFF)
-//        }
-//        registerReceiver(unlockReceiver, filter)
-//
-//        auth = Firebase.auth
-//
-//        startEverything(this)
     }
 
     override fun onDestroy() {
