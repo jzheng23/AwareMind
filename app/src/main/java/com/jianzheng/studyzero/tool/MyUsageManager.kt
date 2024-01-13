@@ -62,24 +62,39 @@ class MyUsageManager {
                 .fallbackToDestructiveMigration()
                 .build()
         val usageDao = db.usageDao()
-        val events = mutableListOf<UsageEvents.Event>()
+        val usages = mutableListOf<Usage>()
+        val sessionStartTimes = mutableMapOf<Pair<String, String>, Long>()
+
         while (usageEvents?.hasNextEvent() == true) {
             val event = UsageEvents.Event()
             usageEvents.getNextEvent(event)
-            events.add(event)
+            val key = Pair(event.packageName, event.className)
+            when (event.eventType) {
+                UsageEvents.Event.ACTIVITY_RESUMED -> {
+                    sessionStartTimes[key] = event.timeStamp
+                }
+                UsageEvents.Event.ACTIVITY_PAUSED -> {
+                    sessionStartTimes[key]?.let {startTime ->
+                        val usage = Usage(
+                            packageName = event.packageName,
+                            className = event.className,
+                            startTime = getDateTime(startTime),
+                            endTime = getDateTime(event.timeStamp)
+                        )
+                        usages.add(usage)
+                        sessionStartTimes.remove(key)
+                    }
+                }
+            }
         }
 
         // Use Coroutine for background processing
         CoroutineScope(Dispatchers.IO).launch {
-            events.forEach { event ->
-                val usage = Usage(
-                    packageName = event.packageName,
-                    className = event.className?: "",
-                    timeStamp = getDateTime(event.timeStamp)
-                )
+            usages.forEach { usage ->
                 val generatedId = usageDao.insert(usage)
                 if (sharedPreferences.getBoolean("UID_valid", false)) myRef.child(uid.toString()).child(generatedId.toString()).setValue(usage.copy(id = generatedId).toFirebaseUsage())
-                Log.d("usageManager","${getEventTypeString(event.eventType)} ${event.className}, ${getDateTime(event.timeStamp)}")
+//                Log.d("usageManager","${getEventTypeString(event.eventType)} ${event.className}, ${getDateTime(event.timeStamp)}")
+                Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
             }
         }
 
