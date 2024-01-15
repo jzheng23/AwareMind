@@ -30,6 +30,7 @@ import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.startMyAccessibilityService
+import com.jianzheng.studyzero.tool.startMyForegroundService
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -112,6 +113,22 @@ fun DebugCard(
                     }
                 },
                 buttonText = "Get"
+            )
+            Divider()
+            AuthCard(
+                title = "Unlock",
+                desc = "Schedule ESM after unlock",
+                onAuthClick = {
+                    startMyForegroundService(context)
+                }
+            )
+            Divider()
+            AuthCard(
+                title = "Notification",
+                desc = "Start persistent notification",
+                onAuthClick = {
+                    startMyForegroundService(context)
+                }
             )
             Divider()
             AuthCard(

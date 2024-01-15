@@ -31,18 +31,7 @@ class MainActivity : ComponentActivity() {
             AppNavigation()  // This sets up the entire navigation for your app
         }
         auth = Firebase.auth
-//        val serviceName = ComponentName(this, MyAccessibilityService::class.java)
-//        val enabledServices = Settings.Secure.getString(
-//            contentResolver,
-//            Settings.Secure.ENABLED_ACCESSIBILITY_SERVICES
-//        )
-//        val isYourServiceEnabled = enabledServices?.contains(serviceName.flattenToString()) ?: false
-//
-//        Log.d("permissionSettings","a11y is enabled: $isYourServiceEnabled")
-//        if (!isYourServiceEnabled) {
-//            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-//            startActivity(intent)
-//        }
+        registerReceiver(unlockReceiver,)
 
     }
 
