@@ -77,7 +77,8 @@ fun DebugCard(
                     MyDelayManager.init(context)
                     resetTriggerFunction(context)
                     val triggerType = if (it) "testing" else "real"
-                    val toast = Toast.makeText(context, "Using $triggerType triggers", Toast.LENGTH_SHORT)
+                    val toast =
+                        Toast.makeText(context, "Using $triggerType triggers", Toast.LENGTH_SHORT)
                     Handler(Looper.getMainLooper()).post { toast.show() }
                     Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
                 },
@@ -131,7 +132,8 @@ fun DebugCard(
                         MyDelayManager.unregisterUnlock(context)
                     }
                 },
-                isEnabled = MyPermissionManager.checkOverlayPermission(context))
+                isEnabled = MyPermissionManager.checkOverlayPermission(context)
+            )
             Divider()
             SwitchCard(
                 title = "Notification",
@@ -143,21 +145,9 @@ fun DebugCard(
                         context.stopService(Intent(context, MyForegroundService::class.java))
                     }
                 },
-                isEnabled = MyPermissionManager.checkNotificationPermission(context))
-            Divider()
-            SwitchCard(
-                title = "Input",
-                desc = "Start recording inputs",
-                onCheckedChange = {
-                    if (it) {
-                        startMyAccessibilityService(context)
-                    } else {
-                        context.stopService(Intent(context, MyAccessibilityService::class.java))
-                    }
-
-                },
-                isEnabled = MyPermissionManager.checkAccessibilityPermission(context)
+                isEnabled = MyPermissionManager.checkNotificationPermission(context)
             )
+
         }
     }
 }
@@ -182,7 +172,7 @@ fun newDayFunction(context: Context) {
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
 //    WorkManager.getInstance(context).enqueue(workRequestOneTime)
-    Log.d("dayCount","new day reset")
+    Log.d("dayCount", "new day reset")
 }
 
 fun resetTriggerFunction(context: Context) {

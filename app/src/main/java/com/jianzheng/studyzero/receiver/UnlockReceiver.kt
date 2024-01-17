@@ -8,9 +8,7 @@ import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDelayManager
 
 class UnlockReceiver : BroadcastReceiver() {
-    //    private var startTimeMillis: Long = 0
-//    private var unlockCounter: Int = 0
-//    private val maxOfPrompts = 30 //TODO need to be the dynamic len of trigger list
+
     override fun onReceive(context: Context?, intent: Intent?) {
         when (intent?.action) {
             Intent.ACTION_USER_PRESENT -> {
