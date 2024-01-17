@@ -3,6 +3,7 @@ package com.jianzheng.studyzero
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -31,8 +32,12 @@ class MainActivity : ComponentActivity() {
             AppNavigation()  // This sets up the entire navigation for your app
         }
         auth = Firebase.auth
-        registerReceiver(unlockReceiver,)
 
+//        val filter = IntentFilter().apply {
+//            addAction(Intent.ACTION_USER_PRESENT)
+//            addAction(Intent.ACTION_SCREEN_OFF)
+//        }
+//        registerReceiver(unlockReceiver, filter)
     }
 
     override fun onDestroy() {

@@ -40,9 +40,11 @@ fun SettingsScreen(
 //            mutableStateOf(sharedPreferences.getString("UID", ""))
 //        }
         val notificationAllowed by usePollState {
-            NotificationManagerCompat.from(context).areNotificationsEnabled()
+            MyPermissionManager.checkNotificationPermission(context)
         }
-        val overlayAllowed by usePollState { Settings.canDrawOverlays(context) }
+        val overlayAllowed by usePollState {
+            MyPermissionManager.checkOverlayPermission(context)
+        }
         val usageStatAllowed by usePollState {
             MyPermissionManager.checkUserStatPermission(context)
         }

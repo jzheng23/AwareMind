@@ -51,6 +51,13 @@ object MyPermissionManager {
         return mode == AppOpsManager.MODE_ALLOWED
     }
 
+    fun checkNotificationPermission(context: Context): Boolean {
+        return NotificationManagerCompat.from(context).areNotificationsEnabled()
+    }
+
+    fun checkOverlayPermission(context: Context): Boolean {
+        return Settings.canDrawOverlays(context)
+    }
     fun grantUserStatPermission(context: Context) {
         val intent = Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS)
         context.startActivity(intent)

@@ -27,6 +27,7 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
+import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.startMyAccessibilityService
@@ -119,7 +120,7 @@ fun DebugCard(
                 title = "Unlock",
                 desc = "Schedule ESM after unlock",
                 onAuthClick = {
-                    startMyForegroundService(context)
+                    MyDelayManager.init(context)
                 }
             )
             Divider()
@@ -128,7 +129,8 @@ fun DebugCard(
                 desc = "Start persistent notification",
                 onAuthClick = {
                     startMyForegroundService(context)
-                }
+                },
+                buttonEnabled = MyPermissionManager.checkNotificationPermission(context)
             )
             Divider()
             AuthCard(

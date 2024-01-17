@@ -1,12 +1,15 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.util.Log
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.receiver.UnlockReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -26,6 +29,7 @@ object MyDelayManager {
     private lateinit var randomRequestID: UUID
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
+    private val unlockReceiver = UnlockReceiver()
 
     fun init(context: Context) {
         val sharedPreferences =
@@ -42,6 +46,12 @@ object MyDelayManager {
             extraTriggerTwenty = 20L * 60
         }
         triggerList = originalTriggerList.shuffled().toMutableList()
+
+        val filter = IntentFilter().apply {
+            addAction(Intent.ACTION_USER_PRESENT)
+            addAction(Intent.ACTION_SCREEN_OFF)
+        }
+        context.registerReceiver(unlockReceiver, filter)
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
     }
 
