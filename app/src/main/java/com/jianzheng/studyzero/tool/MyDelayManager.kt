@@ -57,7 +57,7 @@ object MyDelayManager {
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
     }
 
-    fun unregisterUnlock(context: Context){
+    fun unregisterUnlock(context: Context) {
         context.unregisterReceiver(unlockReceiver)
     }
 

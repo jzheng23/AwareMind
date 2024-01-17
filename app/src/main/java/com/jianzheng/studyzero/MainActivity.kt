@@ -1,14 +1,8 @@
 package com.jianzheng.studyzero
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.util.Log
-import android.view.accessibility.AccessibilityManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.RequiresApi
@@ -16,7 +10,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jianzheng.studyzero.receiver.UnlockReceiver
-import com.jianzheng.studyzero.service.MyAccessibilityService
 import com.jianzheng.studyzero.ui.AppNavigation
 
 class MainActivity : ComponentActivity() {

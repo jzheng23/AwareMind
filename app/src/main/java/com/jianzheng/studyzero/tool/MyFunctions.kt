@@ -35,10 +35,11 @@ fun startMyAccessibilityService(context: Context) {
     context.startService(myAccessibilityService)
 }
 
-fun startMyForegroundService(context: Context){
+fun startMyForegroundService(context: Context) {
     val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
     ContextCompat.startForegroundService(context, myForegroundServiceIntent)
 }
+
 fun scheduleDailyMaintenance(context: Context) {
     val initialDelay = 5_000L
     val myWorkManager = WorkManager.getInstance(context)

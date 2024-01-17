@@ -17,10 +17,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MyUsageManager {
-    fun getUsageEvents(context: Context, currentTime:Long) {
+    fun getUsageEvents(context: Context, currentTime: Long) {
 
         val currentTimeString = getDateTime(currentTime)
-        Log.d("usageManager","get usage events called @ $currentTimeString")
+        Log.d("usageManager", "get usage events called @ $currentTimeString")
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
@@ -58,7 +58,7 @@ class MyUsageManager {
 //            }
 //        }
         val db =
-            Room.databaseBuilder(context, UsageDatabase::class.java,"usage_database")
+            Room.databaseBuilder(context, UsageDatabase::class.java, "usage_database")
                 .fallbackToDestructiveMigration()
                 .build()
         val usageDao = db.usageDao()
@@ -73,8 +73,9 @@ class MyUsageManager {
                 UsageEvents.Event.ACTIVITY_RESUMED -> {
                     sessionStartTimes[key] = event.timeStamp
                 }
+
                 UsageEvents.Event.ACTIVITY_PAUSED -> {
-                    sessionStartTimes[key]?.let {startTime ->
+                    sessionStartTimes[key]?.let { startTime ->
                         val usage = Usage(
                             packageName = event.packageName,
                             className = event.className,
@@ -92,13 +93,15 @@ class MyUsageManager {
         CoroutineScope(Dispatchers.IO).launch {
             usages.forEach { usage ->
                 val generatedId = usageDao.insert(usage)
-                if (sharedPreferences.getBoolean("UID_valid", false)) myRef.child(uid.toString()).child(generatedId.toString()).setValue(usage.copy(id = generatedId).toFirebaseUsage())
+                if (sharedPreferences.getBoolean("UID_valid", false)) myRef.child(uid.toString())
+                    .child(generatedId.toString())
+                    .setValue(usage.copy(id = generatedId).toFirebaseUsage())
 //                Log.d("usageManager","${getEventTypeString(event.eventType)} ${event.className}, ${getDateTime(event.timeStamp)}")
                 Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
             }
         }
 
-    //writeLocalFile() //write local files for all users
+        //writeLocalFile() //write local files for all users
     }
 
     private fun writeLocalFile() {

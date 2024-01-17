@@ -7,7 +7,7 @@ data class FirebaseUsage(
     val endTime: String
 )
 
-fun Usage.toFirebaseUsage(): FirebaseUsage{
+fun Usage.toFirebaseUsage(): FirebaseUsage {
     return FirebaseUsage(
         packageName = packageName,
         className = className,
