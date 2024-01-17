@@ -1,5 +1,6 @@
 package com.jianzheng.studyzero.ui
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
@@ -24,6 +25,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.service.MyAccessibilityService
+import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
@@ -77,7 +80,8 @@ fun DebugCard(
                     val toast = Toast.makeText(context, "Using $triggerType triggers", Toast.LENGTH_SHORT)
                     Handler(Looper.getMainLooper()).post { toast.show() }
                     Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
-                }
+                },
+                isEnabled = true
             )
             Divider()
             AuthCard(
@@ -113,32 +117,46 @@ fun DebugCard(
                         toast.show()
                     }
                 },
-                buttonText = "Get"
+                buttonText = "Get",
+                buttonEnabled = MyPermissionManager.checkUserStatPermission(context)
             )
             Divider()
-            AuthCard(
-                title = "Unlock",
+            SwitchCard(
+                title = "ESM",
                 desc = "Schedule ESM after unlock",
-                onAuthClick = {
-                    MyDelayManager.init(context)
-                }
-            )
-            Divider()
-            AuthCard(
-                title = "Notification",
-                desc = "Start persistent notification",
-                onAuthClick = {
-                    startMyForegroundService(context)
+                onCheckedChange = {
+                    if (it) {
+                        MyDelayManager.init(context)
+                    } else {
+                        MyDelayManager.unregisterUnlock(context)
+                    }
                 },
-                buttonEnabled = MyPermissionManager.checkNotificationPermission(context)
-            )
+                isEnabled = MyPermissionManager.checkOverlayPermission(context))
             Divider()
-            AuthCard(
+            SwitchCard(
+                title = "Notification",
+                desc = "Show a persistent notification",
+                onCheckedChange = {
+                    if (it) {
+                        startMyForegroundService(context)
+                    } else {
+                        context.stopService(Intent(context, MyForegroundService::class.java))
+                    }
+                },
+                isEnabled = MyPermissionManager.checkNotificationPermission(context))
+            Divider()
+            SwitchCard(
                 title = "Input",
                 desc = "Start recording inputs",
-                onAuthClick = {
-                    startMyAccessibilityService(context)
-                }
+                onCheckedChange = {
+                    if (it) {
+                        startMyAccessibilityService(context)
+                    } else {
+                        context.stopService(Intent(context, MyAccessibilityService::class.java))
+                    }
+
+                },
+                isEnabled = MyPermissionManager.checkAccessibilityPermission(context)
             )
         }
     }
@@ -178,4 +196,14 @@ fun testFunction(context: Context) {
         putExtra("tag", "testMet")
     }
     context.startService(serviceIntent)
+}
+
+fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
+    val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+    for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
+        if (serviceClass.name == service.service.className) {
+            return true
+        }
+    }
+    return false
 }

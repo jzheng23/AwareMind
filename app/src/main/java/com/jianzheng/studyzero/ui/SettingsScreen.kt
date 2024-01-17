@@ -82,7 +82,7 @@ fun SettingsScreen(
             Divider()
             AuthCard(
                 title = "App usage",
-                desc = "To access app usage history.",
+                desc = "To access app usage history. Only the app information (e.g., app names and time stamps) will be collected. No personal or sensitive user data will be collected.",
                 onAuthClick = {
                     MyPermissionManager.grantUserStatPermission(context)
                 },
@@ -93,7 +93,7 @@ fun SettingsScreen(
             Divider()
             AuthCard(
                 title = "Accessibility",
-                desc = "To record taps and scrolls.",
+                desc = "To record taps, scrolls, and text edits performed on the phone. No personal or sensitive user data will be collected.",
                 onAuthClick = {
                     MyPermissionManager.grantAccessibilityPermission(context)
                 }

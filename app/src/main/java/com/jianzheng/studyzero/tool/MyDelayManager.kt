@@ -30,8 +30,10 @@ object MyDelayManager {
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
     private val unlockReceiver = UnlockReceiver()
+    var isInitialed = false
 
     fun init(context: Context) {
+        isInitialed = true
         val sharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         if (
@@ -53,6 +55,10 @@ object MyDelayManager {
         }
         context.registerReceiver(unlockReceiver, filter)
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
+    }
+
+    fun unregisterUnlock(context: Context){
+        context.unregisterReceiver(unlockReceiver)
     }
 
     fun delayService(context: Context) {

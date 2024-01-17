@@ -7,5 +7,5 @@
     <string name="_30met">30Met</string>
     <string name="_20met">20Met</string>
     <string name="random_met">randomMet</string>
-    <string name="accessibility_service_description">To record taps and scrolls performed on the phone.</string>
+    <string name="accessibility_service_description">To record the number of taps, scrolls, and text edits performed on the phone.</string>
 </resources>

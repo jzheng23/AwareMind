@@ -86,7 +86,8 @@ fun <T> usePollState(
 fun SwitchCard(
     title: String,
     desc: String,
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    isEnabled: Boolean = true
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -101,13 +102,14 @@ fun SwitchCard(
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
-        SwitchMinimalExample(onCheckedChange)
+        SwitchMinimalExample(onCheckedChange, isEnabled)
     }
 }
 
 @Composable
 fun SwitchMinimalExample(
-    onCheckedChange: (Boolean) -> Unit
+    onCheckedChange: (Boolean) -> Unit,
+    isEnabled: Boolean
 ) {
     var checked by remember { mutableStateOf(false) }
 
@@ -116,6 +118,7 @@ fun SwitchMinimalExample(
         onCheckedChange = {
             checked = it
             onCheckedChange(it)
-        }
+        },
+        enabled = isEnabled
     )
 }
