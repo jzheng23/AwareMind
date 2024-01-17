@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Button
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -45,10 +46,12 @@ fun AuthCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title, fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(2.dp))
+            if (title != "") {
+                Text(
+                    text = title, fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+            }
             Text(
                 text = desc, fontSize = 14.sp
             )
@@ -56,7 +59,8 @@ fun AuthCard(
         Spacer(modifier = Modifier.width(10.dp))
         Button(
             onClick = onAuthClick,
-            enabled = buttonEnabled
+            enabled = buttonEnabled,
+            modifier = Modifier.wrapContentHeight().width(96.dp)
             ) {
             Text(text = buttonText)
         }
@@ -93,10 +97,12 @@ fun SwitchCard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Column(modifier = Modifier.weight(1f)) {
-            Text(
-                text = title, fontSize = 18.sp
-            )
-            Spacer(modifier = Modifier.height(2.dp))
+            if (title != "") {
+                Text(
+                    text = title, fontSize = 18.sp
+                )
+                Spacer(modifier = Modifier.height(2.dp))
+            }
             Text(
                 text = desc, fontSize = 14.sp
             )
@@ -119,6 +125,7 @@ fun SwitchMinimalExample(
             checked = it
             onCheckedChange(it)
         },
-        enabled = isEnabled
+        enabled = isEnabled,
+        modifier = Modifier.wrapContentHeight()
     )
 }

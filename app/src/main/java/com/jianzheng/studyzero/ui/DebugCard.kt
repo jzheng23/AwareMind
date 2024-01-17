@@ -56,17 +56,33 @@ fun DebugCard(
                 .padding(mediumPadding)
         ) {
             Text("User ID is ${userId.value}, upload is ${validateUid(userId.value)}")
-            AuthCard(
-                title = "ESM",
-                desc = "Test the ESM page",
-                onAuthClick = {
-                    testFunction(context)
+            SwitchCard(
+                title = "Notification",
+                desc = "Show a persistent notification",
+                onCheckedChange = {
+                    if (it) {
+                        startMyForegroundService(context)
+                    } else {
+                        context.stopService(Intent(context, MyForegroundService::class.java))
+                    }
                 },
-                buttonText = "Test"
+                isEnabled = MyPermissionManager.checkNotificationPermission(context)
             )
             Divider()
             SwitchCard(
-                title = "Trigger list for testing",
+                title = "ESM",
+                desc = "Schedule ESM after unlock",
+                onCheckedChange = {
+                    if (it) {
+                        MyDelayManager.init(context)
+                    } else {
+                        MyDelayManager.unregisterUnlock(context)
+                    }
+                },
+                isEnabled = MyPermissionManager.checkOverlayPermission(context)
+            )
+            SwitchCard(
+                title = "",
                 desc = "Use testing triggers?",
                 onCheckedChange = {
                     val sharedPreferences =
@@ -84,6 +100,14 @@ fun DebugCard(
                 },
                 isEnabled = true
             )
+            AuthCard(
+                title = "",
+                desc = "Test the ESM page",
+                onAuthClick = {
+                    testFunction(context)
+                },
+                buttonText = "Test"
+            )
             Divider()
             AuthCard(
                 title = "New Day",
@@ -96,15 +120,6 @@ fun DebugCard(
                     }
                 },
                 buttonText = "Reset"
-            )
-            Divider()
-            AuthCard(
-                title = "User ID",
-                desc = "Change User ID",
-                onAuthClick = {
-                    showDialog.value = true
-                },
-                buttonText = "Change"
             )
             Divider()
             AuthCard(
@@ -121,33 +136,6 @@ fun DebugCard(
                 buttonText = "Get",
                 buttonEnabled = MyPermissionManager.checkUserStatPermission(context)
             )
-            Divider()
-            SwitchCard(
-                title = "ESM",
-                desc = "Schedule ESM after unlock",
-                onCheckedChange = {
-                    if (it) {
-                        MyDelayManager.init(context)
-                    } else {
-                        MyDelayManager.unregisterUnlock(context)
-                    }
-                },
-                isEnabled = MyPermissionManager.checkOverlayPermission(context)
-            )
-            Divider()
-            SwitchCard(
-                title = "Notification",
-                desc = "Show a persistent notification",
-                onCheckedChange = {
-                    if (it) {
-                        startMyForegroundService(context)
-                    } else {
-                        context.stopService(Intent(context, MyForegroundService::class.java))
-                    }
-                },
-                isEnabled = MyPermissionManager.checkNotificationPermission(context)
-            )
-
         }
     }
 }
