@@ -30,10 +30,10 @@ object MyDelayManager {
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
     private val unlockReceiver = UnlockReceiver()
-    var isInitialed = false
+
 
     fun init(context: Context) {
-        isInitialed = true
+
         val sharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         if (
@@ -54,11 +54,15 @@ object MyDelayManager {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
         context.registerReceiver(unlockReceiver, filter)
+        MyPreferenceManager.setBoolean(context,"unlock_registered", true)
+        Log.d("unlock","unlock registered")
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
+
     }
 
     fun unregisterUnlock(context: Context) {
         context.unregisterReceiver(unlockReceiver)
+        MyPreferenceManager.setBoolean(context,"unlock_registered", false)
     }
 
     fun delayService(context: Context) {

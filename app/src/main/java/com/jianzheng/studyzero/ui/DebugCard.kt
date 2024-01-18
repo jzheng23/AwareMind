@@ -75,6 +75,7 @@ fun DebugCard(
                         MyDelayManager.init(context)
                     } else {
                         MyDelayManager.unregisterUnlock(context)
+                        Log.d("unlock","unlock unregistered")
                     }
                 },
                 isEnabled = MyPermissionManager.checkOverlayPermission(context)

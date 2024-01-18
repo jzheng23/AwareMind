@@ -10,6 +10,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jianzheng.studyzero.receiver.UnlockReceiver
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.ui.AppNavigation
 
 class MainActivity : ComponentActivity() {
@@ -35,7 +36,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        unregisterReceiver(unlockReceiver)
+        if (MyPreferenceManager.getBoolean(this, "unlock_registered")) {
+            unregisterReceiver(unlockReceiver)
+            MyPreferenceManager.setBoolean(this,"unlock_registered", false)
+            Log.d("unlock","unlock unregistered")
+        }
     }
 
     public override fun onStart() {
