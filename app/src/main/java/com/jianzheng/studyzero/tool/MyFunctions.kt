@@ -34,13 +34,9 @@ fun stopEverything(context: Context){
     context.stopService(Intent(context, MyForegroundService::class.java))
     MyDelayManager.unregisterUnlock(context)
     MyPreferenceManager.setBoolean(context, "input_record", false)
-    cancelDailyMaintenance(context)
+    scheduleDailyMaintenance(context, 2592000000L)
 }
 
-fun cancelDailyMaintenance(context: Context) {
-
-    //TODO cancel it
-}
 
 fun startMyAccessibilityService(context: Context) {
     MyPreferenceManager.setBoolean(context, "input_record", true)
@@ -51,8 +47,7 @@ fun startMyForegroundService(context: Context) {
     ContextCompat.startForegroundService(context, myForegroundServiceIntent)
 }
 
-fun scheduleDailyMaintenance(context: Context) {
-    val initialDelay = 5_000L
+fun scheduleDailyMaintenance(context: Context, initialDelay: Long = 5000L) {
     val myWorkManager = WorkManager.getInstance(context)
 
     val workRequest = PeriodicWorkRequestBuilder<MyDailyWorker>(24, TimeUnit.HOURS)
