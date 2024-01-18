@@ -26,14 +26,12 @@ import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.OverlayService
-import com.jianzheng.studyzero.tool.DrivingStatusCallback
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
-import com.jianzheng.studyzero.tool.checkIfDriving
 import com.jianzheng.studyzero.tool.startMyForegroundService
 import java.util.concurrent.TimeUnit
 
@@ -146,21 +144,6 @@ fun DebugCard(
                 },
                 isEnabled = MyPermissionManager.checkAccessibilityPermission(context)
             )
-            Divider()
-            ButtonCard(
-                title = "Driving",
-                desc = "Check if the user is driving (in moving vehicle, actually)",
-                onAuthClick = {
-                    checkIfDriving(context, object : DrivingStatusCallback {
-                        override fun onDrivingStatusDetermined(isDriving: Boolean) {
-                            if (isDriving) {
-                                // Handle driving case
-                            } else {
-                                // Handle not driving case
-                            }
-                        }
-                    })
-                })
         }
     }
 }

@@ -73,7 +73,6 @@ dependencies {
     implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.21-1.0.16")
     //Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
-    implementation("com.google.android.gms:play-services-location:21.0.1")
     ksp("androidx.room:room-compiler:${rootProject.extra["room_version"]}")
     implementation("androidx.room:room-ktx:${rootProject.extra["room_version"]}")
 
