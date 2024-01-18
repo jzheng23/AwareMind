@@ -1,12 +1,19 @@
 package com.jianzheng.studyzero.tool
 
+import android.Manifest
+import android.app.Activity
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.android.gms.location.ActivityRecognition
+import com.jianzheng.studyzero.receiver.ActivityDetectionBroadcastReceiver
 import com.jianzheng.studyzero.service.MyAccessibilityService
 import com.jianzheng.studyzero.service.MyForegroundService
 import java.text.SimpleDateFormat
@@ -94,3 +101,54 @@ fun createSharedPreference(context: Context) {
             .apply()
     }
 }
+
+fun checkIfDriving(context: Context, callback: DrivingStatusCallback) {
+    val activity = context as? Activity
+    activity?.let {
+        if (ContextCompat.checkSelfPermission(
+                it,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                it,
+                arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                1
+            )
+            if (ContextCompat.checkSelfPermission(
+                    it,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                ActivityCompat.requestPermissions(
+                    it,
+                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    1
+                )
+            }
+        }
+
+    }
+    val activityRecognitionClient = ActivityRecognition.getClient(context)
+    val task = activityRecognitionClient.requestActivityUpdates(
+        1_000L,
+        getActivityDetectionPendingIntent(context)
+    )
+    Log.d("drivingCheck", "check if driving")
+}
+
+fun getActivityDetectionPendingIntent(context: Context): PendingIntent {
+    val intent = Intent(context, ActivityDetectionBroadcastReceiver::class.java)
+    Log.d("drivingCheck", "get intent")
+    return PendingIntent.getBroadcast(
+        context,
+        0,
+        intent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
+}
+
+interface DrivingStatusCallback {
+    fun onDrivingStatusDetermined(isDriving: Boolean)
+}
+

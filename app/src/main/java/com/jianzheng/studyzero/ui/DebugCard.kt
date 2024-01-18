@@ -1,6 +1,5 @@
 package com.jianzheng.studyzero.ui
 
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.os.Handler
@@ -27,11 +26,14 @@ import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.OverlayService
+import com.jianzheng.studyzero.tool.DrivingStatusCallback
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
+import com.jianzheng.studyzero.tool.checkIfDriving
 import com.jianzheng.studyzero.tool.startMyForegroundService
 import java.util.concurrent.TimeUnit
 
@@ -39,7 +41,6 @@ import java.util.concurrent.TimeUnit
 fun DebugCard(
     userId: MutableState<String?>,
     modifier: Modifier,
-    showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current
     Card(
@@ -75,7 +76,7 @@ fun DebugCard(
                         MyDelayManager.init(context)
                     } else {
                         MyDelayManager.unregisterUnlock(context)
-                        Log.d("unlock","unlock unregistered")
+                        Log.d("unlock", "unlock unregistered")
                     }
                 },
                 isEnabled = MyPermissionManager.checkOverlayPermission(context)
@@ -84,11 +85,12 @@ fun DebugCard(
                 title = "",
                 desc = "Use testing triggers?",
                 onCheckedChange = {
-                    val sharedPreferences =
-                        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-                    val editor = sharedPreferences.edit()
-                    editor.putBoolean("using_testing_triggers", it)
-                        .apply()
+//                    val sharedPreferences =
+//                        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+//                    val editor = sharedPreferences.edit()
+//                    editor.putBoolean("using_testing_triggers", it)
+//                        .apply()
+                    MyPreferenceManager.setBoolean(context, "using_testing_triggers", it)
                     MyDelayManager.init(context)
                     resetTriggerFunction(context)
                     val triggerType = if (it) "testing" else "real"
@@ -99,7 +101,7 @@ fun DebugCard(
                 },
                 isEnabled = true
             )
-            AuthCard(
+            ButtonCard(
                 title = "",
                 desc = "Test the ESM page",
                 onAuthClick = {
@@ -108,7 +110,7 @@ fun DebugCard(
                 buttonText = "Test"
             )
             Divider()
-            AuthCard(
+            ButtonCard(
                 title = "New Day",
                 desc = "Simulating a new day starts",
                 onAuthClick = {
@@ -121,7 +123,7 @@ fun DebugCard(
                 buttonText = "Reset"
             )
             Divider()
-            AuthCard(
+            ButtonCard(
                 title = "Usage",
                 desc = "Get usage in last 10 seconds",
                 onAuthClick = {
@@ -135,9 +137,34 @@ fun DebugCard(
                 buttonText = "Get",
                 buttonEnabled = MyPermissionManager.checkUserStatPermission(context)
             )
+            Divider()
+            SwitchCard(
+                title = "Input",
+                desc = "Record input interaction",
+                onCheckedChange = {
+                    MyPreferenceManager.setBoolean(context, "input_record", it)
+                },
+                isEnabled = MyPermissionManager.checkAccessibilityPermission(context)
+            )
+            Divider()
+            ButtonCard(
+                title = "Driving",
+                desc = "Check if the user is driving (in moving vehicle, actually)",
+                onAuthClick = {
+                    checkIfDriving(context, object : DrivingStatusCallback {
+                        override fun onDrivingStatusDetermined(isDriving: Boolean) {
+                            if (isDriving) {
+                                // Handle driving case
+                            } else {
+                                // Handle not driving case
+                            }
+                        }
+                    })
+                })
         }
     }
 }
+
 
 fun newDayFunction(context: Context) {
 //    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
@@ -175,12 +202,3 @@ fun testFunction(context: Context) {
     context.startService(serviceIntent)
 }
 
-fun isMyServiceRunning(context: Context, serviceClass: Class<*>): Boolean {
-    val manager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-    for (service in manager.getRunningServices(Integer.MAX_VALUE)) {
-        if (serviceClass.name == service.service.className) {
-            return true
-        }
-    }
-    return false
-}

@@ -5,7 +5,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
+import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.NotificationManagerCompat
 import com.jianzheng.studyzero.service.MyAccessibilityService
@@ -75,10 +77,25 @@ object MyPermissionManager {
         return enabledServices?.contains(serviceName.flattenToString()) ?: false
     }
 
+    fun checkBatteryPermission(context: Context): Boolean {
+        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+        val packageName = context.packageName
+        return powerManager.isIgnoringBatteryOptimizations(packageName)
+    }
+
+    fun grantBatteryPermission(context: Context){
+        val packageName = context.packageName
+        val intent = Intent().apply {
+            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+            data = Uri.parse("package:$packageName")
+        }
+        context.startActivity(intent)
+    }
     fun checkAllPermissions(context: Context): Boolean =
-        (NotificationManagerCompat.from(context).areNotificationsEnabled()
-                and Settings.canDrawOverlays(context)
+        (checkNotificationPermission(context)
+                and checkOverlayPermission(context)
                 and checkUserStatPermission(context)
+                and checkBatteryPermission(context)
                 and checkAccessibilityPermission(context))
 }
 

@@ -45,13 +45,16 @@ fun SettingsScreen(
         val accessibilityAllowed by usePollState {
             MyPermissionManager.checkAccessibilityPermission(context)
         }
+        val batteryAllowed by usePollState {
+            MyPermissionManager.checkBatteryPermission(context)
+        }
         Text(
             text = "Permission setting",
             style = MaterialTheme.typography.headlineSmall,
             textAlign = TextAlign.Center
         )
         if (!notificationAllowed) {
-            AuthCard(
+            ButtonCard(
                 title = "Notification",
                 desc = "To keep the app alive.",
                 onAuthClick = {
@@ -62,7 +65,7 @@ fun SettingsScreen(
 
         if (!overlayAllowed) {
             Divider()
-            AuthCard(
+            ButtonCard(
                 title = "Overlay",
                 desc = "To show the survey.",
                 onAuthClick = {
@@ -74,7 +77,7 @@ fun SettingsScreen(
 
         if (!usageStatAllowed) {
             Divider()
-            AuthCard(
+            ButtonCard(
                 title = "App usage",
                 desc = "To access app usage history. Only the app information (e.g., app names and time stamps) will be collected. No personal or sensitive user data will be collected.",
                 onAuthClick = {
@@ -85,11 +88,22 @@ fun SettingsScreen(
 
         if (!accessibilityAllowed) {
             Divider()
-            AuthCard(
+            ButtonCard(
                 title = "Accessibility",
                 desc = "To record taps, scrolls, and text edits performed on the phone. No personal or sensitive user data will be collected.",
                 onAuthClick = {
                     MyPermissionManager.grantAccessibilityPermission(context)
+                }
+            )
+        }
+
+        if (!batteryAllowed) {
+            Divider()
+            ButtonCard(
+                title = "Battery whitelist",
+                desc = "Prevent the app from being killed by the system battery optimization.",
+                onAuthClick = {
+                    MyPermissionManager.grantBatteryPermission(context)
                 }
             )
         }

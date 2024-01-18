@@ -74,20 +74,20 @@ fun HomeScreen(
             )
         } else {
             if (showPermissionCard) {
-                AuthCard(
+                ButtonCard(
                     title = "Permission",
                     desc = "Permission",
                     onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
                 )
             }
-            AuthCard(
+            ButtonCard(
                 title = "Tutorial",
                 desc = "Tutorial",
                 onAuthClick = { navController.navigate(AppRoutes.TUTORIAL) },
                 buttonText = "Start",
                 buttonEnabled = !showPermissionCard
             )
-            AuthCard(
+            ButtonCard(
                 title = "Data collection",
                 desc = "Start data collection",
                 onAuthClick = { startEverything(context) },
@@ -101,7 +101,6 @@ fun HomeScreen(
             DebugCard(
                 userId = userId,
                 modifier = modifier,
-                showDialog = showDialog
             )
         }
     }

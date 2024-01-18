@@ -30,12 +30,13 @@ class MyUsageManager {
 
 //        val gson = Gson()
 //        val jsonData = gson.toJson(eventsList)
+        //move outside of the fun
         val database = Firebase.database
         val myRef = database.getReference("Usage")
+        //use MyPrefsManager
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         val uid = sharedPreferences.getString("UID", "null")
-        val dayCount = sharedPreferences.getInt("day_count", -1)
 //        if (sharedPreferences.getBoolean("UID_valid", false)) {//only upload for authenticated users
 //            val scope = CoroutineScope(Dispatchers.IO)
 //            scope.launch {

@@ -28,7 +28,7 @@ import kotlin.coroutines.CoroutineContext
 
 
 @Composable
-fun AuthCard(
+fun ButtonCard(
     title: String,
     desc: String,
     onAuthClick: () -> Unit,
