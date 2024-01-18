@@ -32,7 +32,9 @@ import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
+import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.tool.startMyForegroundService
+import com.jianzheng.studyzero.tool.stopEverything
 import java.util.concurrent.TimeUnit
 
 @Composable
@@ -143,6 +145,26 @@ fun DebugCard(
                     MyPreferenceManager.setBoolean(context, "input_record", it)
                 },
                 isEnabled = MyPermissionManager.checkAccessibilityPermission(context)
+            )
+            Divider()
+            SwitchCard(
+                title = "Tutorial",
+                desc = "Set tutorial as completed",
+                onCheckedChange = {
+                    MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
+                },
+            )
+            Divider()
+            SwitchCard(
+                title = "Data collection",
+                desc = "Start or pause data collection",
+                onCheckedChange = {
+                    if (it) {
+                        startEverything(context)
+                    } else {
+                        stopEverything(context)
+                    }
+                },
             )
         }
     }

@@ -50,6 +50,7 @@ fun HomeScreen(
         !MyPermissionManager.checkAllPermissions(context)
     }
 
+
     val sharedPreferences =
         LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val userId = remember {
@@ -57,6 +58,9 @@ fun HomeScreen(
     }
     val isTester by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
+    }
+    val tutorialFinished by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
     }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
@@ -80,19 +84,21 @@ fun HomeScreen(
                     onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
                 )
             }
-            ButtonCard(
-                title = "Tutorial",
-                desc = "Tutorial",
-                onAuthClick = { navController.navigate(AppRoutes.TUTORIAL) },
-                buttonText = "Start",
-                buttonEnabled = !showPermissionCard
-            )
+            if (!tutorialFinished.value) {
+                ButtonCard(
+                    title = "Tutorial",
+                    desc = "Tutorial",
+                    onAuthClick = { navController.navigate(AppRoutes.TUTORIAL) },
+                    buttonText = "Start",
+                    buttonEnabled = !showPermissionCard
+                )
+            }
             ButtonCard(
                 title = "Data collection",
                 desc = "Start data collection",
                 onAuthClick = { startEverything(context) },
                 buttonText = "Start",
-                buttonEnabled = !showPermissionCard
+                buttonEnabled = tutorialFinished.value
             )
             WelcomeInfo(userId, showDialog)
 
@@ -109,7 +115,7 @@ fun HomeScreen(
 
 @Composable
 fun ContactInfo() {
-    Text("By jzheng23@umd.edu")
+    Text("Jian Zheng, jzheng23@umd.edu")
 }
 
 @Composable

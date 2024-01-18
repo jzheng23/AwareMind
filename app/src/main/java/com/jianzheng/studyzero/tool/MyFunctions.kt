@@ -30,9 +30,20 @@ fun startEverything(context: Context) {
     startMyAccessibilityService(context)
 }
 
+fun stopEverything(context: Context){
+    context.stopService(Intent(context, MyForegroundService::class.java))
+    MyDelayManager.unregisterUnlock(context)
+    MyPreferenceManager.setBoolean(context, "input_record", false)
+    cancelDailyMaintenance(context)
+}
+
+fun cancelDailyMaintenance(context: Context) {
+
+    //TODO cancel it
+}
+
 fun startMyAccessibilityService(context: Context) {
-    val myAccessibilityService = Intent(context, MyAccessibilityService::class.java)
-    context.startService(myAccessibilityService)
+    MyPreferenceManager.setBoolean(context, "input_record", true)
 }
 
 fun startMyForegroundService(context: Context) {

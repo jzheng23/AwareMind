@@ -9,12 +9,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 @Composable
 fun TutorialScreen(
     navController: NavController
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -23,7 +26,10 @@ fun TutorialScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Tutorial page")
-        Button(onClick = { navController.navigate(AppRoutes.HOME) }) {
+        Button(onClick = {
+            navController.navigate(AppRoutes.HOME)
+            MyPreferenceManager.setBoolean(context,"tutorial_finished", true)
+        }) {
             Text("Home")
         }
     }
