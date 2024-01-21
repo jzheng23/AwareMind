@@ -36,11 +36,11 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        if (MyPreferenceManager.getBoolean(this, "unlock_registered")) {
-            MyPreferenceManager.setBoolean(this,"unlock_registered", false)
-            unregisterReceiver(unlockReceiver)
-            Log.d("unlock","unlock unregistered")
-        }
+//        if (MyPreferenceManager.getBoolean(this, "unlock_registered")) {
+//            MyPreferenceManager.setBoolean(this,"unlock_registered", false)
+//            unregisterReceiver(unlockReceiver)
+//            Log.d("unlock","unlock unregistered")
+//        }
     }
 
     public override fun onStart() {

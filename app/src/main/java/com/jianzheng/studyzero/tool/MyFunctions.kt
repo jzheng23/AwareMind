@@ -25,6 +25,8 @@ fun getDateTime(timeInMillis: Long): String {
 fun startEverything(context: Context) {
     startMyForegroundService(context)
     createSharedPreference(context)
+    MyPreferenceManager.setBoolean(context, "using_testing_triggers",false)
+    MyPreferenceManager.setBoolean(context, "collecting_data",true)
     MyDelayManager.init(context)
     scheduleDailyMaintenance(context)
     startMyAccessibilityService(context)
@@ -34,6 +36,7 @@ fun stopEverything(context: Context){
     context.stopService(Intent(context, MyForegroundService::class.java))
     MyDelayManager.unregisterUnlock(context)
     MyPreferenceManager.setBoolean(context, "input_record", false)
+    MyPreferenceManager.setBoolean(context, "collecting_data",false)
     scheduleDailyMaintenance(context, 2592000000L)
 }
 
@@ -52,7 +55,8 @@ fun scheduleDailyMaintenance(context: Context, initialDelay: Long = 5000L) {
 
     val workRequest = PeriodicWorkRequestBuilder<MyDailyWorker>(24, TimeUnit.HOURS)
         // Additional configuration (like constraints)
-        .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+//        .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
+        .setInitialDelay(getInitialDelay(), TimeUnit.MILLISECONDS)
         .build()
     myWorkManager.enqueueUniquePeriodicWork(
         "daily_maintenance",

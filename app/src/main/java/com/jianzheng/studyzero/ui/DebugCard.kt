@@ -16,6 +16,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,6 +45,27 @@ fun DebugCard(
     modifier: Modifier,
 ) {
     val context = LocalContext.current
+    val sharedPreferences =
+        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+    val isOverlayAllowed by usePollState {
+        MyPermissionManager.checkOverlayPermission(context)
+    }
+    val isUsageAllowed by usePollState {
+        MyPermissionManager.checkUserStatPermission(context)
+    }
+    val isA11yAllowed by usePollState {
+        MyPermissionManager.checkAccessibilityPermission(context)
+    }
+    val isInputRecording by usePollState {
+        mutableStateOf( sharedPreferences.getBoolean("input_record", false))
+    }
+    val isTutorialFinished by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
+    }
+    val isDataCollecting by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
+    }
+
     Card(
 //        modifier = Modifier.padding(16.dp),
         shape = MaterialTheme.shapes.medium,
@@ -79,7 +102,7 @@ fun DebugCard(
                         Log.d("unlock", "unlock unregistered")
                     }
                 },
-                isEnabled = MyPermissionManager.checkOverlayPermission(context)
+                isEnabled = isOverlayAllowed
             )
             SwitchCard(
                 title = "",
@@ -99,15 +122,16 @@ fun DebugCard(
                     Handler(Looper.getMainLooper()).post { toast.show() }
                     Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
                 },
-                isEnabled = true
+                isEnabled = isOverlayAllowed
             )
             ButtonCard(
                 title = "",
                 desc = "Test the ESM page",
                 onAuthClick = {
-                    testFunction(context)
+                    testSurvey(context)
                 },
-                buttonText = "Test"
+                buttonText = "Test",
+                buttonEnabled = isOverlayAllowed
             )
             Divider()
             ButtonCard(
@@ -135,7 +159,7 @@ fun DebugCard(
                     }
                 },
                 buttonText = "Get",
-                buttonEnabled = MyPermissionManager.checkUserStatPermission(context)
+                buttonEnabled = isUsageAllowed
             )
             Divider()
             SwitchCard(
@@ -144,7 +168,8 @@ fun DebugCard(
                 onCheckedChange = {
                     MyPreferenceManager.setBoolean(context, "input_record", it)
                 },
-                isEnabled = MyPermissionManager.checkAccessibilityPermission(context)
+                isEnabled = isA11yAllowed,
+                isChecked = isInputRecording.value
             )
             Divider()
             SwitchCard(
@@ -153,6 +178,7 @@ fun DebugCard(
                 onCheckedChange = {
                     MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
                 },
+                isChecked = isTutorialFinished.value
             )
             Divider()
             SwitchCard(
@@ -165,6 +191,7 @@ fun DebugCard(
                         stopEverything(context)
                     }
                 },
+                isChecked = isDataCollecting.value
             )
         }
     }
@@ -200,7 +227,7 @@ fun resetTriggerFunction(context: Context) {
     MyDelayManager.resetTriggerList()
 }
 
-fun testFunction(context: Context) {
+fun testSurvey(context: Context) {
     val serviceIntent = Intent(context, OverlayService::class.java).apply {
         putExtra("tag", "testMet")
     }

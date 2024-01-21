@@ -86,7 +86,8 @@ fun SwitchCard(
     title: String,
     desc: String,
     onCheckedChange: (Boolean) -> Unit,
-    isEnabled: Boolean = true
+    isEnabled: Boolean = true,
+    isChecked: Boolean = false
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically
@@ -103,16 +104,17 @@ fun SwitchCard(
             )
         }
         Spacer(modifier = Modifier.width(10.dp))
-        SwitchMinimalExample(onCheckedChange, isEnabled)
+        SwitchMinimalExample(onCheckedChange, isEnabled, isChecked)
     }
 }
 
 @Composable
 fun SwitchMinimalExample(
     onCheckedChange: (Boolean) -> Unit,
-    isEnabled: Boolean
+    isEnabled: Boolean,
+    isChecked: Boolean = false
 ) {
-    var checked by remember { mutableStateOf(false) }
+    var checked by remember { mutableStateOf(isChecked) }
 
     Switch(
         checked = checked,

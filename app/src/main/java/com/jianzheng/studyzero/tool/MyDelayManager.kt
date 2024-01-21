@@ -36,7 +36,11 @@ object MyDelayManager {
 
         val sharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        if (
+        if (sharedPreferences.getBoolean("using_once_triggers", false)) {
+            originalTriggerList = mutableListOf(1)
+            extraTriggerThirty = 30L * 60 //30 minutes for real 30 seconds for testing
+            extraTriggerTwenty = 20L * 60
+        } else if (
             sharedPreferences.getBoolean("using_testing_triggers", true)
         ) {//testing
             originalTriggerList = shortTriggerList
@@ -61,11 +65,16 @@ object MyDelayManager {
     }
 
     fun unregisterUnlock(context: Context) {
-        context.unregisterReceiver(unlockReceiver)
+        if (MyPreferenceManager.getBoolean(context, "unlock_registered")) {
+            MyPreferenceManager.setBoolean(context,"unlock_registered", false)
+//            context.unregisterReceiver(unlockReceiver)
+            Log.d("unlock","unlock unregistered")
+        }
         MyPreferenceManager.setBoolean(context,"unlock_registered", false)
     }
 
-    fun delayService(context: Context) {
+
+    fun scheduleOverlayService(context: Context) {
         myWorkManager = WorkManager.getInstance(context)
         val responseCounter = ResponseCounter(context)
         val currentTimeMillis = System.currentTimeMillis()

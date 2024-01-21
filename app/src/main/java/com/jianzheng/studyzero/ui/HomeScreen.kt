@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
@@ -59,8 +60,11 @@ fun HomeScreen(
     val isTester by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
     }
-    val tutorialFinished by usePollState {
+    val isTutorialFinished by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
+    }
+    val isDataCollecting by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
     if (showDialog.value) LoginPage(userId, showDialog)
     Column(
@@ -84,22 +88,27 @@ fun HomeScreen(
                     onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
                 )
             }
-            if (!tutorialFinished.value) {
+            if (!isTutorialFinished.value) {
                 ButtonCard(
                     title = "Tutorial",
                     desc = "Tutorial",
-                    onAuthClick = { navController.navigate(AppRoutes.TUTORIAL) },
+                    onAuthClick = {
+                        navController.navigate(AppRoutes.TUTORIAL)
+                        MyPreferenceManager.setInt(context, "randomMet", 0)
+                    },
                     buttonText = "Start",
                     buttonEnabled = !showPermissionCard
                 )
             }
-            ButtonCard(
-                title = "Data collection",
-                desc = "Start data collection",
-                onAuthClick = { startEverything(context) },
-                buttonText = "Start",
-                buttonEnabled = tutorialFinished.value
-            )
+            if (!isDataCollecting.value) {
+                ButtonCard(
+                    title = "Data collection",
+                    desc = "Start data collection",
+                    onAuthClick = { startEverything(context) },
+                    buttonText = "Start",
+                    buttonEnabled = isTutorialFinished.value
+                )
+            }
             WelcomeInfo(userId, showDialog)
 
         }
