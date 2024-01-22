@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -22,30 +23,35 @@ fun TutorialScreen(
     val testShown = remember {
         mutableStateOf<Boolean>(false)
     }
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(mediumPadding),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+    Surface(
+        modifier = Modifier.fillMaxSize()
     ) {
-        Text("Please tap the Test button below to see the survey page.")
-        Button(
-            onClick = {
-                testSurvey(context)
-                testShown.value = true
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(mediumPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text("Please tap the Test button below to see the survey page.")
+            Button(
+                onClick = {
+                    testSurvey(context)
+                    testShown.value = true
+                }
+            ) {
+                Text("Test")
             }
-        ) {
-            Text("Test")
-        }
-        Button(
-            onClick = {
-                navController.navigate(AppRoutes.TUTORIAL2)
-            },
-            enabled = testShown.value
-        ) {
-            Text("Next")
+            Button(
+                onClick = {
+                    navController.navigate(AppRoutes.TUTORIAL2)
+                },
+                enabled = testShown.value
+            ) {
+                Text("Next")
+            }
         }
     }
+
 
 }

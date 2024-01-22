@@ -37,12 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
 @Composable
 fun ShowOverlayPreview() {
 
-    StudyZeroTheme(isOverlay = true) {
+    StudyZeroEsmTheme(isOverlay = true) {
         Surface(
             modifier = Modifier
                 .fillMaxSize(),

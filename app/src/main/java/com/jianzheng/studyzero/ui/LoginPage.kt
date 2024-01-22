@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 @Preview
 @Composable
@@ -100,7 +101,10 @@ fun UseIdInputField(
     userId.value?.let { it ->
         TextField(
             value = it,
-            onValueChange = { userId.value = it },
+            onValueChange = {
+                userId.value = it
+                MyPreferenceManager.setString(context, "UID", it)
+            },
             label = { Text("User ID") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(

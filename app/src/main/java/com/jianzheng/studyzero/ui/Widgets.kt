@@ -1,5 +1,6 @@
 package com.jianzheng.studyzero.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -55,7 +56,7 @@ fun ButtonCard(
             enabled = buttonEnabled,
             modifier = Modifier
                 .wrapContentHeight()
-                .width(96.dp)
+                .width(108.dp)
         ) {
             Text(text = buttonText)
         }
@@ -125,4 +126,39 @@ fun SwitchMinimalExample(
         enabled = isEnabled,
         modifier = Modifier.wrapContentHeight()
     )
+}
+
+@Composable
+fun AuthCard(
+    title: String,
+    desc: String,
+    onAuthClick: () -> Unit,
+    buttonText: String = "Allow",
+    buttonEnabled: Boolean = true
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            Text(
+                text = title, fontSize = 20.sp
+            )
+            Spacer(modifier = Modifier.weight(1f))
+            Button(
+                onClick = onAuthClick,
+                enabled = buttonEnabled,
+                modifier = Modifier
+                    .wrapContentHeight()
+            ) {
+                Text(text = buttonText)
+            }
+        }
+        Spacer(modifier = Modifier.height(2.dp))
+        Text(
+            text = desc, fontSize = 14.sp
+        )
+    }
 }

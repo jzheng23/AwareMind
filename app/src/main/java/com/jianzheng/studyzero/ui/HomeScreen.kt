@@ -5,6 +5,7 @@ import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,7 +36,7 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
-import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
+import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 
 val mediumPadding = 12.dp
 
@@ -54,7 +55,7 @@ fun HomeScreen(
 
     val sharedPreferences =
         LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val userId = remember {
+    val userId by usePollState {
         mutableStateOf(sharedPreferences.getString("UID", ""))
     }
     val isTester by usePollState {
@@ -67,58 +68,67 @@ fun HomeScreen(
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
     if (showDialog.value) LoginPage(userId, showDialog)
-    Column(
-        modifier = Modifier
-            .verticalScroll(rememberScrollState())
-            .fillMaxSize()
-            .padding(mediumPadding),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (userId.value == "") {
-            Text("Please login")
-            LoginButton(
-                showDialog = showDialog
-            )
-        } else {
-            if (showPermissionCard) {
-                ButtonCard(
-                    title = "Permission",
-                    desc = "Permission",
-                    onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
-                )
-            }
-            if (!isTutorialFinished.value) {
-                ButtonCard(
-                    title = "Tutorial",
-                    desc = "Tutorial",
-                    onAuthClick = {
-                        navController.navigate(AppRoutes.TUTORIAL)
-                        MyPreferenceManager.setInt(context, "randomMet", 0)
-                    },
-                    buttonText = "Start",
-                    buttonEnabled = !showPermissionCard
-                )
-            }
-            if (!isDataCollecting.value) {
-                ButtonCard(
-                    title = "Data collection",
-                    desc = "Start data collection",
-                    onAuthClick = { startEverything(context) },
-                    buttonText = "Start",
-                    buttonEnabled = isTutorialFinished.value
-                )
-            }
-            WelcomeInfo(userId, showDialog)
 
-        }
-        if (isTester.value) {
-            DebugCard(
-                userId = userId,
-                modifier = modifier,
-            )
+    Surface(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .verticalScroll(rememberScrollState())
+                .fillMaxSize()
+                .padding(mediumPadding),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (userId.value == "") {
+                Text("Please login")
+                LoginButton(
+                    showDialog = showDialog
+                )
+            } else {
+                if (showPermissionCard) {
+                    ButtonCard(
+                        title = "Permission",
+                        desc = "Grant permissions the app needs",
+                        onAuthClick = { navController.navigate(AppRoutes.SETTINGS) },
+                        buttonText = "Manage"
+                    )
+                }
+                if (!isTutorialFinished.value) {
+                    ButtonCard(
+                        title = "Tutorial",
+                        desc = if (!showPermissionCard) "See what the survey is like and how it works" else "Please grant permissions to unlock the tutorial",
+                        onAuthClick = {
+                            navController.navigate(AppRoutes.TUTORIAL)
+                            MyPreferenceManager.setInt(context, "randomMet", 0)
+                        },
+                        buttonText = "Start",
+                        buttonEnabled = !showPermissionCard
+                    )
+                }
+                if (!isDataCollecting.value) {
+                    ButtonCard(
+                        title = "Data collection",
+                        desc = if (isTutorialFinished.value) "Start data collection" else "Please complete tutorial first ",
+                        onAuthClick = { startEverything(context) },
+                        buttonText = "Start",
+                        buttonEnabled = isTutorialFinished.value
+                    )
+                }
+                if (isDataCollecting.value) {
+                    WelcomeInfo(userId, showDialog)
+                }
+
+            }
+            if (isTester.value) {
+                DebugCard(
+                    userId = userId,
+                    modifier = modifier,
+                )
+            }
         }
     }
+
 }
 
 
@@ -130,7 +140,7 @@ fun ContactInfo() {
 @Composable
 fun UmdLogo() {
     Image(
-        painterResource(id = R.drawable.umd_logo),
+        painterResource(id = if (isSystemInDarkTheme()) R.drawable.logos_wordmark_light_text else R.drawable.logos_wordmark_dark_text),
         contentDescription = null,
     )
 }
@@ -204,7 +214,7 @@ fun LoginButton(
 @Preview
 @Composable
 fun SettingPagePreview() {
-    StudyZeroTheme(isOverlay = true) {
+    StudyZeroEsmTheme(isOverlay = true) {
         Surface(
             modifier = Modifier
                 .fillMaxSize(),

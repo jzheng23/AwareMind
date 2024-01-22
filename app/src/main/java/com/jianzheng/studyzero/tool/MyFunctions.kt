@@ -7,7 +7,6 @@ import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.jianzheng.studyzero.service.MyAccessibilityService
 import com.jianzheng.studyzero.service.MyForegroundService
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -24,20 +23,24 @@ fun getDateTime(timeInMillis: Long): String {
 
 fun startEverything(context: Context) {
     startMyForegroundService(context)
-    createSharedPreference(context)
-    MyPreferenceManager.setBoolean(context, "using_testing_triggers",false)
-    MyPreferenceManager.setBoolean(context, "collecting_data",true)
+//    initializeSharedPreference(context)
+    MyPreferenceManager.setBoolean(context, "using_testing_triggers", false)
+    MyPreferenceManager.setBoolean(context, "collecting_data", true)
     MyDelayManager.init(context)
     scheduleDailyMaintenance(context)
     startMyAccessibilityService(context)
 }
 
-fun stopEverything(context: Context){
+fun stopEverything(context: Context) {
     context.stopService(Intent(context, MyForegroundService::class.java))
     MyDelayManager.unregisterUnlock(context)
     MyPreferenceManager.setBoolean(context, "input_record", false)
-    MyPreferenceManager.setBoolean(context, "collecting_data",false)
+    MyPreferenceManager.setBoolean(context, "collecting_data", false)
     scheduleDailyMaintenance(context, 2592000000L)
+}
+
+fun resetEverything(context: Context) {
+    initializeSharedPreference(context)
 }
 
 
@@ -95,13 +98,29 @@ fun getInitialDelay(): Long {
     return dueDate.timeInMillis - currentDate.timeInMillis
 }
 
-fun createSharedPreference(context: Context) {
+fun initializeSharedPreference(context: Context) {
     val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
-    if (sharedPreferences.getBoolean("first_run", true)) {
-        editor.putBoolean("first_run", false)
-            .putString("UID", "null")
-            .apply()
-    }
+    editor.putInt("today_count", 0)
+        .putInt("total_count", 0)
+        .putInt("day_count", 0)
+        .putBoolean("using_once_triggers", false)
+        .putBoolean("using_testing_triggers", false)
+        .putBoolean("first_run", false)
+        .putString("UID", "")
+        .putBoolean("UID_valid", false)
+        .putInt("20Met", 0)
+        .putInt("30Met", 0)
+        .putInt("randomMet", 0)
+        .putBoolean("input_record", false)
+        .putBoolean("tutorial_finished", false)
+        .putBoolean("collecting_data", false)
+        .putBoolean("is_tester", false)
+        .apply()
+//    if (sharedPreferences.getBoolean("first_run", true)) {
+//        editor.putBoolean("first_run", false)
+//            .putString("UID", "null")
+//            .apply()
+//    }
 }
 

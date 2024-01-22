@@ -80,7 +80,7 @@ private val lightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun StudyZeroTheme(
+fun StudyZeroEsmTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
@@ -92,6 +92,41 @@ fun StudyZeroTheme(
             val context = LocalContext.current
             //if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
             if (!darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+        }
+
+        darkTheme -> lightColorScheme
+        else -> darkColorScheme
+    }
+    val view = LocalView.current
+    if (!view.isInEditMode && !isOverlay) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colorScheme.primary.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = darkTheme
+        }
+    }
+
+    MaterialTheme(
+        colorScheme = colorScheme,
+        typography = Typography,
+        content = content
+    )
+}
+
+
+@Composable
+fun StudyZeroTheme(
+    darkTheme: Boolean = isSystemInDarkTheme(),
+    // Dynamic color is available on Android 12+
+    dynamicColor: Boolean = true,
+    isOverlay: Boolean = false,
+    content: @Composable () -> Unit
+) {
+    val colorScheme = when {
+        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
+            val context = LocalContext.current
+            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
+//            if (!darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
         darkTheme -> lightColorScheme

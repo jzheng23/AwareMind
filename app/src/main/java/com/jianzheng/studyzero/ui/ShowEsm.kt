@@ -56,7 +56,7 @@ import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.ResponseCounter
-import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
+import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -90,7 +90,7 @@ fun ShowOverlay(
         }
     }, displayTimeMillis) // 10 seconds delay
 
-    StudyZeroTheme(isOverlay = true) {
+    StudyZeroEsmTheme(isOverlay = true) {
         Surface(
             modifier = Modifier
                 .fillMaxSize(),

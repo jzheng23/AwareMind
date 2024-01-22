@@ -12,9 +12,9 @@ import com.google.firebase.ktx.Firebase
 import com.jianzheng.studyzero.receiver.UnlockReceiver
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.ui.AppNavigation
+import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
 class MainActivity : ComponentActivity() {
-    private val unlockReceiver = UnlockReceiver()
     private lateinit var auth: FirebaseAuth
 
 
@@ -23,7 +23,9 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            AppNavigation()  // This sets up the entire navigation for your app
+            StudyZeroTheme {
+                AppNavigation()
+            }
         }
         auth = Firebase.auth
 
