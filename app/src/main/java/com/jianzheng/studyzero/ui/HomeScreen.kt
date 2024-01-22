@@ -116,7 +116,7 @@ fun HomeScreen(
                     )
                 }
                 if (isDataCollecting.value) {
-                    WelcomeInfo(userId, showDialog)
+                    WelcomeInfo(userId.value?:"", showDialog)
                 }
 
             }
@@ -147,7 +147,7 @@ fun UmdLogo() {
 
 @Composable
 fun WelcomeInfo(
-    userId: MutableState<String?> = mutableStateOf(""),
+    userId: String = "",
     showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current.applicationContext as Application
@@ -157,13 +157,12 @@ fun WelcomeInfo(
     val todayCount = sharedPrefsViewModel.todayCount.observeAsState()
     val totalCount = sharedPrefsViewModel.totalCount.observeAsState()
     val dayCount = sharedPrefsViewModel.dayCount.observeAsState()
-    Log.d("liveCounter", "Compose: today is ${todayCount.value}")
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Welcome, ${userId.value}!",
+            text = "Welcome, $userId!",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.clickable { showDialog.value = true }
         )
