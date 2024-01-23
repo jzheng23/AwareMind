@@ -67,10 +67,10 @@ fun DebugCard(
         MyPermissionManager.checkAccessibilityPermission(context)
     }
     val isInputRecording by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("input_record", false))
+        sharedPreferences.getBoolean("input_record", false)
     }
     val isTutorialFinished by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
+        sharedPreferences.getBoolean("tutorial_finished", false)
     }
     val isDataCollecting by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
@@ -211,7 +211,7 @@ fun DebugCard(
                         MyPreferenceManager.setBoolean(context, "input_record", it)
                     },
                     isEnabled = isA11yAllowed,
-                    isChecked = isInputRecording.value
+                    isChecked = isInputRecording
                 )
                 Divider(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
@@ -222,7 +222,7 @@ fun DebugCard(
                     onCheckedChange = {
                         MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
                     },
-                    isChecked = isTutorialFinished.value
+                    isChecked = isTutorialFinished
                 )
                 Divider(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)

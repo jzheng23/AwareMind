@@ -88,6 +88,7 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10.1")
     implementation("com.google.android.recaptcha:recaptcha:18.4.0")
     constraints.implementation("androidx.fragment:fragment:1.6.2")
+    implementation("androidx.core:core-splashscreen:1.0.1")
 
 
 

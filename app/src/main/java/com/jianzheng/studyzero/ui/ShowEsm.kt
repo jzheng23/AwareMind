@@ -79,7 +79,7 @@ fun ShowOverlay(
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val displayTimeMillis = if (
-        sharedPreferences.getBoolean("using_testing_triggers", true)
+        sharedPreferences.getBoolean("using_testing_triggers", false)
     ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
     handler.postDelayed({
         if (autoDismiss.value) {
