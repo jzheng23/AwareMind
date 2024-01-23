@@ -20,7 +20,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,14 +57,14 @@ fun DebugCard(
     val context = LocalContext.current
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val isOverlayAllowed by usePollState {
-        MyPermissionManager.checkOverlayPermission(context)
+    val isOverlayAllowed by remember {
+        mutableStateOf(MyPermissionManager.checkOverlayPermission(context))
     }
-    val isUsageAllowed by usePollState {
-        MyPermissionManager.checkUserStatPermission(context)
+    val isUsageAllowed by remember {
+        mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
     }
-    val isA11yAllowed by usePollState {
-        MyPermissionManager.checkAccessibilityPermission(context)
+    val isA11yAllowed by remember {
+        mutableStateOf(MyPermissionManager.checkAccessibilityPermission(context))
     }
     val isInputRecording by usePollState {
         sharedPreferences.getBoolean("input_record", false)
@@ -76,7 +75,7 @@ fun DebugCard(
     val isDataCollecting by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
-    val isTestTriggers by usePollState {
+    val isTestTriggers by remember {
         mutableStateOf(sharedPreferences.getBoolean("using_testing_triggers", false))
     }
     val isNotificationShowing by usePollState {
@@ -158,7 +157,7 @@ fun DebugCard(
                         Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
                     },
                     isEnabled = isOverlayAllowed,
-                    isChecked = isTestTriggers.value
+                    isChecked = isTestTriggers
                 )
                 ButtonCard(
                     title = "",
@@ -246,10 +245,11 @@ fun DebugCard(
                 ButtonCard(
                     title = "Reset",
                     desc = "Reset to default",
-                    onAuthClick  = {
+                    onAuthClick = {
                         resetEverything(context)
                         Handler(Looper.getMainLooper()).post {
-                            val toast = Toast.makeText(context, "Reset to default!", Toast.LENGTH_SHORT)
+                            val toast =
+                                Toast.makeText(context, "Reset to default!", Toast.LENGTH_SHORT)
                             toast.show()
                         }
                     },

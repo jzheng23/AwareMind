@@ -2,6 +2,7 @@ package com.jianzheng.studyzero.ui
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -122,7 +123,11 @@ fun HomeScreen(
                     )
                 }
                 if (isDataCollecting) {
-                    WelcomeInfo(userId?:"", showDialog)
+                    WelcomeInfo(userId?:"", showDialog
+                    ) {
+                        navController.navigate(AppRoutes.EXPORT)
+                        Log.d("navigate","to export")
+                    }
                 }
 
             }
@@ -154,7 +159,8 @@ fun UmdLogo() {
 @Composable
 fun WelcomeInfo(
     userId: String = "",
-    showDialog: MutableState<Boolean>
+    showDialog: MutableState<Boolean>,
+    onClickOfInput: () -> Unit
 ) {
     val context = LocalContext.current.applicationContext as Application
     val welcomeViewModel: WelcomeViewModel = viewModel(
@@ -194,6 +200,7 @@ fun WelcomeInfo(
         Text(
             text = "Thanks for your input!",
             style = MaterialTheme.typography.headlineSmall,
+            modifier = Modifier.clickable { onClickOfInput() }
         )
         UmdLogo()
         ContactInfo()
