@@ -75,6 +75,15 @@ fun DebugCard(
     val isDataCollecting by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
+    val isTestTriggers by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("using_testing_triggers", false))
+    }
+    val isNotificationShowing by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("notification_showing", false))
+    }
+    val isUnlockReceiverRegistered by usePollState {
+        mutableStateOf(MyReceiverManager.checkRegistered())
+    }
 
     Card(
 //        modifier = Modifier.padding(16.dp),
@@ -105,7 +114,8 @@ fun DebugCard(
                             context.stopService(Intent(context, MyForegroundService::class.java))
                         }
                     },
-                    isEnabled = MyPermissionManager.checkNotificationPermission(context)
+                    isEnabled = MyPermissionManager.checkNotificationPermission(context),
+                    isChecked = isNotificationShowing.value
                 )
                 Divider(
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
@@ -121,7 +131,8 @@ fun DebugCard(
                             Log.d("unlock", "unlock unregistered")
                         }
                     },
-                    isEnabled = isOverlayAllowed
+                    isEnabled = isOverlayAllowed,
+                    isChecked = isUnlockReceiverRegistered.value
                 )
                 SwitchCard(
                     title = "",
@@ -145,7 +156,8 @@ fun DebugCard(
                         Handler(Looper.getMainLooper()).post { toast.show() }
                         Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
                     },
-                    isEnabled = isOverlayAllowed
+                    isEnabled = isOverlayAllowed,
+                    isChecked = isTestTriggers.value
                 )
                 ButtonCard(
                     title = "",

@@ -26,4 +26,8 @@ object MyReceiverManager {
             isReceiverRegistered = false
         }
     }
+
+    fun checkRegistered(): Boolean {
+        return isReceiverRegistered
+    }
 }

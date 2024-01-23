@@ -9,39 +9,18 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.room.Room
 import com.jianzheng.studyzero.MainActivity
-import com.jianzheng.studyzero.data.response.ResponseDao
-import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
-import java.util.Calendar
 
 class MyForegroundService : Service() {
 
     private lateinit var notificationManager: NotificationManager
-    private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    private lateinit var countOfResponses: Flow<Int>
-    private lateinit var responseDao: ResponseDao
 
 
     override fun onCreate() {
         super.onCreate()
 //        Log.d("fore", "onCreate")
         notificationManager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-        val db =
-            Room.databaseBuilder(
-                applicationContext,
-                ResponseDatabase::class.java,
-                "response_database"
-            )
-                .fallbackToDestructiveMigration()
-                .build()
-        responseDao = db.responseDao()
         createNotificationChannel()
         updateCount()
     }
@@ -53,18 +32,14 @@ class MyForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 //        createNotificationChannel()
         updateCount()
+        MyPreferenceManager.setBoolean(this, "notification_showing", true)
         return START_STICKY
     }
 
     private fun updateCount() {
-        countOfResponses = responseDao.getCountToday(todayStarts())
-        serviceScope.launch {
-            countOfResponses.collect {
-                val notification = buildForegroundNotification(it)
-                startForeground(notificationId, notification)
-                Log.d("notification", "count updated!")
-            }
-        }
+        val notification = buildForegroundNotification()
+        startForeground(notificationId, notification)
+        Log.d("notification", "count updated!")
     }
 
     // Inside MyForegroundService class
@@ -77,7 +52,7 @@ class MyForegroundService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    private fun buildForegroundNotification(count: Int = 0): Notification {
+    private fun buildForegroundNotification(): Notification {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
@@ -96,13 +71,4 @@ class MyForegroundService : Service() {
         const val channelId = "timer_channel"
     }
 
-    private fun todayStarts(): Long {
-        val startOfDayCalendar = Calendar.getInstance().apply {
-            set(Calendar.HOUR_OF_DAY, 0)
-            set(Calendar.MINUTE, 0)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-        return startOfDayCalendar.timeInMillis
-    }
 }

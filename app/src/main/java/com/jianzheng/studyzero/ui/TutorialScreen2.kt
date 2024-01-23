@@ -44,10 +44,12 @@ fun TutorialScreen2(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Tap the Schedule button to schedule a survey page to show after next unlock of the phone.")
+            Text("Tap the Schedule button and the survey page will appear after next unlock " +
+                    "of the phone. Please answer the questions. DO NOT dismiss the survey page.")
             Button(
                 onClick = {
                     MyPreferenceManager.setBoolean(context, "using_once_triggers", true)
+                    MyPreferenceManager.setInt(context,"randomMet",0)
                     MyDelayManager.init(context)
                     Handler(Looper.getMainLooper()).post {
                         val toast = Toast.makeText(context, "Please lock and then unlock your phone.", Toast.LENGTH_SHORT)

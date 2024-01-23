@@ -116,6 +116,7 @@ fun initializeSharedPreference(context: Context) {
         .putBoolean("tutorial_finished", false)
         .putBoolean("collecting_data", false)
         .putBoolean("is_tester", false)
+        .putBoolean("notification_showing", false)
         .apply()
 //    if (sharedPreferences.getBoolean("first_run", true)) {
 //        editor.putBoolean("first_run", false)
