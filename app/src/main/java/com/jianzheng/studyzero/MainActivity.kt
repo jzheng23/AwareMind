@@ -11,12 +11,12 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.jianzheng.studyzero.receiver.UnlockReceiver
 import com.jianzheng.studyzero.tool.MyPreferenceManager
+import com.jianzheng.studyzero.tool.MyReceiverManager
 import com.jianzheng.studyzero.ui.AppNavigation
 import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
-
 
     @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,12 +38,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        MyPreferenceManager.setBoolean(this,"unlock_registered", false)
-//        if (MyPreferenceManager.getBoolean(this, "unlock_registered")) {
-//            MyPreferenceManager.setBoolean(this,"unlock_registered", false)
-//            unregisterReceiver(unlockReceiver)
-//            Log.d("unlock","unlock unregistered")
-//        }
+        MyReceiverManager.unregisterReceiver(this)
     }
 
     public override fun onStart() {
@@ -54,7 +49,7 @@ class MainActivity : ComponentActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("Authentication", "signInAnonymously:success")
-                    val user = auth.currentUser
+//                    val user = auth.currentUser
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("Authentication", "signInAnonymously:failure", task.exception)

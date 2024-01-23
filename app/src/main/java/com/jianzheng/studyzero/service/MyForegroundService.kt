@@ -13,6 +13,7 @@ import androidx.room.Room
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.data.response.ResponseDao
 import com.jianzheng.studyzero.data.response.ResponseDatabase
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -80,9 +81,10 @@ class MyForegroundService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
+        val countFromPrefs = MyPreferenceManager.getInt(this, "today_count")
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle("Study Zero")
-            .setContentText("$count prompts completed today")
+            .setContentText("$countFromPrefs prompts completed today")
             .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
             .setContentIntent(pendingIntent)
             .setOngoing(true)

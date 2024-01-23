@@ -33,7 +33,7 @@ fun startEverything(context: Context) {
 
 fun stopEverything(context: Context) {
     context.stopService(Intent(context, MyForegroundService::class.java))
-    MyDelayManager.unregisterUnlock(context)
+    MyReceiverManager.unregisterReceiver(context)
     MyPreferenceManager.setBoolean(context, "input_record", false)
     MyPreferenceManager.setBoolean(context, "collecting_data", false)
     scheduleDailyMaintenance(context, 2592000000L)

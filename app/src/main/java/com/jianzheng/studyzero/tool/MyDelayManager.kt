@@ -29,7 +29,6 @@ object MyDelayManager {
     private lateinit var randomRequestID: UUID
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
-    private val unlockReceiver = UnlockReceiver()
 
 
     fun init(context: Context) {
@@ -57,20 +56,11 @@ object MyDelayManager {
             addAction(Intent.ACTION_USER_PRESENT)
             addAction(Intent.ACTION_SCREEN_OFF)
         }
-        context.registerReceiver(unlockReceiver, filter)
+        MyReceiverManager.registerReceiver(context)
         MyPreferenceManager.setBoolean(context,"unlock_registered", true)
         Log.d("unlock","unlock registered")
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
 
-    }
-
-    fun unregisterUnlock(context: Context) {
-        if (MyPreferenceManager.getBoolean(context, "unlock_registered")) {
-            MyPreferenceManager.setBoolean(context,"unlock_registered", false)
-//            context.unregisterReceiver(unlockReceiver)
-            Log.d("unlock","unlock unregistered")
-        }
-        MyPreferenceManager.setBoolean(context,"unlock_registered", false)
     }
 
 
@@ -79,7 +69,7 @@ object MyDelayManager {
         val responseCounter = ResponseCounter(context)
         val currentTimeMillis = System.currentTimeMillis()
         Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
-        if (!responseCounter.checkRandomComplete()) {
+        if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
             val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
                 .setInitialDelay(triggerList[triggerIndex].toLong(), TimeUnit.SECONDS)
                 .setInputData(
@@ -174,6 +164,7 @@ object MyDelayManager {
 
     fun resetTriggerList() {
         triggerList = originalTriggerList.shuffled().toMutableList()
+        triggerIndex = 0
         Log.d("unlock", "trigger list is reset")
     }
 }

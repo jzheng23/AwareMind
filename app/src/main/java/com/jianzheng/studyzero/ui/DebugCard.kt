@@ -39,6 +39,7 @@ import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
+import com.jianzheng.studyzero.tool.MyReceiverManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything
@@ -116,7 +117,7 @@ fun DebugCard(
                         if (it) {
                             MyDelayManager.init(context)
                         } else {
-                            MyDelayManager.unregisterUnlock(context)
+                            MyReceiverManager.unregisterReceiver(context)
                             Log.d("unlock", "unlock unregistered")
                         }
                     },
