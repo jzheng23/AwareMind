@@ -2,7 +2,6 @@ package com.jianzheng.studyzero.ui
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -51,22 +50,29 @@ fun HomeScreen(
     val showPermissionCard by usePollState {
         !MyPermissionManager.checkAllPermissions(context)
     }
+    val context2 = LocalContext.current.applicationContext as Application
+    val sharedPrefsViewModel: SharedPrefsViewModel = viewModel(
+        factory = SharedPrefsViewModelFactory(context2)
+    )
+    val userId by sharedPrefsViewModel.userId.observeAsState("")
+    val isTester by sharedPrefsViewModel.isTester.observeAsState(false)
+    val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
+    val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
 
-
-    val sharedPreferences =
-        LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val userId by usePollState {
-        mutableStateOf(sharedPreferences.getString("UID", ""))
-    }
-    val isTester by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
-    }
-    val isTutorialFinished by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
-    }
-    val isDataCollecting by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
-    }
+//    val sharedPreferences =
+//        LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+//    val userId by usePollState {
+//        mutableStateOf(sharedPreferences.getString("UID", ""))
+//    }
+//    val isTester by usePollState {
+//        mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
+//    }
+//    val isTutorialFinished by usePollState {
+//        mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
+//    }
+//    val isDataCollecting by usePollState {
+//        mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
+//    }
     if (showDialog.value) LoginPage(userId, showDialog)
 
     Surface(
@@ -80,7 +86,7 @@ fun HomeScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if (userId.value == "") {
+            if (userId == "") {
                 Text("Please login")
                 LoginButton(
                     showDialog = showDialog
@@ -94,7 +100,7 @@ fun HomeScreen(
                         buttonText = "Manage"
                     )
                 }
-                if (!isTutorialFinished.value) {
+                if (!isTutorialFinished) {
                     ButtonCard(
                         title = "Tutorial",
                         desc = if (!showPermissionCard) "See what the survey is like and how it works" else "Please grant permissions to unlock the tutorial",
@@ -106,21 +112,21 @@ fun HomeScreen(
                         buttonEnabled = !showPermissionCard
                     )
                 }
-                if (!isDataCollecting.value) {
+                if (!isDataCollecting) {
                     ButtonCard(
                         title = "Data collection",
-                        desc = if (isTutorialFinished.value) "Start data collection" else "Please complete tutorial first ",
+                        desc = if (isTutorialFinished) "Start data collection" else "Please complete tutorial first ",
                         onAuthClick = { startEverything(context) },
                         buttonText = "Start",
-                        buttonEnabled = isTutorialFinished.value
+                        buttonEnabled = isTutorialFinished
                     )
                 }
-                if (isDataCollecting.value) {
-                    WelcomeInfo(userId.value?:"", showDialog)
+                if (isDataCollecting) {
+                    WelcomeInfo(userId?:"", showDialog)
                 }
 
             }
-            if (isTester.value) {
+            if (isTester) {
                 DebugCard(
                     userId = userId,
                     modifier = modifier,
@@ -151,12 +157,12 @@ fun WelcomeInfo(
     showDialog: MutableState<Boolean>
 ) {
     val context = LocalContext.current.applicationContext as Application
-    val sharedPrefsViewModel: SharedPrefsViewModel = viewModel(
-        factory = SharedPrefsViewModelFactory(context)
+    val welcomeViewModel: WelcomeViewModel = viewModel(
+        factory = WelcomeViewModelFactory(context)
     )
-    val todayCount = sharedPrefsViewModel.todayCount.observeAsState()
-    val totalCount = sharedPrefsViewModel.totalCount.observeAsState()
-    val dayCount = sharedPrefsViewModel.dayCount.observeAsState()
+    val todayCount = welcomeViewModel.todayCount.observeAsState()
+    val totalCount = welcomeViewModel.totalCount.observeAsState()
+    val dayCount = welcomeViewModel.dayCount.observeAsState()
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,

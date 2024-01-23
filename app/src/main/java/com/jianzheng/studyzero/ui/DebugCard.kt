@@ -50,7 +50,8 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun DebugCard(
-    userId: MutableState<String?>,
+//    userId: MutableState<String?>,
+    userId: String,
     modifier: Modifier,
 ) {
     var isVisible by remember { mutableStateOf(true) }
@@ -103,7 +104,7 @@ fun DebugCard(
                 )
             }
             if (isVisible) {
-                Text("User ID is ${userId.value}, upload is ${validateUid(userId.value)}")
+                Text("User ID is $userId, upload is ${validateUid(userId)}")
                 SwitchCard(
                     title = "Notification",
                     desc = "Show a persistent notification",

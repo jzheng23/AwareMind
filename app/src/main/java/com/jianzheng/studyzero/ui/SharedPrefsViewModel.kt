@@ -10,30 +10,51 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
 class SharedPrefsViewModel(application: Application) : AndroidViewModel(application) {
-    private val _todayCount = MutableLiveData<Int>()
-    private val _totalCount = MutableLiveData<Int>()
-    private val _dayCount = MutableLiveData<Int>()
-    val todayCount: LiveData<Int> = _todayCount
-    val totalCount: LiveData<Int> = _totalCount
-    val dayCount: LiveData<Int> = _dayCount
     private val sharedPreferences =
         application.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+
+    // LiveData for UID
+    private val _userId = MutableLiveData<String>()
+    val userId: LiveData<String> = _userId
+
+    // LiveData for isTester
+    private val _isTester = MutableLiveData<Boolean>()
+    val isTester: LiveData<Boolean> = _isTester
+
+    // LiveData for isTutorialFinished
+    private val _isTutorialFinished = MutableLiveData<Boolean>()
+    val isTutorialFinished: LiveData<Boolean> = _isTutorialFinished
+
+    // LiveData for isDataCollecting
+    private val _isDataCollecting = MutableLiveData<Boolean>()
+    val isDataCollecting: LiveData<Boolean> = _isDataCollecting
+
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                "today_count" -> _todayCount.value = sharedPreferences.getInt("today_count", 0)
-                "total_count" -> _totalCount.value = sharedPreferences.getInt("total_count", 0)
-                "day_count" -> _dayCount.value = sharedPreferences.getInt("day_count", 0)
+                "UID" -> _userId.value = sharedPreferences.getString("UID", "")
+                "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
+                "tutorial_finished" -> _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
+                "collecting_data" -> _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)
             }
         }
 
     init {
-        _todayCount.value = sharedPreferences.getInt("today_count", 0)
-        _totalCount.value = sharedPreferences.getInt("total_count", 0)
-        _dayCount.value = sharedPreferences.getInt("day_count", 0)
-        // Set up a listener for changes
+        // Initialize LiveData with current preferences values
+        _userId.value = sharedPreferences.getString("UID", "")
+        _isTester.value = sharedPreferences.getBoolean("is_tester", false)
+        _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
+        _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)
+
+        // Register the listener for changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
+
+    override fun onCleared() {
+        super.onCleared()
+        sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
+    }
+
 }
 
 class SharedPrefsViewModelFactory(private val application: Application) :
@@ -46,4 +67,3 @@ class SharedPrefsViewModelFactory(private val application: Application) :
         throw IllegalArgumentException("Unknown ViewModel class")
     }
 }
-

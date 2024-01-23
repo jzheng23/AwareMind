@@ -16,7 +16,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -29,7 +32,8 @@ import com.jianzheng.studyzero.tool.MyPreferenceManager
 @Preview
 @Composable
 fun LoginPage(
-    userId: MutableState<String?> = mutableStateOf(""),
+//    userId: MutableState<String?> = mutableStateOf(""),
+    userId: String = "",
     showDialog: MutableState<Boolean> = mutableStateOf(true),
     isTester: MutableState<Boolean> = mutableStateOf(true),
 ) {
@@ -59,20 +63,21 @@ fun LoginPage(
 }
 
 fun saveUserId(
-    userId: MutableState<String?>,
+//    userId: MutableState<String?>,
+    userId: String,
     isTester: MutableState<Boolean>,
     context: Context
 ) {
-    val userIdIsValidate: Boolean = validateUid(userId.value)
-    isTester.value = isTester(userId.value)
+    val userIdIsValidate: Boolean = validateUid(userId)
+    isTester.value = isTester(userId)
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
-    editor.putString("UID", userId.value)
+    editor.putString("UID", userId)
         .putBoolean("UID_valid", userIdIsValidate)
         .putBoolean("is_tester", isTester.value)
         .apply()
-    Log.d("userId", "UID is ${userId.value}, and tester? ${isTester.value}")
+    Log.d("userId", "UID is $userId, and tester? ${isTester.value}")
 }
 
 fun isTester(userId: String?): Boolean {
@@ -92,17 +97,18 @@ fun validateUid(userId: String?): Boolean {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UseIdInputField(
-    userId: MutableState<String?>,
+//    userId: MutableState<String?>,
+    userId: String = "",
     showDialog: MutableState<Boolean>,
     isTester: MutableState<Boolean>
 ) {
-    //var userId by remember { mutableStateOf("") }
+    var userIdInput by remember { mutableStateOf(userId) }
     val context = LocalContext.current
-    userId.value?.let { it ->
+    userIdInput?.let { it ->
         TextField(
             value = it,
             onValueChange = {
-                userId.value = it
+                userIdInput = it
                 MyPreferenceManager.setString(context, "UID", it)
             },
             label = { Text("User ID") },
@@ -114,7 +120,7 @@ fun UseIdInputField(
                 onDone = {
                     showDialog.value = false
                     saveUserId(
-                        userId,
+                        userIdInput,
                         isTester,
                         context,
                     )
@@ -131,7 +137,7 @@ fun UseIdInputField(
                 context,
             )
         },
-        enabled = (userId.value != "")
+        enabled = (userIdInput != "")
     ) {
         Text("Confirm")
     }

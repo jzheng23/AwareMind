@@ -12,18 +12,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
-import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
-import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
 
 @Composable
 fun TutorialScreen2(
@@ -32,7 +28,7 @@ fun TutorialScreen2(
     val context = LocalContext.current
     val scheduleButtonClicked = remember { mutableStateOf(false) }
     val randomMetCount by usePollState {
-        mutableIntStateOf(MyPreferenceManager.getInt(context,"randomMet"))
+        MyPreferenceManager.getInt(context, "randomMet")
     }
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -44,15 +40,21 @@ fun TutorialScreen2(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text("Tap the Schedule button and the survey page will appear after next unlock " +
-                    "of the phone. Please answer the questions. DO NOT dismiss the survey page.")
+            Text(
+                "Tap the Schedule button and the survey page will appear after next unlock " +
+                        "of the phone. Please answer the questions. DO NOT dismiss the survey page."
+            )
             Button(
                 onClick = {
                     MyPreferenceManager.setBoolean(context, "using_once_triggers", true)
-                    MyPreferenceManager.setInt(context,"randomMet",0)
+                    MyPreferenceManager.setInt(context, "randomMet", 0)
                     MyDelayManager.init(context)
                     Handler(Looper.getMainLooper()).post {
-                        val toast = Toast.makeText(context, "Please lock and then unlock your phone.", Toast.LENGTH_SHORT)
+                        val toast = Toast.makeText(
+                            context,
+                            "Please lock and then unlock your phone.",
+                            Toast.LENGTH_SHORT
+                        )
                         toast.show()
                     }
                     scheduleButtonClicked.value = true
@@ -67,7 +69,7 @@ fun TutorialScreen2(
                     MyPreferenceManager.setBoolean(context, "tutorial_finished", true)
                     MyPreferenceManager.setBoolean(context, "using_once_triggers", false)
                 },
-                enabled = randomMetCount.intValue >= 1
+                enabled = randomMetCount >= 1
             ) {
                 Text("Done")
             }
