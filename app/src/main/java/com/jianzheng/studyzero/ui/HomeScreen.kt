@@ -226,7 +226,7 @@ fun LoginButton(
 @Preview
 @Composable
 fun SettingPagePreview() {
-    StudyZeroEsmTheme(isOverlay = true) {
+    StudyZeroEsmTheme() {
         Surface(
             modifier = Modifier
                 .fillMaxSize(),

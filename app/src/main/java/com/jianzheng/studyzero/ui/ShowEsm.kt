@@ -1,14 +1,15 @@
 package com.jianzheng.studyzero.ui
 
-import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -40,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.PlatformTextStyle
@@ -51,48 +55,46 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
-import androidx.room.Room
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDelayManager
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
-import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun ShowOverlay(
+    darkTheme: Boolean = isSystemInDarkTheme(),
     tag: String = "",
     unlockTime: Long = 0L,
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    val db =
-        Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
-            .fallbackToDestructiveMigration()
-            .build()
-    val responseDao = db.responseDao()
-    val myViewModel = EsmViewModel(responseDao, context)
+    var myViewModel: EsmViewModelInterface
     val autoDismiss = remember { mutableStateOf(true) }
     //TODO need to tidy up
-    val handler = Handler(Looper.myLooper()!!)
-    val sharedPreferences =
-        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val displayTimeMillis = if (
-        sharedPreferences.getBoolean("using_testing_triggers", false)
-    ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
-    handler.postDelayed({
-        if (autoDismiss.value) {
-            autoDismiss.value = false
-            onClick()
-            if (tag == "randomMet") MyDelayManager.recycleTrigger()
-            Log.d("unlock", "unanswered")
-        }
-    }, displayTimeMillis) // 10 seconds delay
 
-    StudyZeroEsmTheme(isOverlay = true) {
+    if (!LocalInspectionMode.current) {
+        myViewModel = EsmViewModel(context)
+        val handler = Handler(Looper.myLooper()!!)
+        val displayTimeMillis = if (
+            MyPreferenceManager.getBoolean(context, "using_testing_triggers")
+        ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
+        handler.postDelayed({
+            if (autoDismiss.value) {
+                autoDismiss.value = false
+                onClick()
+                if (tag == "randomMet") MyDelayManager.recycleTrigger()
+                Log.d("unlock", "unanswered")
+            }
+        }, displayTimeMillis) // 10 seconds delay
+    } else {
+
+        myViewModel = MockEsmViewModel()
+    }
+    StudyZeroEsmTheme(darkTheme = darkTheme) {
         Surface(
             modifier = Modifier
                 .fillMaxSize(),
@@ -104,11 +106,8 @@ fun ShowOverlay(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(mediumPadding),
-//                onClick = {
-//                    autoDismiss.value = false
-//                },
                 elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
-                shape = RoundedCornerShape(20.dp)
+                shape = RoundedCornerShape(8.dp)
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
@@ -136,7 +135,7 @@ fun ShowOverlay(
 fun SubmitButton(
     tag: String = "",
     unlockTime: Long = 0L,
-    myViewModel: EsmViewModel,
+    myViewModel: EsmViewModelInterface,
     isShowing: MutableState<Boolean> = mutableStateOf(false),
     onClick: () -> Unit = {},
 ) {
@@ -161,7 +160,7 @@ fun SubmitButton(
             responseCounter.responsePlusOne(tag)
             onClick()
         },
-        shape = RoundedCornerShape(16.dp)
+        shape = RoundedCornerShape(8.dp)
     ) {
         Text(
             text = "Submit",
@@ -172,31 +171,24 @@ fun SubmitButton(
 
 @Composable
 fun ShowEsm(
-    myViewModel: EsmViewModel,
-//    autoDismiss: MutableState<Boolean>,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    myViewModel: EsmViewModelInterface,
+    onClick: () -> Unit = {},
 ) {
-    val mediumPadding = dimensionResource(id = R.dimen.padding_medium)
     Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = Modifier
             .background(color = MaterialTheme.colorScheme.surface)
-            .padding(vertical = mediumPadding)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = modifier
-                .padding(horizontal = mediumPadding / 2)
+            verticalAlignment = Alignment.Bottom,
+            horizontalArrangement = Arrangement.Center,
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentWidth()
 
         ) {
             ShowInstruction(modifier = Modifier.weight(1f))
-            DismissButton(
-                onDismiss = onClick,
-                modifier = Modifier//.width(40.dp)
-            )
+//            Spacer(modifier = modifier.weight(1f))
+            DismissButton(onDismiss = onClick)
         }
         //show question 1
         ShowQuestion(
@@ -220,25 +212,10 @@ fun ShowInstruction(
 ) {
     Text(
         stringResource(R.string.instruction),
-        textAlign = TextAlign.Center,
-        fontSize = 13.sp,
         color = MaterialTheme.colorScheme.onSurface,
-        style = LocalTextStyle.current.merge(
-            TextStyle(
-                lineHeight = 1.0.em,
-                platformStyle = PlatformTextStyle(
-                    includeFontPadding = false
-                ),
-                lineHeightStyle = LineHeightStyle(
-                    alignment = LineHeightStyle.Alignment.Center,
-                    trim = LineHeightStyle.Trim.None
-                )
-            )
-        ),
-        modifier = modifier
-            .padding(
-                top = mediumPadding / 2,
-            )
+        style = MaterialTheme.typography.bodyLarge,
+        textAlign = TextAlign.Center,
+        modifier = Modifier.wrapContentWidth().padding(start = 24.dp)
     )
 }
 
@@ -247,7 +224,7 @@ fun ShowQuestion(
     questionString: Int,
     modifier: Modifier = Modifier,
     index: Int,
-    myViewModel: EsmViewModel,
+    myViewModel: EsmViewModelInterface,
 //    autoDismiss: MutableState<Boolean>
 ) {
     val options: List<Int> = listOf(1, 2, 3, 4, 5)
@@ -256,14 +233,15 @@ fun ShowQuestion(
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = mediumPadding, vertical = mediumPadding),
+            .padding(horizontal = mediumPadding, vertical = mediumPadding/2)
+        ,
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation))
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .padding(horizontal = mediumPadding, vertical = mediumPadding / 4)
+                .padding(horizontal = mediumPadding, vertical = mediumPadding)
         ) {
             Text(
                 stringResource(questionString),
@@ -289,7 +267,7 @@ fun ShowQuestion(
                 modifier = modifier
                     //.height(28.dp)
                     .fillMaxWidth()
-                    .padding(top = dimensionResource(id = R.dimen.padding_medium))
+//                    .padding(top = dimensionResource(id = R.dimen.padding_medium))
             ) {
                 options.forEach { item ->
                     ChoiceWithLabel(
@@ -311,7 +289,7 @@ fun ChoiceWithLabel(
     item: Int,
     label: String,
     index: Int,
-    myViewModel: EsmViewModel,
+    myViewModel: EsmViewModelInterface,
     selectedValue: MutableState<Int>,
 //    autoDismiss: MutableState<Boolean>,
     modifier: Modifier = Modifier,
@@ -359,24 +337,19 @@ fun ChoiceWithLabel(
 @Composable
 fun DismissButton(
     onDismiss: () -> Unit,
-    modifier: Modifier
 ) {
     IconButton(
         onClick = {
             onDismiss()
             MyDelayManager.recycleTrigger()
         },
-        modifier = modifier.padding(end = 4.dp)
     ) {
         Icon(
             imageVector = Icons.Filled.Close,
             contentDescription = "Dismiss",
-            modifier = modifier
-                .size(40.dp)
-                .background(
-                    color = MaterialTheme.colorScheme.surfaceVariant,
-                    shape = RoundedCornerShape(10.dp)
-                )
+            tint = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier
+                .size(24.dp)
 
         )
     }
@@ -385,11 +358,13 @@ fun DismissButton(
 
 @Preview
 @Composable
-fun PreviewEsm() {
-    StudyZeroEsmTheme {
-        // A surface container using the 'background' color from the theme
-        Surface {
-            ShowOverlay()
-        }
-    }
+fun PreviewEsmLight() {
+    ShowOverlay(darkTheme = false)
 }
+
+@Preview
+@Composable
+fun PreviewEsmDark() {
+    ShowOverlay(darkTheme = true)
+}
+

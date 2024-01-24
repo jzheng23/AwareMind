@@ -6,11 +6,12 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.data.response.EsmUiState
 import com.jianzheng.studyzero.data.response.Response
-import com.jianzheng.studyzero.data.response.ResponseDao
+import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
 import com.jianzheng.studyzero.data.response.toResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,17 +20,21 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class EsmViewModel(
-    private val responseDao: ResponseDao,
     val context: Context
-) {
+): EsmViewModelInterface {
+    private val db =
+        Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
+            .fallbackToDestructiveMigration()
+            .build()
+    private val responseDao = db.responseDao()
     private val _uiState = MutableStateFlow(EsmUiState(listOf(0, 0), false))
-    val uiState: StateFlow<EsmUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<EsmUiState> = _uiState.asStateFlow()
     private val database = Firebase.database
     private val myRef = database.getReference("ESM")
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
 
-    fun setAnswer(selection: Int, index: Int) {
+    override fun setAnswer(selection: Int, index: Int) {
         val updatedAnswers = uiState.value.answer.toMutableList()
         updatedAnswers[index] = selection
         //Log.d("viewModel", "$index is set to ${uiState.value.answer[index]}")
@@ -41,7 +46,7 @@ class EsmViewModel(
         }
     }
 
-    suspend fun saveAnswer(delay: Long, startingTime: Long) {
+    override suspend fun saveAnswer(delay: Long, startingTime: Long) {
         val newResponse = uiState.value.toResponse(delay, startingTime)
         responseDao.insert(newResponse)
         uploadToFirebase(responseDao.getLastResponse())
@@ -61,4 +66,23 @@ class EsmViewModel(
     }
 
 
+}
+
+interface EsmViewModelInterface {
+    val uiState: StateFlow<EsmUiState>
+    fun setAnswer(selection: Int, index: Int)
+    suspend fun saveAnswer(delay: Long, startingTime: Long)
+    // Include other methods that the composable function will use
+}
+
+
+class MockEsmViewModel(): EsmViewModelInterface {
+    override val uiState = MutableStateFlow(EsmUiState(listOf(0, 0), false))
+    override fun setAnswer(selection: Int, index: Int) {
+        // Mock implementation
+    }
+
+    override suspend fun saveAnswer(delay: Long, startingTime: Long) {
+        // Mock implementation
+    }
 }
