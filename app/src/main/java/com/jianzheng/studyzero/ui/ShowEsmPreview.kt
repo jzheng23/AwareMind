@@ -225,13 +225,3 @@ fun ChoiceWithLabelPreview(
     }
 }
 
-@Preview
-@Composable
-fun PreviewEsm() {
-    StudyZeroTheme {
-        // A surface container using the 'background' color from the theme
-        Surface {
-            ShowOverlayPreview()
-        }
-    }
-}

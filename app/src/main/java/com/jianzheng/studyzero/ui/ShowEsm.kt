@@ -46,6 +46,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -57,14 +58,15 @@ import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
+import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable
 fun ShowOverlay(
-    tag: String,
-    unlockTime: Long,
-    onClick: () -> Unit
+    tag: String = "",
+    unlockTime: Long = 0L,
+    onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val db =
@@ -132,11 +134,11 @@ fun ShowOverlay(
 
 @Composable
 fun SubmitButton(
-    tag: String,
-    unlockTime: Long,
+    tag: String = "",
+    unlockTime: Long = 0L,
     myViewModel: EsmViewModel,
-    isShowing: MutableState<Boolean>,
-    onClick: () -> Unit,
+    isShowing: MutableState<Boolean> = mutableStateOf(false),
+    onClick: () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
     val startingTime = System.currentTimeMillis()
@@ -158,7 +160,9 @@ fun SubmitButton(
             isShowing.value = false
             responseCounter.responsePlusOne(tag)
             onClick()
-        }) {
+        },
+        shape = RoundedCornerShape(16.dp)
+    ) {
         Text(
             text = "Submit",
             style = MaterialTheme.typography.headlineSmall
@@ -379,3 +383,13 @@ fun DismissButton(
 }
 
 
+@Preview
+@Composable
+fun PreviewEsm() {
+    StudyZeroEsmTheme {
+        // A surface container using the 'background' color from the theme
+        Surface {
+            ShowOverlay()
+        }
+    }
+}
