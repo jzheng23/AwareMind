@@ -28,6 +28,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -60,20 +62,6 @@ fun HomeScreen(
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
 
-//    val sharedPreferences =
-//        LocalContext.current.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-//    val userId by usePollState {
-//        mutableStateOf(sharedPreferences.getString("UID", ""))
-//    }
-//    val isTester by usePollState {
-//        mutableStateOf(sharedPreferences.getBoolean("is_tester", false))
-//    }
-//    val isTutorialFinished by usePollState {
-//        mutableStateOf(sharedPreferences.getBoolean("tutorial_finished", false))
-//    }
-//    val isDataCollecting by usePollState {
-//        mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
-//    }
     if (showDialog.value) LoginPage(userId, showDialog)
 
     Surface(
@@ -88,7 +76,12 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (userId == "") {
-                Text("Please login")
+                Text(
+                    text = "Please login",
+                    modifier = Modifier.semantics {
+                        contentDescription = "Please login"
+                    }
+                )
                 LoginButton(
                     showDialog = showDialog
                 )
@@ -216,6 +209,9 @@ fun LoginButton(
     Button(
         onClick = {
             showDialog.value = true
+        },
+        modifier = Modifier.semantics {
+            contentDescription = "Login button"
         }
     ) {
         Text("Login")

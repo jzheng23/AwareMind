@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -163,7 +164,7 @@ fun SubmitButton(
         shape = RoundedCornerShape(8.dp)
     ) {
         Text(
-            text = "Submit",
+            text = stringResource(id = R.string.submit),
             style = MaterialTheme.typography.headlineSmall
         )
     }
@@ -178,46 +179,47 @@ fun ShowEsm(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
-        Row(
-            verticalAlignment = Alignment.Bottom,
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentWidth()
 
-        ) {
-            ShowInstruction(modifier = Modifier.weight(1f))
-//            Spacer(modifier = modifier.weight(1f))
-            DismissButton(onDismiss = onClick)
+        Box(modifier = Modifier.fillMaxWidth()) {
+            Text(
+                text = stringResource(id = R.string.instruction),
+                modifier = Modifier
+                    .align(Alignment.Center),
+                textAlign = TextAlign.Center
+            )
+
+            IconButton(
+                onClick = {
+                    onClick()
+                    MyDelayManager.recycleTrigger()
+                },
+                modifier = Modifier.align(Alignment.CenterEnd)
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Close,
+                    contentDescription = "Dismiss",
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
         }
         //show question 1
         ShowQuestion(
             questionString = R.string.question1,
             index = 0,
             myViewModel = myViewModel,
+            labelSet = 1
 //            autoDismiss = autoDismiss
         )
         ShowQuestion(
             questionString = R.string.question2,
             index = 1,
             myViewModel = myViewModel,
+            labelSet = 2
 //            autoDismiss = autoDismiss
         )
     }
 }
 
-@Composable
-fun ShowInstruction(
-    modifier: Modifier = Modifier
-) {
-    Text(
-        stringResource(R.string.instruction),
-        color = MaterialTheme.colorScheme.onSurface,
-        style = MaterialTheme.typography.bodyLarge,
-        textAlign = TextAlign.Center,
-        modifier = Modifier.wrapContentWidth().padding(start = 24.dp)
-    )
-}
 
 @Composable
 fun ShowQuestion(
@@ -225,23 +227,28 @@ fun ShowQuestion(
     modifier: Modifier = Modifier,
     index: Int,
     myViewModel: EsmViewModelInterface,
+    labelSet: Int,
 //    autoDismiss: MutableState<Boolean>
 ) {
     val options: List<Int> = listOf(1, 2, 3, 4, 5)
-    val labels: List<String> = listOf("Strongly disagree", "", "Neutral", "", "Strongly agree")
+    val labels1: List<String> = listOf("Very passively", "", "Moderately", "", "Very actively")
+    val labels2: List<String> = listOf("Strongly disagree", "", "Neutral", "", "Strongly agree")
+    val labels = if (labelSet == 1) labels1 else labels2
     val selectedValue = remember { mutableIntStateOf(0) }
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = mediumPadding, vertical = mediumPadding/2)
-        ,
+            .padding(horizontal = mediumPadding, vertical = mediumPadding / 2),
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation))
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             modifier = modifier
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
-                .padding(horizontal = mediumPadding, vertical = mediumPadding)
+                .padding(
+                    horizontal = mediumPadding,
+                    vertical = mediumPadding/2
+                )
         ) {
             Text(
                 stringResource(questionString),
@@ -260,6 +267,7 @@ fun ShowQuestion(
                         )
                     )
                 ),
+                modifier = Modifier.padding(bottom = 4.dp)
             )
             Row(
                 verticalAlignment = Alignment.Top,
@@ -311,49 +319,32 @@ fun ChoiceWithLabel(
             modifier = modifier
                 .height(22.dp)
         )
-        Text(
-            text = label,//s[item - 1],
-            fontSize = 12.sp,
-            textAlign = TextAlign.Center,
-            style = LocalTextStyle.current.merge(
-                TextStyle(
-                    lineHeight = 1.0.em,
-                    platformStyle = PlatformTextStyle(
-                        includeFontPadding = false
-                    ),
-                    lineHeightStyle = LineHeightStyle(
-                        alignment = LineHeightStyle.Alignment.Center,
-                        trim = LineHeightStyle.Trim.None
+        if (label != ""){
+            Text(
+                text = label,//s[item - 1],
+                fontSize = 12.sp,
+                textAlign = TextAlign.Center,
+                style = LocalTextStyle.current.merge(
+                    TextStyle(
+                        lineHeight = 1.0.em,
+                        platformStyle = PlatformTextStyle(
+                            includeFontPadding = false
+                        ),
+                        lineHeightStyle = LineHeightStyle(
+                            alignment = LineHeightStyle.Alignment.Center,
+                            trim = LineHeightStyle.Trim.None
+                        )
                     )
-                )
-            ),
-            modifier = modifier
-                .width(55.dp)
+                ),
+                modifier = modifier
+                    .width(68.dp)
 
-        )
+            )
+        }
+
     }
 }
 
-@Composable
-fun DismissButton(
-    onDismiss: () -> Unit,
-) {
-    IconButton(
-        onClick = {
-            onDismiss()
-            MyDelayManager.recycleTrigger()
-        },
-    ) {
-        Icon(
-            imageVector = Icons.Filled.Close,
-            contentDescription = "Dismiss",
-            tint = MaterialTheme.colorScheme.onSurface,
-            modifier = Modifier
-                .size(24.dp)
-
-        )
-    }
-}
 
 
 @Preview
@@ -367,4 +358,7 @@ fun PreviewEsmLight() {
 fun PreviewEsmDark() {
     ShowOverlay(darkTheme = true)
 }
+
+
+
 

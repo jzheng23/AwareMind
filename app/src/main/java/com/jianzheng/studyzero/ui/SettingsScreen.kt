@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.tool.MyPermissionManager
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 @Composable
 fun SettingsScreen(
@@ -122,6 +124,13 @@ fun SettingsScreen(
                         MyPermissionManager.grantAccessibilityPermission(context)
                     }
                 )
+            }
+            Button(
+                onClick = {
+                    navController.navigate(AppRoutes.HOME)
+                },
+            ) {
+                Text("Home")
             }
 
 

@@ -28,12 +28,6 @@ class MainActivity : ComponentActivity() {
             }
         }
         auth = Firebase.auth
-
-//        val filter = IntentFilter().apply {
-//            addAction(Intent.ACTION_USER_PRESENT)
-//            addAction(Intent.ACTION_SCREEN_OFF)
-//        }
-//        registerReceiver(unlockReceiver, filter)
     }
 
     override fun onDestroy() {
