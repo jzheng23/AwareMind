@@ -17,7 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 import java.io.File
+import java.io.FileInputStream
+import java.io.FileOutputStream
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 @Composable
 fun ExportScreen(
@@ -38,10 +44,9 @@ fun ExportScreen(
             Text("Export data to local files")
             Button(
                 onClick = {
-                    val path = context.getDatabasePath("response_database")
-                    shareDatabase(context, "response_database", "com.jianzheng.studyzero.provider")
+                    shareDatabases(context, listOf("response_database", "input_database", "usage_database"), "com.jianzheng.studyzero.provider")
 //                    shareDatabaseBackup(context, "response_database", "com.jianzheng.studyzero.provider")
-                    Log.d("exportData", "path: $path")
+
                 }
             ) {
                 Text("Export")
@@ -58,23 +63,29 @@ fun ExportScreen(
 }
 
 
-fun shareDatabase(context: Context, databaseName: String, authority: String) {
-    val originalFile = File(context.getDatabasePath(databaseName).path)
-
-    // Ensure the file exists and is readable
-    if (!originalFile.exists() || !originalFile.canRead()) {
-        Log.e("ShareDatabase", "Database file is not accessible.")
-        return
+fun shareDatabases(context: Context, databaseNames: List<String>, authority: String) {
+    val files = databaseNames.map { dbName ->
+        val originalFile = File(context.getDatabasePath(dbName).path)
+        val newFile = File(context.getExternalFilesDir(null), "$dbName.db")
+        originalFile.copyTo(newFile, overwrite = true)
+        newFile
     }
 
-    // New file location in external files directory
-    val newFile = File(context.getExternalFilesDir(null), databaseName)
+    val zipFile = File(context.getExternalFilesDir(null), "databases.zip")
+    ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
+        files.forEach { file ->
+            FileInputStream(file).use { fis ->
+                BufferedInputStream(fis).use { bis ->
+                    val zipEntry = ZipEntry(file.name)
+                    zos.putNextEntry(zipEntry)
+                    bis.copyTo(zos)
+                    zos.closeEntry()
+                }
+            }
+        }
+    }
 
-    // Copy the database file to the external files directory
-    originalFile.copyTo(newFile, overwrite = true)
-
-    // Get URI for the new file using FileProvider
-    val fileUri = FileProvider.getUriForFile(context, authority, newFile)
+    val fileUri = FileProvider.getUriForFile(context, authority, zipFile)
 
     val emailIntent = Intent(Intent.ACTION_SEND).apply {
         type = "application/octet-stream" // or use "*/*"

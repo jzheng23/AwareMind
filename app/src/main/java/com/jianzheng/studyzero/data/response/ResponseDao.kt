@@ -12,13 +12,13 @@ interface ResponseDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(response: Response)
 
-    @Query("SELECT COUNT(id) from responses")
+    @Query("SELECT COUNT(id) from response")
     fun getCount(): Flow<Int>
 
-    @Query("SELECT COUNT(id) from responses WHERE submittingTime > :todayInMillis")
+    @Query("SELECT COUNT(id) from response WHERE submittingTime > :todayInMillis")
     fun getCountToday(todayInMillis: Long): Flow<Int>
 
-    @Query("SELECT * FROM responses WHERE id = (SELECT MAX(id) FROM responses)")
+    @Query("SELECT * FROM response WHERE id = (SELECT MAX(id) FROM response)")
     fun getLastResponse(): Response
 
 }
