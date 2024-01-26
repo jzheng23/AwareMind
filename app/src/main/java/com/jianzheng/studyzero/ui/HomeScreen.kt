@@ -1,28 +1,34 @@
 package com.jianzheng.studyzero.ui
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -32,6 +38,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,10 +48,9 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
-import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
+import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
 val mediumPadding = 12.dp
-
 
 
 @Composable
@@ -77,7 +84,7 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
                 .padding(mediumPadding),
-            verticalArrangement = Arrangement.Center,
+            verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (userId == "") {
@@ -121,10 +128,11 @@ fun HomeScreen(
                     )
                 }
                 if (isDataCollecting) {
-                    WelcomeInfo(userId?:"", showDialog
+                    WelcomeInfo(
+                        userId, showDialog
                     ) {
                         navController.navigate(AppRoutes.EXPORT)
-                        Log.d("navigate","to export")
+                        Log.d("navigate", "to export")
                     }
                 }
 
@@ -140,68 +148,68 @@ fun HomeScreen(
 
 }
 
-
-@Composable
-fun ContactInfo() {
-    Text("Jian Zheng, jzheng23@umd.edu")
-}
-
-@Composable
-fun UmdLogo() {
-    Image(
-        painterResource(id = if (isSystemInDarkTheme()) R.drawable.logos_wordmark_light_text else R.drawable.logos_wordmark_dark_text),
-        contentDescription = null,
-    )
-}
-
 @Composable
 fun WelcomeInfo(
     userId: String = "",
-    showDialog: MutableState<Boolean>,
-    onClickOfInput: () -> Unit
+    showDialog: MutableState<Boolean> = mutableStateOf(false),
+    onClickOfInput: () -> Unit = {}
 ) {
-    val context = LocalContext.current.applicationContext as Application
-    val welcomeViewModel: WelcomeViewModel = viewModel(
-        factory = WelcomeViewModelFactory(context)
-    )
-    val todayCount = welcomeViewModel.todayCount.observeAsState()
-    val totalCount = welcomeViewModel.totalCount.observeAsState()
-    val dayCount = welcomeViewModel.dayCount.observeAsState()
+    val todayCount = remember { mutableIntStateOf(0) }
+    val totalCount = remember { mutableIntStateOf(0) }
+    val dayCount = remember { mutableIntStateOf(0) }
+
+
+//    val context = LocalContext.current.applicationContext as Application
+//    val welcomeViewModel: WelcomeViewModel = viewModel(
+//        factory = WelcomeViewModelFactory(context)
+//    )
+//    val todayCount = welcomeViewModel.todayCount.observeAsState()
+//    val totalCount = welcomeViewModel.totalCount.observeAsState()
+//    val dayCount = welcomeViewModel.dayCount.observeAsState()
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Welcome, $userId!",
-            style = MaterialTheme.typography.headlineSmall,
+            text = "Hi, $userId!",
+            style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier.clickable { showDialog.value = true }
+                .padding(32.dp)
         )
-        Divider()
-        Text(
-            text = "App has been running for ${dayCount.value} day(s).",
-            style = MaterialTheme.typography.bodyLarge
+        InfoCard(
+            dayCount = dayCount.value,
+            todayCount = todayCount.value,
+            totalCount = totalCount.value
         )
-        Text(
-            text = "You have made:",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            text = "${todayCount.value} report(s) today,",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-        Text(
-            text = "${totalCount.value} report(s) in total.",
-            style = MaterialTheme.typography.bodyLarge,
-        )
-
-        Divider()
+        Spacer(modifier = Modifier.height(32.dp))
         Text(
             text = "Thanks for your input!",
             style = MaterialTheme.typography.headlineSmall,
             modifier = Modifier.clickable { onClickOfInput() }
         )
-        UmdLogo()
-        ContactInfo()
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(vertical = 12.dp)
+        ){
+            Image(
+                painterResource(id = if (isSystemInDarkTheme()) R.drawable.logos_wordmark_light_text else R.drawable.logos_wordmark_dark_text),
+                contentDescription = null,
+                modifier = Modifier
+                    .weight(1f) // The weight is a ratio, so both use 1f to split space equally
+                    .fillMaxWidth()
+            )
+            Column(
+                horizontalAlignment = Alignment.End,
+                modifier = Modifier
+                    .weight(1f) // The weight is a ratio, so both use 1f to split space equally
+                    .fillMaxWidth()
+            ) {
+                Text("Jian Zheng")
+                Text("jzheng23@umd.edu")
+            }
+        }
+
     }
 
 }
@@ -223,23 +231,106 @@ fun LoginButton(
     }
 }
 
+@Composable
+fun InfoCard(
+    dayCount: Int,
+    todayCount: Int,
+    totalCount: Int
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth(),
+        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+    ) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 8.dp)
+
+        ) {
+//            Text(
+//                text = "Summary",
+//                style = MaterialTheme.typography.titleLarge,
+//                fontWeight = FontWeight.Bold
+//            )
+//            Spacer(modifier = Modifier.height(16.dp))
+//            Text(
+//                text = "The app has been running for"
+//            )
+//            RowOfInfo(intCount = dayCount, unit = "day")
+//            Spacer(modifier = Modifier.height(16.dp))
+            Text(
+                text = "Reports",
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            RowOfInfo(intCount = todayCount, extraString = "Today")
+            RowOfInfo(intCount = totalCount, extraString = "In total")
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+    }
+
+}
+
+@Composable
+fun RowOfInfo(
+    intCount: Int = 0,
+    extraString: String = ""
+) {
+    Row(
+        verticalAlignment = Alignment.Bottom
+    ) {
+        Text(
+            text = intCount.toString(),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.Bold
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = extraString,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
+}
 
 @Preview
 @Composable
-fun SettingPagePreview() {
-    StudyZeroEsmTheme() {
+fun HomePagePreview() {
+    StudyZeroTheme (darkTheme = true) {
         Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            color = Color.White.copy(alpha = 0.5f),
-//            onClick = onClick
+            modifier = Modifier.fillMaxSize()
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .padding(mediumPadding),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                UmdLogo()
-                ContactInfo()
+                WelcomeInfo()
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HomePagePreviewLight() {
+    StudyZeroTheme (darkTheme = false) {
+        Surface(
+            modifier = Modifier.fillMaxSize()
+        ) {
+            Column(
+                modifier = Modifier
+                    .verticalScroll(rememberScrollState())
+                    .fillMaxSize()
+                    .padding(mediumPadding),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                WelcomeInfo()
             }
         }
     }
