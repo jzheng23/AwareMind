@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -34,6 +35,7 @@ import com.jianzheng.studyzero.tool.MyPreferenceManager
 fun LoginPage(
 //    userId: MutableState<String?> = mutableStateOf(""),
     userId: String = "",
+    userAlias: String = "",
     showDialog: MutableState<Boolean> = mutableStateOf(true),
     isTester: MutableState<Boolean> = mutableStateOf(true),
 ) {
@@ -53,9 +55,9 @@ fun LoginPage(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 UseIdInputField(
-                    userId,
-                    showDialog,
-                    isTester
+                    userId = userId,
+                    userAlias = userAlias,
+                    showDialog = showDialog
                 )
             }
         }
@@ -65,19 +67,21 @@ fun LoginPage(
 fun saveUserId(
 //    userId: MutableState<String?>,
     userId: String,
-    isTester: MutableState<Boolean>,
+    userAlias: String,
+//    isTester: MutableState<Boolean>,
     context: Context
 ) {
     val userIdIsValidate: Boolean = validateUid(userId)
-    isTester.value = isTester(userId)
+    val isTester = isTester(userId)
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
     editor.putString("UID", userId)
+        .putString("user_alias", userAlias)
         .putBoolean("UID_valid", userIdIsValidate)
-        .putBoolean("is_tester", isTester.value)
+        .putBoolean("is_tester", isTester)
         .apply()
-    Log.d("userId", "UID is $userId, and tester? ${isTester.value}")
+    Log.d("userId", "UID is $userId, and tester? ${isTester}")
 }
 
 fun isTester(userId: String?): Boolean {
@@ -99,13 +103,16 @@ fun validateUid(userId: String?): Boolean {
 fun UseIdInputField(
 //    userId: MutableState<String?>,
     userId: String = "",
-    showDialog: MutableState<Boolean>,
-    isTester: MutableState<Boolean>
+    userAlias: String = "",
+    showDialog: MutableState<Boolean>
 ) {
     var userIdInput by remember { mutableStateOf(userId) }
+    var userAliasInput by remember {
+        mutableStateOf(userAlias)
+    }
     val context = LocalContext.current
     userIdInput?.let { it ->
-        TextField(
+        OutlinedTextField(
             value = it,
             onValueChange = {
                 userIdInput = it
@@ -114,30 +121,40 @@ fun UseIdInputField(
             label = { Text("User ID") },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
-                imeAction = ImeAction.Done
+                imeAction = ImeAction.Next
             ),
-            keyboardActions = KeyboardActions(
-                onDone = {
-                    showDialog.value = false
-                    saveUserId(
-                        userIdInput,
-                        isTester,
-                        context,
-                    )
-                }
-            )
+//            keyboardActions = KeyboardActions(
+//                onDone = {
+//                    showDialog.value = false
+//                    saveUserId(
+//                        userIdInput,
+//                        isTester,
+//                        context,
+//                    )
+//                }
+//            )
         )
     }
+    OutlinedTextField(
+        value = userAliasInput,
+        onValueChange = {userAliasInput = it},
+        label = {Text("Alias (optional)")},
+        singleLine = true,
+        keyboardOptions = KeyboardOptions(
+            imeAction = ImeAction.Done
+        ),
+    )
     Button(
         onClick = {
             showDialog.value = false
             saveUserId(
-                userId,
-                isTester,
+                userIdInput,
+                userAliasInput,
                 context,
             )
         },
-        enabled = (userIdInput != "")
+        enabled = (userIdInput != ""),
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text("Confirm")
     }

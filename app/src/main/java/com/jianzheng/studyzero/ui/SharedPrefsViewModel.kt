@@ -17,6 +17,8 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     private val _userId = MutableLiveData<String>()
     val userId: LiveData<String> = _userId
 
+    private val _userAlias = MutableLiveData<String>()
+    val userAlias: LiveData<String> = _userAlias
     // LiveData for isTester
     private val _isTester = MutableLiveData<Boolean>()
     val isTester: LiveData<Boolean> = _isTester
@@ -33,6 +35,7 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 "UID" -> _userId.value = sharedPreferences.getString("UID", "")
+                "user_alias" -> _userAlias.value = sharedPreferences.getString("user_alias", "")
                 "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
                 "tutorial_finished" -> _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
                 "collecting_data" -> _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)
@@ -42,6 +45,7 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     init {
         // Initialize LiveData with current preferences values
         _userId.value = sharedPreferences.getString("UID", "")
+        _userAlias.value = sharedPreferences.getString("user_alias", "")
         _isTester.value = sharedPreferences.getBoolean("is_tester", false)
         _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
         _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)

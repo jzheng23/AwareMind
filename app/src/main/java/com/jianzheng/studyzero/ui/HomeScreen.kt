@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -20,7 +19,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,17 +26,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,12 +63,12 @@ fun HomeScreen(
         factory = SharedPrefsViewModelFactory(context2)
     )
     val userId by sharedPrefsViewModel.userId.observeAsState("")
+    val userAlias by sharedPrefsViewModel.userAlias.observeAsState("")
     val isTester by sharedPrefsViewModel.isTester.observeAsState(false)
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
 
-    if (showDialog.value) LoginPage(userId, showDialog)
-
+    if (showDialog.value) LoginPage(userId, userAlias, showDialog)
 
 
     Surface(
@@ -129,7 +124,7 @@ fun HomeScreen(
                 }
                 if (isDataCollecting) {
                     WelcomeInfo(
-                        userId, showDialog
+                        userId, userAlias, showDialog
                     ) {
                         navController.navigate(AppRoutes.EXPORT)
                         Log.d("navigate", "to export")
@@ -151,35 +146,37 @@ fun HomeScreen(
 @Composable
 fun WelcomeInfo(
     userId: String = "",
+    userAlias: String = "",
     showDialog: MutableState<Boolean> = mutableStateOf(false),
     onClickOfInput: () -> Unit = {}
 ) {
-    val todayCount = remember { mutableIntStateOf(0) }
-    val totalCount = remember { mutableIntStateOf(0) }
-    val dayCount = remember { mutableIntStateOf(0) }
+//    val todayCount = remember { mutableIntStateOf(0) }
+//    val totalCount = remember { mutableIntStateOf(0) }
+//    val dayCount = remember { mutableIntStateOf(0) }
 
 
-//    val context = LocalContext.current.applicationContext as Application
-//    val welcomeViewModel: WelcomeViewModel = viewModel(
-//        factory = WelcomeViewModelFactory(context)
-//    )
-//    val todayCount = welcomeViewModel.todayCount.observeAsState()
-//    val totalCount = welcomeViewModel.totalCount.observeAsState()
-//    val dayCount = welcomeViewModel.dayCount.observeAsState()
+    val context = LocalContext.current.applicationContext as Application
+    val welcomeViewModel: WelcomeViewModel = viewModel(
+        factory = WelcomeViewModelFactory(context)
+    )
+    val todayCount = welcomeViewModel.todayCount.observeAsState()
+    val totalCount = welcomeViewModel.totalCount.observeAsState()
+    val dayCount = welcomeViewModel.dayCount.observeAsState()
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = "Hi, $userId!",
+            text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias",
             style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier.clickable { showDialog.value = true }
+            modifier = Modifier
+                .clickable { showDialog.value = true }
                 .padding(32.dp)
         )
         InfoCard(
-            dayCount = dayCount.value,
-            todayCount = todayCount.value,
-            totalCount = totalCount.value
+            dayCount = dayCount.value ?: 0,
+            todayCount = todayCount.value ?: 0,
+            totalCount = totalCount.value ?: 0
         )
         Spacer(modifier = Modifier.height(32.dp))
         Text(
@@ -191,7 +188,7 @@ fun WelcomeInfo(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
                 .padding(vertical = 12.dp)
-        ){
+        ) {
             Image(
                 painterResource(id = if (isSystemInDarkTheme()) R.drawable.logos_wordmark_light_text else R.drawable.logos_wordmark_dark_text),
                 contentDescription = null,
@@ -297,7 +294,7 @@ fun RowOfInfo(
 @Preview
 @Composable
 fun HomePagePreview() {
-    StudyZeroTheme (darkTheme = true) {
+    StudyZeroTheme(darkTheme = true) {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {
@@ -318,7 +315,7 @@ fun HomePagePreview() {
 @Preview
 @Composable
 fun HomePagePreviewLight() {
-    StudyZeroTheme (darkTheme = false) {
+    StudyZeroTheme(darkTheme = false) {
         Surface(
             modifier = Modifier.fillMaxSize()
         ) {

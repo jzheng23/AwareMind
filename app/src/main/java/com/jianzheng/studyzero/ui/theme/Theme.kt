@@ -76,7 +76,6 @@ fun StudyZeroEsmTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-
         darkTheme -> darkColorScheme
         else -> lightColorScheme
     }
@@ -95,8 +94,6 @@ fun StudyZeroTheme(
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
-
-
         darkTheme -> lightColorScheme
         else -> darkColorScheme
     }
