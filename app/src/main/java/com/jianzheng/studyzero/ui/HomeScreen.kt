@@ -1,6 +1,8 @@
 package com.jianzheng.studyzero.ui
 
 import android.app.Application
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -29,6 +31,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -156,22 +159,28 @@ fun WelcomeInfo(
 //    val dayCount = remember { mutableIntStateOf(0) }
 
 
-    val context = LocalContext.current.applicationContext as Application
+    val contextAsApp = LocalContext.current.applicationContext as Application
     val welcomeViewModel: WelcomeViewModel = viewModel(
-        factory = WelcomeViewModelFactory(context)
+        factory = WelcomeViewModelFactory(contextAsApp)
     )
     val todayCount = welcomeViewModel.todayCount.observeAsState()
     val totalCount = welcomeViewModel.totalCount.observeAsState()
     val dayCount = welcomeViewModel.dayCount.observeAsState()
-
+    var clickOnUserCount by remember { mutableIntStateOf(0) }
+    var clickOnInputCount by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Text(
-            text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias",
+
+            text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias!",
             style = MaterialTheme.typography.headlineMedium,
             modifier = Modifier
-                .clickable { showDialog.value = true }
+                .clickable {
+                    clickOnUserCount++
+                    if (clickOnUserCount > 2) showDialog.value = true
+                }
                 .padding(32.dp)
         )
         InfoCard(
@@ -183,7 +192,10 @@ fun WelcomeInfo(
         Text(
             text = "Thanks for your input!",
             style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.clickable { onClickOfInput() }
+            modifier = Modifier.clickable {
+                clickOnInputCount++
+                if (clickOnInputCount > 2) onClickOfInput()
+            }
         )
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -204,7 +216,24 @@ fun WelcomeInfo(
                     .fillMaxWidth()
             ) {
                 Text("Jian Zheng")
-                Text("jzheng23@umd.edu")
+                Text(
+                    text = "jzheng23@umd.edu",
+                    modifier = Modifier.clickable {
+                        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                            data = Uri.parse("mailto:")
+                            putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
+                            putExtra(Intent.EXTRA_SUBJECT, "From Study Zero")
+                        }
+
+                        // Verify that the intent will resolve to an activity
+                        if (emailIntent.resolveActivity(context.packageManager) != null) {
+                            context.startActivity(emailIntent)
+                            Log.d("email","can do")
+                        } else {
+                            Log.d("email","cannot do")
+                        }
+                    }
+                )
             }
         }
 

@@ -2,7 +2,7 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -39,7 +39,8 @@ fun ExportScreen(
             Button(
                 onClick = {
                     val path = context.getDatabasePath("response_database")
-                    shareDatabase(context,"response_database", "com.jianzheng.studyzero.provider")
+                    shareDatabase(context, "response_database", "com.jianzheng.studyzero.provider")
+//                    shareDatabaseBackup(context, "response_database", "com.jianzheng.studyzero.provider")
                     Log.d("exportData", "path: $path")
                 }
             ) {
@@ -56,7 +57,40 @@ fun ExportScreen(
     }
 }
 
+
 fun shareDatabase(context: Context, databaseName: String, authority: String) {
+    val originalFile = File(context.getDatabasePath(databaseName).path)
+
+    // Ensure the file exists and is readable
+    if (!originalFile.exists() || !originalFile.canRead()) {
+        Log.e("ShareDatabase", "Database file is not accessible.")
+        return
+    }
+
+    // New file location in external files directory
+    val newFile = File(context.getExternalFilesDir(null), databaseName)
+
+    // Copy the database file to the external files directory
+    originalFile.copyTo(newFile, overwrite = true)
+
+    // Get URI for the new file using FileProvider
+    val fileUri = FileProvider.getUriForFile(context, authority, newFile)
+
+    val emailIntent = Intent(Intent.ACTION_SEND).apply {
+        type = "application/octet-stream" // or use "*/*"
+        putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
+        putExtra(Intent.EXTRA_SUBJECT, "Study Zero: Database Files")
+        putExtra(Intent.EXTRA_STREAM, fileUri)
+        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    }
+
+    // Verify that the intent will resolve to an activity
+    if (emailIntent.resolveActivity(context.packageManager) != null) {
+        context.startActivity(Intent.createChooser(emailIntent, "Send Database via Email"))
+    }
+}
+
+fun shareDatabaseBackup(context: Context, databaseName: String, authority: String) {
     // Original database file
     val originalFile = File(context.getDatabasePath(databaseName).path)
 
