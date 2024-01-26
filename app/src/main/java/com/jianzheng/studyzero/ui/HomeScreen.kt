@@ -9,6 +9,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,8 +20,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,6 +46,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -73,7 +81,7 @@ fun HomeScreen(
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
 
     if (showDialog.value) LoginPage(userId, userAlias, showDialog)
-
+    var clickOnUserCount by remember { mutableIntStateOf(0) }
 
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -97,32 +105,63 @@ fun HomeScreen(
                     showDialog = showDialog
                 )
             } else {
+                Box(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    IconButton(
+                        onClick = {
+                        },
+                        modifier = Modifier.align(Alignment.CenterStart)
+                    ){
+                        Icon(
+                            imageVector = Icons.Filled.AccountCircle,
+                            contentDescription = "Back"
+                        )
+                    }
+                    Text(
+                        text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias!",
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .clickable {
+                                clickOnUserCount++
+                                if (clickOnUserCount > 2) showDialog.value = true
+                            }
+                            .align(Alignment.Center)
+                    )
+                }
+                Divider(
+                    color = MaterialTheme.colorScheme.outline
+                )
                 if (showPermissionCard) {
-                    ButtonCard(
+                    ArrowCard(
                         title = "Permission",
                         desc = "Grant permissions the app needs",
-                        onAuthClick = { navController.navigate(AppRoutes.SETTINGS) },
-                        buttonText = "Manage"
+                        onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
                     )
                 }
                 if (!isTutorialFinished) {
-                    ButtonCard(
+                    ArrowCard(
                         title = "Tutorial",
                         desc = if (!showPermissionCard) "See what the survey is like and how it works" else "Please grant permissions to unlock the tutorial",
                         onAuthClick = {
-                            navController.navigate(AppRoutes.TUTORIAL)
-                            MyPreferenceManager.setInt(context, "randomMet", 0)
+                            if (!showPermissionCard) {
+                                navController.navigate(AppRoutes.TUTORIAL)
+                                MyPreferenceManager.setInt(context, "randomMet", 0)
+                            }
                         },
-                        buttonText = "Start",
                         buttonEnabled = !showPermissionCard
                     )
                 }
                 if (!isDataCollecting) {
-                    ButtonCard(
+                    ArrowCard(
                         title = "Data collection",
                         desc = if (isTutorialFinished) "Start data collection" else "Please complete tutorial first ",
-                        onAuthClick = { startEverything(context) },
-                        buttonText = "Start",
+                        onAuthClick = {
+                            if (isTutorialFinished) {
+                                startEverything(context)
+                            }
+                        },
                         buttonEnabled = isTutorialFinished
                     )
                 }
@@ -228,9 +267,9 @@ fun WelcomeInfo(
                         // Verify that the intent will resolve to an activity
                         if (emailIntent.resolveActivity(context.packageManager) != null) {
                             context.startActivity(emailIntent)
-                            Log.d("email","can do")
+                            Log.d("email", "can do")
                         } else {
-                            Log.d("email","cannot do")
+                            Log.d("email", "cannot do")
                         }
                     }
                 )
@@ -276,17 +315,6 @@ fun InfoCard(
                 .padding(horizontal = 12.dp, vertical = 8.dp)
 
         ) {
-//            Text(
-//                text = "Summary",
-//                style = MaterialTheme.typography.titleLarge,
-//                fontWeight = FontWeight.Bold
-//            )
-//            Spacer(modifier = Modifier.height(16.dp))
-//            Text(
-//                text = "The app has been running for"
-//            )
-//            RowOfInfo(intCount = dayCount, unit = "day")
-//            Spacer(modifier = Modifier.height(16.dp))
             Text(
                 text = "Reports",
                 style = MaterialTheme.typography.titleMedium,

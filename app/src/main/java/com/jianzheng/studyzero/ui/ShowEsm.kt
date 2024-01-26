@@ -4,22 +4,19 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -106,13 +103,20 @@ fun ShowOverlay(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(mediumPadding),
+                    .padding(
+                        top = 40.dp,
+                        end = mediumPadding,
+                        start = mediumPadding,
+//                        bottom = mediumPadding
+                    ),
                 elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
-                shape = RoundedCornerShape(8.dp)
+                shape = RoundedCornerShape(8.dp),
             ) {
                 Column(
                     verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.surface)
                 ) {
                     ShowEsm(
                         myViewModel = myViewModel,
@@ -149,7 +153,12 @@ fun SubmitButton(
     Button(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(mediumPadding),
+            .padding(
+                start = mediumPadding,
+                end = mediumPadding,
+                top = mediumPadding / 2,
+                bottom = mediumPadding
+            ),
         enabled = myViewModel.uiState.collectAsState().value.isAnswerValid,
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
@@ -180,11 +189,14 @@ fun ShowEsm(
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
 
-        Box(modifier = Modifier.fillMaxWidth()) {
+        Box(
+            modifier = Modifier.fillMaxWidth()
+        ) {
             Text(
                 text = stringResource(id = R.string.instruction),
                 modifier = Modifier
-                    .align(Alignment.Center),
+                    .align(Alignment.Center)
+                    .padding(top = mediumPadding),
                 textAlign = TextAlign.Center
             )
 
@@ -193,7 +205,7 @@ fun ShowEsm(
                     onClick()
                     MyDelayManager.recycleTrigger()
                 },
-                modifier = Modifier.align(Alignment.CenterEnd)
+                modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
                     imageVector = Icons.Filled.Close,
@@ -239,7 +251,9 @@ fun ShowQuestion(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = mediumPadding, vertical = mediumPadding / 2),
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation))
+        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
+        shape = RoundedCornerShape(8.dp),
+//        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -247,7 +261,7 @@ fun ShowQuestion(
                 .background(color = MaterialTheme.colorScheme.surfaceVariant)
                 .padding(
                     horizontal = mediumPadding,
-                    vertical = mediumPadding/2
+                    vertical = mediumPadding / 2
                 )
         ) {
             Text(
@@ -319,7 +333,7 @@ fun ChoiceWithLabel(
             modifier = modifier
                 .height(22.dp)
         )
-        if (label != ""){
+        if (label != "") {
             Text(
                 text = label,//s[item - 1],
                 fontSize = 12.sp,
@@ -344,7 +358,6 @@ fun ChoiceWithLabel(
 
     }
 }
-
 
 
 @Preview
