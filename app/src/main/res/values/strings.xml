@@ -2,7 +2,7 @@
     <string name="app_name">Study Zero</string>
     <string name="question1">I am using my phone...</string>
     <string name="question2">I should continue using my phone.</string>
-    <string name="instruction">Please answer these questions  </string>
+    <string name="instruction">Please answer these questions:  </string>
     <string name="submit">Submit</string>
     <string name="_30met">30Met</string>
     <string name="_20met">20Met</string>

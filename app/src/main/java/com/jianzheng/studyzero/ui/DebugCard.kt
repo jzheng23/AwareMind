@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -96,7 +97,10 @@ fun DebugCard(
             modifier = modifier
                 .padding(mediumPadding)
         ) {
-            IconButton(onClick = { isVisible = !isVisible }) {
+            IconButton(
+                onClick = { isVisible = !isVisible },
+                modifier = Modifier.wrapContentSize()
+                ) {
                 Icon(
                     imageVector = if (isVisible) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = if (isVisible) "Collapse" else "Expand"

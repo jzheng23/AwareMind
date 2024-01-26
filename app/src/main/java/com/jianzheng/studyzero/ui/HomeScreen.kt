@@ -14,9 +14,11 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
@@ -43,6 +45,7 @@ import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 val mediumPadding = 12.dp
 
 
+
 @Composable
 fun HomeScreen(
     navController: NavController,
@@ -63,6 +66,8 @@ fun HomeScreen(
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
 
     if (showDialog.value) LoginPage(userId, showDialog)
+
+
 
     Surface(
         modifier = Modifier.fillMaxSize()
