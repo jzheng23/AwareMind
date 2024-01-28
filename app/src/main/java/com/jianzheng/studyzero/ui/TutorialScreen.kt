@@ -38,8 +38,8 @@ fun TutorialScreen(
     val testShown = remember {
         mutableStateOf<Boolean>(false)
     }
-    val randomMetCount by usePollState {
-        MyPreferenceManager.getInt(context, "randomMet")
+    val onceMetCount by usePollState {
+        MyPreferenceManager.getInt(context, "onceMet")
     }
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -57,8 +57,10 @@ fun TutorialScreen(
                 IconButton(
                     onClick = {
                         navController.navigate(AppRoutes.HOME)
-                        MyPreferenceManager.setBoolean(context, "tutorial_finished", true)
-                        MyPreferenceManager.setBoolean(context, "using_once_triggers", false)
+                        if (onceMetCount > 0) {
+                            MyPreferenceManager.setBoolean(context, "tutorial_finished", true)
+                            MyPreferenceManager.setBoolean(context, "using_once_triggers", false)
+                        }
                     },
                     modifier = Modifier.align(Alignment.CenterStart)
                 ) {
@@ -85,7 +87,7 @@ fun TutorialScreen(
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                if (randomMetCount == 0) {
+                if (onceMetCount == 0) {
                     ArrowCard(
                         title = "Test the Survey Page",
                         desc = "Please test and see the survey page.",

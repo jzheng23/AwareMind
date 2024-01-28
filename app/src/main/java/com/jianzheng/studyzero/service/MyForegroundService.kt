@@ -10,6 +10,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.jianzheng.studyzero.MainActivity
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 class MyForegroundService : Service() {
@@ -61,6 +62,7 @@ class MyForegroundService : Service() {
             .setContentTitle("Study Zero")
             .setContentText("$countFromPrefs prompts completed today")
             .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
+            .setSmallIcon(R.drawable.ic_phone_android)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .build()

@@ -42,4 +42,14 @@ object MyPreferenceManager {
             apply()
         }
     }
+
+    fun getLong(context: Context, key: String):Long =
+        getSharedPreferences(context).getLong(key, 0L)
+
+    fun setLong(context: Context, key: String, value: Long) {
+        getSharedPreferences(context).edit().apply {
+            putLong(key, value)
+            apply()
+        }
+    }
 }

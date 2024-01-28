@@ -41,6 +41,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
@@ -123,7 +125,9 @@ fun HomeScreen(
                     ) {
                         Icon(
                             imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Back"
+                            contentDescription = "Back",
+                            tint = Color.Transparent, // Set the tint color to transparent
+                            modifier = Modifier.alpha(0f) // Set alpha to 0 for invisibility
                         )
                     }
                     Text(

@@ -14,6 +14,7 @@ import com.jianzheng.studyzero.data.response.Response
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
 import com.jianzheng.studyzero.data.response.toResponse
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,7 @@ import kotlinx.coroutines.flow.update
 
 class EsmViewModel(
     val context: Context
-): EsmViewModelInterface {
+) : EsmViewModelInterface {
     private val db =
         Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
             .fallbackToDestructiveMigration()
@@ -50,11 +51,13 @@ class EsmViewModel(
         val newResponse = uiState.value.toResponse(delay, startingTime)
         responseDao.insert(newResponse)
         uploadToFirebase(responseDao.getLastResponse())
-        Log.d("data", "${responseDao.getLastResponse().startingTime}")
+        Log.d("data", responseDao.getLastResponse().startingTime)
+        MyPreferenceManager.setLong(context,"lastSubmit", System.currentTimeMillis())
         Handler(Looper.getMainLooper()).post {
             val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
             toast.show()
         }
+
     }
 
     private fun uploadToFirebase(newResponse: Response) {
@@ -76,7 +79,7 @@ interface EsmViewModelInterface {
 }
 
 
-class MockEsmViewModel(): EsmViewModelInterface {
+class MockEsmViewModel : EsmViewModelInterface {
     override val uiState = MutableStateFlow(EsmUiState(listOf(0, 0), false))
     override fun setAnswer(selection: Int, index: Int) {
         // Mock implementation

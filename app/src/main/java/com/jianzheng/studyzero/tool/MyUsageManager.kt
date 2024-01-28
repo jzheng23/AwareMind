@@ -24,7 +24,7 @@ class MyUsageManager {
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
-        val usageEvents = usageStatsManager.queryEvents(currentTime - dayInMillisTest, currentTime)
+        val usageEvents = usageStatsManager.queryEvents(currentTime - dayInMillis, currentTime)
         val usageEvent = UsageEvents.Event()
 //        val eventsList = mutableListOf<UsageEventModel>()
 
