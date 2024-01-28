@@ -12,7 +12,6 @@
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -86,5 +85,13 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+    <queries>
+        <!-- If you're looking for email clients -->
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
 
+        <!-- Add other queries here if needed -->
+    </queries>
 </manifest>

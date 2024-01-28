@@ -10,7 +10,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -26,7 +25,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.tool.MyPermissionManager
-import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 @Composable
 fun SettingsScreen(
@@ -34,7 +32,7 @@ fun SettingsScreen(
 ) {
     Surface(
         modifier = Modifier.fillMaxSize()
-    ){
+    ) {
         Column(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
@@ -77,7 +75,7 @@ fun SettingsScreen(
                         navController.navigate(AppRoutes.HOME)
                     },
                     modifier = Modifier.align(Alignment.CenterStart)
-                ){
+                ) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowLeft,
                         contentDescription = "Back"
@@ -91,16 +89,16 @@ fun SettingsScreen(
                         .align(Alignment.Center),
                 )
             }
-            Divider(
-                color = MaterialTheme.colorScheme.outline
-            )
+//            Divider(
+//                color = MaterialTheme.colorScheme.outline
+//            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(horizontal = mediumPadding, vertical = 4.dp),
                 verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 if (!notificationAllowed) {
                     ArrowCard(
                         title = "Notification",
@@ -163,7 +161,10 @@ fun SettingsScreen(
                     )
                 }
                 if (allAllowed) {
-                    Text("All permissions have been allowed.")
+                    Text(
+                        text = "All permissions have been allowed.",
+                        style = MaterialTheme.typography.headlineSmall,
+                    )
                 }
             }
 

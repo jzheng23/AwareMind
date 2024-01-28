@@ -2,9 +2,7 @@ package com.jianzheng.studyzero.ui
 
 import android.app.Application
 import android.content.Intent
-import android.net.Uri
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -22,17 +20,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
@@ -45,11 +39,8 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -57,7 +48,6 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
-import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
 val mediumPadding = 12.dp
 
@@ -142,9 +132,9 @@ fun HomeScreen(
                             .align(Alignment.Center)
                     )
                 }
-                Divider(
-                    color = MaterialTheme.colorScheme.outline
-                )
+//                Divider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -194,6 +184,7 @@ fun HomeScreen(
 
 
             }
+
             if (isTester) {
                 DebugCard(
                     userId = userId,
@@ -220,9 +211,7 @@ fun WelcomeInfo(
     )
     val todayCount = welcomeViewModel.todayCount.observeAsState()
     val totalCount = welcomeViewModel.totalCount.observeAsState()
-//    val dayCount = welcomeViewModel.dayCount.observeAsState()
     var clickOnInputCount by remember { mutableIntStateOf(0) }
-    val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -232,7 +221,7 @@ fun WelcomeInfo(
             todayCount = todayCount.value ?: 0,
             totalCount = totalCount.value ?: 0
         )
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         Text(
             text = "Thanks for your input!",
             style = MaterialTheme.typography.headlineSmall,
@@ -241,65 +230,55 @@ fun WelcomeInfo(
                 if (clickOnInputCount > 2) onClickOfInput()
             }
         )
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(vertical = 12.dp)
-        ) {
-            Image(
-                painterResource(id = if (isSystemInDarkTheme()) R.drawable.logos_wordmark_light_text else R.drawable.logos_wordmark_dark_text),
-                contentDescription = null,
-                modifier = Modifier
-                    .weight(1f) // The weight is a ratio, so both use 1f to split space equally
-                    .fillMaxWidth()
-            )
-            Column(
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier
-                    .weight(1f) // The weight is a ratio, so both use 1f to split space equally
-                    .fillMaxWidth()
-            ) {
-                Text("Jian Zheng")
-                Text(
-                    text = "jzheng23@umd.edu",
-                    modifier = Modifier.clickable {
-                        val emailIntent = Intent(Intent.ACTION_SEND).apply {
-                            type = "message/rfc822" // MIME type for email
-                            putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
-                            putExtra(Intent.EXTRA_SUBJECT, "From Study Zero")
-                        }
 
-                        if (emailIntent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(Intent.createChooser(emailIntent, "Choose an email client"))
-                            Log.d("email", "can do")
-                        } else {
-                            Log.d("email", "cannot do")
-                        }
-                    }
-                )
-            }
-        }
-
+        LogoAndContact()
     }
 
 }
-
 
 @Composable
-fun LoginButton(
-    showDialog: MutableState<Boolean>
-) {
-    Button(
-        onClick = {
-            showDialog.value = true
-        },
-        modifier = Modifier.semantics {
-            contentDescription = "Login button"
-        }
+fun LogoAndContact() {
+    val context = LocalContext.current
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .padding(vertical = 12.dp)
     ) {
-        Text("Login")
+        Image(
+            painterResource(id = if (isSystemInDarkTheme()) R.drawable.logos_wordmark_light_text else R.drawable.logos_wordmark_dark_text),
+            contentDescription = null,
+            modifier = Modifier
+                .weight(1f) // The weight is a ratio, so both use 1f to split space equally
+                .fillMaxWidth()
+        )
+        Column(
+            horizontalAlignment = Alignment.End,
+            modifier = Modifier
+                .weight(1f) // The weight is a ratio, so both use 1f to split space equally
+                .fillMaxWidth()
+        ) {
+            Text("Jian Zheng")
+            Text(
+                text = "jzheng23@umd.edu",
+                modifier = Modifier.clickable {
+                    val emailIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "message/rfc822" // MIME type for email
+                        putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
+                        putExtra(Intent.EXTRA_SUBJECT, "From Study Zero")
+                    }
+
+                    if (emailIntent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(Intent.createChooser(emailIntent, "Choose an email client"))
+                        Log.d("email", "can do")
+                    } else {
+                        Log.d("email", "cannot do")
+                    }
+                }
+            )
+        }
     }
 }
+
 
 @Composable
 fun InfoCard(
@@ -310,7 +289,7 @@ fun InfoCard(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+//        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(
             horizontalAlignment = Alignment.Start,

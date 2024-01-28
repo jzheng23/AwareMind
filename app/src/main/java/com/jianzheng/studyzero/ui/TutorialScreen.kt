@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Divider
@@ -66,7 +67,8 @@ fun TutorialScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.KeyboardArrowLeft,
-                        contentDescription = "Back"
+                        contentDescription = "Back",
+//                        modifier = Modifier.size(48.dp)
                     )
                 }
                 Text(
@@ -118,7 +120,10 @@ fun TutorialScreen(
                         },
                         buttonEnabled = testShown.value
                     )
-                } else Text("Tutorial finished!")
+                } else Text(
+                    text = "Tutorial finished!",
+                    style = MaterialTheme.typography.headlineSmall,
+                    )
             }
 
         }

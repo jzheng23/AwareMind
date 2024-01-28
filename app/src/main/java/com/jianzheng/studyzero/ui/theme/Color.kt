@@ -90,10 +90,10 @@ val md_theme_light_onErrorContainer = Color(0xFF410E0B) // Unchanged
 val md_theme_light_outline = Color(0xFF79747E) // Unchanged
 val md_theme_light_background = Color(0xFFF7F5FF)
 val md_theme_light_onBackground = Color(0xFF1C1B1F) // Unchanged
-val md_theme_light_surface = Color(0xFFF7F5FF)
-val md_theme_light_onSurface = Color(0xFF1C1B1F) // Unchanged
-val md_theme_light_surfaceVariant = Color(0xFFE7E0EC) // Unchanged
-val md_theme_light_onSurfaceVariant = Color(0xFF1C1B1F) // Unchanged
+//val md_theme_light_surface = Color(0xFFF7F5FF)
+//val md_theme_light_onSurface = Color(0xFF1C1B1F) // Unchanged
+//val md_theme_light_surfaceVariant = Color(0xFFE7E0EC) // Unchanged
+//val md_theme_light_onSurfaceVariant = Color(0xFF1C1B1F) // Unchanged
 val md_theme_light_inverseSurface = Color(0xFF313033) // Unchanged
 val md_theme_light_inverseOnSurface = Color(0xFFF4EFF4) // Unchanged
 val md_theme_light_inversePrimary = Color(0xFFD0BCFF) // Unchanged
@@ -125,10 +125,10 @@ val md_theme_dark_onErrorContainer = Color(0xFFF9DEDC) // Unchanged
 val md_theme_dark_outline = Color(0xFF938F99) // Unchanged
 val md_theme_dark_background = Color(0xFF18171B)
 val md_theme_dark_onBackground = Color(0xFFE6E1E5) // Unchanged
-val md_theme_dark_surface = Color(0xFF18171B)
-val md_theme_dark_onSurface = Color(0xFFE6E1E5) // Unchanged
-val md_theme_dark_surfaceVariant = Color(0xFF333038) // Darker surfaceVariant
-val md_theme_dark_onSurfaceVariant = Color(0xFFE6E1E5) // Lighter onSurfaceVariant
+//val md_theme_dark_surface = Color(0xFF18171B)
+//val md_theme_dark_onSurface = Color(0xFFE6E1E5) // Unchanged
+//val md_theme_dark_surfaceVariant = Color(0xFF333038) // Darker surfaceVariant
+//val md_theme_dark_onSurfaceVariant = Color(0xFFE6E1E5) // Lighter onSurfaceVariant
 val md_theme_dark_inverseSurface = Color(0xFFE6E1E5) // Unchanged
 val md_theme_dark_inverseOnSurface = Color(0xFF313033) // Unchanged
 val md_theme_dark_inversePrimary = Color(0xFF6750A4) // Unchanged
@@ -136,3 +136,15 @@ val md_theme_dark_shadow = Color(0xFF000000) // Unchanged
 val md_theme_dark_surfaceTint = Color(0xFFD0BCFF) // Unchanged
 val md_theme_dark_outlineVariant = Color(0xFF49454F) // Unchanged
 val md_theme_dark_scrim = Color(0xFF000000) // Unchanged
+
+
+val md_theme_light_surfaceVariant = Color(0xFFF7F5FF)
+val md_theme_light_onSurfaceVariant = Color(0xFF1C1B1F) // Unchanged
+val md_theme_light_surface = Color(0xFFE7E0EC) // Unchanged
+val md_theme_light_onSurface = Color(0xFF1C1B1F) // Unchanged
+
+
+val md_theme_dark_surfaceVariant = Color(0xFF18171B)
+val md_theme_dark_onSurfaceVariant = Color(0xFFE6E1E5) // Unchanged
+val md_theme_dark_surface = Color(0xFF333038) // Darker surfaceVariant
+val md_theme_dark_onSurface = Color(0xFFE6E1E5) // Lighter onSurfaceVariant
