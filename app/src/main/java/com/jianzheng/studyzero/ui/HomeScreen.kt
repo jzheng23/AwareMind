@@ -95,15 +95,22 @@ fun HomeScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (userId == "") {
-                Text(
-                    text = "Please login",
-                    modifier = Modifier.semantics {
-                        contentDescription = "Please login"
+                ArrowCard(
+                    title = "Login",
+                    desc = "Please login with the assigned user ID",
+                    onAuthClick = {
+                        showDialog.value = true
                     }
                 )
-                LoginButton(
-                    showDialog = showDialog
-                )
+//                Text(
+//                    text = "Please login",
+//                    modifier = Modifier.semantics {
+//                        contentDescription = "Please login"
+//                    }
+//                )
+//                LoginButton(
+//                    showDialog = showDialog
+//                )
             } else {
                 Box(
                     modifier = Modifier.fillMaxWidth()
@@ -137,7 +144,7 @@ fun HomeScreen(
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(mediumPadding),
+                        .padding(horizontal = mediumPadding, vertical = 4.dp),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ){
@@ -342,44 +349,4 @@ fun RowOfInfo(
     }
 }
 
-@Preview
-@Composable
-fun HomePagePreview() {
-    StudyZeroTheme(darkTheme = true) {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-                    .padding(mediumPadding),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                WelcomeInfo()
-            }
-        }
-    }
-}
 
-@Preview
-@Composable
-fun HomePagePreviewLight() {
-    StudyZeroTheme(darkTheme = false) {
-        Surface(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
-                modifier = Modifier
-                    .verticalScroll(rememberScrollState())
-                    .fillMaxSize()
-                    .padding(mediumPadding),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                WelcomeInfo()
-            }
-        }
-    }
-}
