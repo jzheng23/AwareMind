@@ -79,9 +79,6 @@ fun TutorialScreen(
                         .align(Alignment.Center),
                 )
             }
-            Divider(
-                color = MaterialTheme.colorScheme.outline
-            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
