@@ -73,7 +73,7 @@ object MyDelayManager {
         val lastSubmit = MyPreferenceManager.getLong(context,"lastSubmit")
         Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
         if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
-            if ((currentTimeMillis + triggerList[triggerIndex]*1_000L) > (lastSubmit + 900_000L)) {
+            if ((tempTag == "onceMet") or ((currentTimeMillis + triggerList[triggerIndex]*1_000L) > (lastSubmit + 900_000L))) {
                 val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
                     .setInitialDelay(triggerList[triggerIndex].toLong(), TimeUnit.SECONDS)
                     .setInputData(

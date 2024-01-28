@@ -225,6 +225,7 @@ fun DebugCard(
                     desc = "Set tutorial as completed",
                     onCheckedChange = {
                         MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
+                        MyPreferenceManager.setInt(context,"onceMet", if (it) 1 else 0)
                     },
                     isChecked = isTutorialFinished
                 )
