@@ -1,6 +1,7 @@
 package com.jianzheng.studyzero.ui
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -191,7 +192,8 @@ fun ArrowCard(
             .wrapContentHeight()
             .clickable { onAuthClick() }
             .padding(vertical = 4.dp),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+
     ){
         Column(
             horizontalAlignment = Alignment.Start,

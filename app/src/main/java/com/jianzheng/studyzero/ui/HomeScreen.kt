@@ -90,7 +90,7 @@ fun HomeScreen(
             modifier = Modifier
                 .verticalScroll(rememberScrollState())
                 .fillMaxSize()
-                .padding(mediumPadding),
+                .padding(vertical = mediumPadding),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -110,9 +110,10 @@ fun HomeScreen(
                 ) {
                     IconButton(
                         onClick = {
+                            //TODO
                         },
                         modifier = Modifier.align(Alignment.CenterStart)
-                    ){
+                    ) {
                         Icon(
                             imageVector = Icons.Filled.AccountCircle,
                             contentDescription = "Back"
@@ -133,46 +134,53 @@ fun HomeScreen(
                 Divider(
                     color = MaterialTheme.colorScheme.outline
                 )
-                if (showPermissionCard) {
-                    ArrowCard(
-                        title = "Permission",
-                        desc = "Grant permissions the app needs",
-                        onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
-                    )
-                }
-                if (!isTutorialFinished) {
-                    ArrowCard(
-                        title = "Tutorial",
-                        desc = if (!showPermissionCard) "See what the survey is like and how it works" else "Please grant permissions to unlock the tutorial",
-                        onAuthClick = {
-                            if (!showPermissionCard) {
-                                navController.navigate(AppRoutes.TUTORIAL)
-                                MyPreferenceManager.setInt(context, "randomMet", 0)
-                            }
-                        },
-                        buttonEnabled = !showPermissionCard
-                    )
-                }
-                if (!isDataCollecting) {
-                    ArrowCard(
-                        title = "Data collection",
-                        desc = if (isTutorialFinished) "Start data collection" else "Please complete tutorial first ",
-                        onAuthClick = {
-                            if (isTutorialFinished) {
-                                startEverything(context)
-                            }
-                        },
-                        buttonEnabled = isTutorialFinished
-                    )
-                }
-                if (isDataCollecting) {
-                    WelcomeInfo(
-                        userId, userAlias, showDialog
-                    ) {
-                        navController.navigate(AppRoutes.EXPORT)
-                        Log.d("navigate", "to export")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(mediumPadding),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ){
+                    if (showPermissionCard) {
+                        ArrowCard(
+                            title = "Permission",
+                            desc = "Grant permissions the app needs",
+                            onAuthClick = { navController.navigate(AppRoutes.SETTINGS) }
+                        )
+                    }
+                    if (!isTutorialFinished) {
+                        ArrowCard(
+                            title = "Tutorial",
+                            desc = if (!showPermissionCard) "See what the survey is like and how it works" else "Please grant permissions to unlock the tutorial",
+                            onAuthClick = {
+                                if (!showPermissionCard) {
+                                    navController.navigate(AppRoutes.TUTORIAL)
+                                    MyPreferenceManager.setInt(context, "randomMet", 0)
+                                }
+                            },
+                            buttonEnabled = !showPermissionCard
+                        )
+                    }
+                    if (!isDataCollecting) {
+                        ArrowCard(
+                            title = "Data collection",
+                            desc = if (isTutorialFinished) "Start data collection" else "Please complete tutorial first ",
+                            onAuthClick = {
+                                if (isTutorialFinished) {
+                                    startEverything(context)
+                                }
+                            },
+                            buttonEnabled = isTutorialFinished
+                        )
+                    }
+                    if (isDataCollecting) {
+                        WelcomeInfo {
+                            navController.navigate(AppRoutes.EXPORT)
+                            Log.d("navigate", "to export")
+                        }
                     }
                 }
+
 
             }
             if (isTester) {
@@ -188,9 +196,6 @@ fun HomeScreen(
 
 @Composable
 fun WelcomeInfo(
-    userId: String = "",
-    userAlias: String = "",
-    showDialog: MutableState<Boolean> = mutableStateOf(false),
     onClickOfInput: () -> Unit = {}
 ) {
 //    val todayCount = remember { mutableIntStateOf(0) }
@@ -204,26 +209,15 @@ fun WelcomeInfo(
     )
     val todayCount = welcomeViewModel.todayCount.observeAsState()
     val totalCount = welcomeViewModel.totalCount.observeAsState()
-    val dayCount = welcomeViewModel.dayCount.observeAsState()
-    var clickOnUserCount by remember { mutableIntStateOf(0) }
+//    val dayCount = welcomeViewModel.dayCount.observeAsState()
     var clickOnInputCount by remember { mutableIntStateOf(0) }
     val context = LocalContext.current
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Text(
 
-            text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias!",
-            style = MaterialTheme.typography.headlineMedium,
-            modifier = Modifier
-                .clickable {
-                    clickOnUserCount++
-                    if (clickOnUserCount > 2) showDialog.value = true
-                }
-                .padding(32.dp)
-        )
         InfoCard(
-            dayCount = dayCount.value ?: 0,
+//            dayCount = dayCount.value ?: 0,
             todayCount = todayCount.value ?: 0,
             totalCount = totalCount.value ?: 0
         )
@@ -258,15 +252,14 @@ fun WelcomeInfo(
                 Text(
                     text = "jzheng23@umd.edu",
                     modifier = Modifier.clickable {
-                        val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                            data = Uri.parse("mailto:")
+                        val emailIntent = Intent(Intent.ACTION_SEND).apply {
+                            type = "message/rfc822" // MIME type for email
                             putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
                             putExtra(Intent.EXTRA_SUBJECT, "From Study Zero")
                         }
 
-                        // Verify that the intent will resolve to an activity
                         if (emailIntent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(emailIntent)
+                            context.startActivity(Intent.createChooser(emailIntent, "Choose an email client"))
                             Log.d("email", "can do")
                         } else {
                             Log.d("email", "cannot do")
@@ -299,14 +292,14 @@ fun LoginButton(
 
 @Composable
 fun InfoCard(
-    dayCount: Int,
     todayCount: Int,
     totalCount: Int
 ) {
     Card(
         modifier = Modifier
-            .fillMaxWidth(),
-        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
+            .fillMaxWidth()
+            .padding(vertical = 4.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(
             horizontalAlignment = Alignment.Start,

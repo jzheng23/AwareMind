@@ -17,6 +17,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.FileProvider
 import androidx.navigation.NavController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.io.File
@@ -64,40 +68,45 @@ fun ExportScreen(
 
 
 fun shareDatabases(context: Context, databaseNames: List<String>, authority: String) {
-    val files = databaseNames.map { dbName ->
-        val originalFile = File(context.getDatabasePath(dbName).path)
-        val newFile = File(context.getExternalFilesDir(null), "$dbName.db")
-        originalFile.copyTo(newFile, overwrite = true)
-        newFile
-    }
+    CoroutineScope(Dispatchers.Main).launch {
+        val zipFile = File(context.getExternalFilesDir(null), "databases.zip")
+        withContext(Dispatchers.IO) {
+            val files = databaseNames.map { dbName ->
+                val originalFile = File(context.getDatabasePath(dbName).path)
+                val newFile = File(context.getExternalFilesDir(null), "$dbName.db")
+                originalFile.copyTo(newFile, overwrite = true)
+                newFile
+            }
 
-    val zipFile = File(context.getExternalFilesDir(null), "databases.zip")
-    ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
-        files.forEach { file ->
-            FileInputStream(file).use { fis ->
-                BufferedInputStream(fis).use { bis ->
-                    val zipEntry = ZipEntry(file.name)
-                    zos.putNextEntry(zipEntry)
-                    bis.copyTo(zos)
-                    zos.closeEntry()
+            ZipOutputStream(BufferedOutputStream(FileOutputStream(zipFile))).use { zos ->
+                files.forEach { file ->
+                    FileInputStream(file).use { fis ->
+                        BufferedInputStream(fis).use { bis ->
+                            val zipEntry = ZipEntry(file.name)
+                            zos.putNextEntry(zipEntry)
+                            bis.copyTo(zos)
+                            zos.closeEntry()
+                        }
+                    }
                 }
             }
         }
-    }
 
-    val fileUri = FileProvider.getUriForFile(context, authority, zipFile)
+        // The UI operation remains on the Main thread
+        val fileUri = FileProvider.getUriForFile(context, authority, zipFile)
 
-    val emailIntent = Intent(Intent.ACTION_SEND).apply {
-        type = "application/octet-stream" // or use "*/*"
-        putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
-        putExtra(Intent.EXTRA_SUBJECT, "Study Zero: Database Files")
-        putExtra(Intent.EXTRA_STREAM, fileUri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
+        val emailIntent = Intent(Intent.ACTION_SEND).apply {
+            type = "application/zip"
+            putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
+            putExtra(Intent.EXTRA_SUBJECT, "Study Zero: Database Files")
+            putExtra(Intent.EXTRA_STREAM, fileUri)
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
 
-    // Verify that the intent will resolve to an activity
-    if (emailIntent.resolveActivity(context.packageManager) != null) {
-        context.startActivity(Intent.createChooser(emailIntent, "Send Database via Email"))
+        // Verify that the intent will resolve to an activity
+        if (emailIntent.resolveActivity(context.packageManager) != null) {
+            context.startActivity(Intent.createChooser(emailIntent, "Send Database via Email"))
+        }
     }
 }
 
