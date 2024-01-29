@@ -9,7 +9,6 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.receiver.UnlockReceiver
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,8 +58,8 @@ object MyDelayManager {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
         MyReceiverManager.registerReceiver(context)
-        MyPreferenceManager.setBoolean(context,"unlock_registered", true)
-        Log.d("unlock","unlock registered")
+        MyPreferenceManager.setBoolean(context, "unlock_registered", true)
+        Log.d("unlock", "unlock registered")
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
 
     }
@@ -70,10 +69,10 @@ object MyDelayManager {
         myWorkManager = WorkManager.getInstance(context)
         val responseCounter = ResponseCounter(context)
         val currentTimeMillis = System.currentTimeMillis()
-        val lastSubmit = MyPreferenceManager.getLong(context,"lastSubmit")
+        val lastSubmit = MyPreferenceManager.getLong(context, "lastSubmit")
         Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
         if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
-            if ((tempTag == "onceMet") or ((currentTimeMillis + triggerList[triggerIndex]*1_000L) > (lastSubmit + 900_000L))) {
+            if ((tempTag == "onceMet") or ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + 900_000L))) {
                 val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
                     .setInitialDelay(triggerList[triggerIndex].toLong(), TimeUnit.SECONDS)
                     .setInputData(

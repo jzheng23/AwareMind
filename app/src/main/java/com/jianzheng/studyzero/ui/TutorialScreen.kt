@@ -103,7 +103,6 @@ fun TutorialScreen(
                         onAuthClick = {
                             if (testShown.value) {
                                 MyPreferenceManager.setBoolean(context, "using_once_triggers", true)
-                                MyPreferenceManager.setInt(context, "randomMet", 0)
                                 MyDelayManager.init(context)
                                 Handler(Looper.getMainLooper()).post {
                                     val toast = Toast.makeText(

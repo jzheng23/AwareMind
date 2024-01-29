@@ -83,7 +83,7 @@ fun DebugCard(
         mutableStateOf(sharedPreferences.getBoolean("notification_showing", false))
     }
     val isUnlockReceiverRegistered by usePollState {
-        mutableStateOf(MyReceiverManager.checkRegistered())
+        mutableStateOf(sharedPreferences.getBoolean("receiver_registered", false))
     }
 
     Card(
@@ -142,11 +142,6 @@ fun DebugCard(
                     title = "",
                     desc = "Use testing triggers?",
                     onCheckedChange = {
-//                    val sharedPreferences =
-//                        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-//                    val editor = sharedPreferences.edit()
-//                    editor.putBoolean("using_testing_triggers", it)
-//                        .apply()
                         MyPreferenceManager.setBoolean(context, "using_testing_triggers", it)
                         MyDelayManager.init(context)
                         resetTriggerFunction(context)
