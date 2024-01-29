@@ -112,6 +112,7 @@ fun initializeSharedPreference(context: Context) {
         .putBoolean("UID_valid", false)
         .putInt("20Met", 0)
         .putInt("30Met", 0)
+        .putInt("onceMet", 0)
         .putInt("randomMet", 0)
         .putBoolean("input_record", false)
         .putBoolean("tutorial_finished", false)
