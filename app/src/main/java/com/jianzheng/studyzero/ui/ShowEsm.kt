@@ -194,12 +194,15 @@ fun ShowEsm(
         ) {
             Text(
                 text = stringResource(id = R.string.instruction),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(top = mediumPadding),
-                textAlign = TextAlign.Center
+                    .padding(
+                    top = mediumPadding,
+//                    start = mediumPadding,
+                    end = mediumPadding * 2
+                )
             )
-
             IconButton(
                 onClick = {
                     onClick()
@@ -214,6 +217,7 @@ fun ShowEsm(
                 )
             }
         }
+
         //show question 1
         ShowQuestion(
             questionString = R.string.question1,
@@ -242,9 +246,9 @@ fun ShowQuestion(
     labelSet: Int,
 //    autoDismiss: MutableState<Boolean>
 ) {
-    val options: List<Int> = listOf(1, 2, 3, 4, 5)
-    val labels1: List<String> = listOf("Very passively", "", "Moderately", "", "Very actively")
-    val labels2: List<String> = listOf("Strongly disagree", "", "Neutral", "", "Strongly agree")
+    val options: List<Int> = listOf(1, 2, 3, 4)
+    val labels1: List<String> = listOf("Passively", "", "", "Actively")
+    val labels2: List<String> = listOf("Stop", "", "", "Continue")
     val labels = if (labelSet == 1) labels1 else labels2
     val selectedValue = remember { mutableIntStateOf(0) }
     Card(
@@ -298,7 +302,8 @@ fun ShowQuestion(
                         index = index,
                         myViewModel = myViewModel,
 //                        autoDismiss = autoDismiss,
-                        selectedValue = selectedValue
+                        selectedValue = selectedValue,
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -318,7 +323,8 @@ fun ChoiceWithLabel(
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     )
     {
         RadioButton(
@@ -330,7 +336,7 @@ fun ChoiceWithLabel(
                 myViewModel.setAnswer(item, index)
                 Log.d("viewModel", "$item selected for q$index!")
             },
-            modifier = modifier
+            modifier = Modifier
                 .height(22.dp)
         )
         if (label != "") {
@@ -350,8 +356,6 @@ fun ChoiceWithLabel(
                         )
                     )
                 ),
-                modifier = modifier
-                    .width(68.dp)
 
             )
         }
