@@ -68,12 +68,15 @@ fun ShowOverlay(
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    var myViewModel: EsmViewModelInterface
+    val myViewModel: EsmViewModelInterface = if (!LocalInspectionMode.current) {
+        EsmViewModel(context)
+    } else {
+        MockEsmViewModel()
+    }
     val autoDismiss = remember { mutableStateOf(true) }
     //TODO need to tidy up
 
     if (!LocalInspectionMode.current) {
-        myViewModel = EsmViewModel(context)
         val handler = Handler(Looper.myLooper()!!)
         val displayTimeMillis = if (
             MyPreferenceManager.getBoolean(context, "using_testing_triggers")
@@ -86,9 +89,6 @@ fun ShowOverlay(
                 Log.d("unlock", "unanswered")
             }
         }, displayTimeMillis) // 10 seconds delay
-    } else {
-
-        myViewModel = MockEsmViewModel()
     }
     StudyZeroEsmTheme(darkTheme = darkTheme) {
         Surface(

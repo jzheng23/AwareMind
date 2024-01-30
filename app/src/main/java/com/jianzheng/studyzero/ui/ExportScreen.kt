@@ -112,26 +112,3 @@ fun shareDatabases(context: Context, databaseNames: List<String>, authority: Str
     }
 }
 
-fun shareDatabaseBackup(context: Context, databaseName: String, authority: String) {
-    // Original database file
-    val originalFile = File(context.getDatabasePath(databaseName).path)
-
-    // New file location in external files directory
-    val newFile = File(context.getExternalFilesDir(null), databaseName)
-
-    // Copy the database file to the external files directory
-    originalFile.copyTo(newFile, overwrite = true)
-
-    // Get URI for the new file
-    val fileUri = FileProvider.getUriForFile(context, authority, newFile)
-
-    // Intent to share the file
-    val shareIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        type = "application/octet-stream"
-        putExtra(Intent.EXTRA_STREAM, fileUri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    context.startActivity(Intent.createChooser(shareIntent, "Share Database"))
-}

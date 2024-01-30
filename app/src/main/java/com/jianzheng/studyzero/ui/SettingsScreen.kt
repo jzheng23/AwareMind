@@ -72,9 +72,9 @@ fun ScrollSettingContent(it: PaddingValues) {
     val accessibilityAllowed by usePollState {
         MyPermissionManager.checkAccessibilityPermission(context)
     }
-    val batteryAllowed by usePollState {
-        MyPermissionManager.checkBatteryPermission(context)
-    }
+//    val batteryAllowed by usePollState {
+//        MyPermissionManager.checkBatteryPermission(context)
+//    }
     val allAllowed by usePollState {
         MyPermissionManager.checkAllPermissions(context)
     }
@@ -129,16 +129,16 @@ fun ScrollSettingContent(it: PaddingValues) {
                 )
             }
 
-            if (!batteryAllowed) {
-                ArrowCard(
-                    title = "Optimize battery usage",
-                    desc = "The app needs to be put into the whitelist, so" +
-                            " it won't killed by the system battery optimization.",
-                    onAuthClick = {
-                        MyPermissionManager.grantBatteryPermission(context)
-                    }
-                )
-            }
+//            if (!batteryAllowed) {
+//                ArrowCard(
+//                    title = "Optimize battery usage",
+//                    desc = "The app needs to be put into the whitelist, so" +
+//                            " it won't killed by the system battery optimization.",
+//                    onAuthClick = {
+//                        MyPermissionManager.grantBatteryPermission(context)
+//                    }
+//                )
+//            }
 
             if (!accessibilityAllowed) {
                 ArrowCard(
