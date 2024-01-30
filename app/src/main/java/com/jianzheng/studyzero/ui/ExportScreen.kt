@@ -2,8 +2,6 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -48,7 +46,11 @@ fun ExportScreen(
             Text("Export data to local files")
             Button(
                 onClick = {
-                    shareDatabases(context, listOf("response_database", "input_database", "usage_database"), "com.jianzheng.studyzero.provider")
+                    shareDatabases(
+                        context,
+                        listOf("response_database", "input_database", "usage_database"),
+                        "com.jianzheng.studyzero.provider"
+                    )
 //                    shareDatabaseBackup(context, "response_database", "com.jianzheng.studyzero.provider")
 
                 }

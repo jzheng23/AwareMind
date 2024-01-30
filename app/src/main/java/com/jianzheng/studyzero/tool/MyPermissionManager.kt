@@ -83,7 +83,7 @@ object MyPermissionManager {
         return powerManager.isIgnoringBatteryOptimizations(packageName)
     }
 
-    fun grantBatteryPermission(context: Context){
+    fun grantBatteryPermission(context: Context) {
         val packageName = context.packageName
         val intent = Intent().apply {
             action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
@@ -91,6 +91,7 @@ object MyPermissionManager {
         }
         context.startActivity(intent)
     }
+
     fun checkAllPermissions(context: Context): Boolean =
         (checkNotificationPermission(context)
                 and checkOverlayPermission(context)

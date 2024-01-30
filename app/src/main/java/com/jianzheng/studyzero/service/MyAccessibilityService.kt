@@ -195,6 +195,7 @@ class MyAccessibilityService : AccessibilityService() {
                     lastWindowsChangeTime = currentTime
 
                 }
+
                 else -> {}
             }
         }

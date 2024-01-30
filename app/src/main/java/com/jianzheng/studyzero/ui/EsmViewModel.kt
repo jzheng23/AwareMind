@@ -52,7 +52,7 @@ class EsmViewModel(
         responseDao.insert(newResponse)
         uploadToFirebase(responseDao.getLastResponse())
         Log.d("data", responseDao.getLastResponse().startingTime)
-        MyPreferenceManager.setLong(context,"lastSubmit", System.currentTimeMillis())
+        MyPreferenceManager.setLong(context, "lastSubmit", System.currentTimeMillis())
         Handler(Looper.getMainLooper()).post {
             val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
             toast.show()

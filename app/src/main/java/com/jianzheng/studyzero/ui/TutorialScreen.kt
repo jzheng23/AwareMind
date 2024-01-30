@@ -5,7 +5,6 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -31,7 +30,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.MyReceiverManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -92,8 +90,12 @@ fun TutorialScreen(
                                 "Please test the Survey Page first.",
                             onAuthClick = {
                                 if (testShown.value) {
-                                    MyPreferenceManager.setBoolean(context, "using_once_triggers", true)
-                                    MyPreferenceManager.setInt(context,"onceMet", 0)
+                                    MyPreferenceManager.setBoolean(
+                                        context,
+                                        "using_once_triggers",
+                                        true
+                                    )
+                                    MyPreferenceManager.setInt(context, "onceMet", 0)
 //                                    MyReceiverManager.unregisterReceiver(context)
                                     MyDelayManager.init(context)
                                     Handler(Looper.getMainLooper()).post {

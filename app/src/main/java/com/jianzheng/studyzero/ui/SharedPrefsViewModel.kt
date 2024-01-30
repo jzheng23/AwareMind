@@ -19,6 +19,7 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
 
     private val _userAlias = MutableLiveData<String>()
     val userAlias: LiveData<String> = _userAlias
+
     // LiveData for isTester
     private val _isTester = MutableLiveData<Boolean>()
     val isTester: LiveData<Boolean> = _isTester
@@ -37,8 +38,11 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
                 "UID" -> _userId.value = sharedPreferences.getString("UID", "")
                 "user_alias" -> _userAlias.value = sharedPreferences.getString("user_alias", "")
                 "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
-                "tutorial_finished" -> _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
-                "collecting_data" -> _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)
+                "tutorial_finished" -> _isTutorialFinished.value =
+                    sharedPreferences.getBoolean("tutorial_finished", false)
+
+                "collecting_data" -> _isDataCollecting.value =
+                    sharedPreferences.getBoolean("collecting_data", false)
             }
         }
 

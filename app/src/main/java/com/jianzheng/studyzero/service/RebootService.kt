@@ -21,8 +21,4 @@ class RebootService : Service() {
         return null
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        // Clean up any resources if needed
-    }
 }

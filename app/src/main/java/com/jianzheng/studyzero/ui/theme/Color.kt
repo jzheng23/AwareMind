@@ -1,6 +1,7 @@
 package com.jianzheng.studyzero.ui.theme
 
 import androidx.compose.ui.graphics.Color
+
 //
 //val md_theme_light_primary = Color(0xFF6750A4)
 //val md_theme_light_onPrimary = Color(0xFFFFFFFF)
@@ -90,6 +91,7 @@ val md_theme_light_onErrorContainer = Color(0xFF410E0B) // Unchanged
 val md_theme_light_outline = Color(0xFF79747E) // Unchanged
 val md_theme_light_background = Color(0xFFF7F5FF)
 val md_theme_light_onBackground = Color(0xFF1C1B1F) // Unchanged
+
 //val md_theme_light_surface = Color(0xFFF7F5FF)
 //val md_theme_light_onSurface = Color(0xFF1C1B1F) // Unchanged
 //val md_theme_light_surfaceVariant = Color(0xFFE7E0EC) // Unchanged
@@ -125,6 +127,7 @@ val md_theme_dark_onErrorContainer = Color(0xFFF9DEDC) // Unchanged
 val md_theme_dark_outline = Color(0xFF938F99) // Unchanged
 val md_theme_dark_background = Color(0xFF18171B)
 val md_theme_dark_onBackground = Color(0xFFE6E1E5) // Unchanged
+
 //val md_theme_dark_surface = Color(0xFF18171B)
 //val md_theme_dark_onSurface = Color(0xFFE6E1E5) // Unchanged
 //val md_theme_dark_surfaceVariant = Color(0xFF333038) // Darker surfaceVariant

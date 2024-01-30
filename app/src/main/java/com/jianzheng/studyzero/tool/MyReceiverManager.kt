@@ -15,15 +15,15 @@ object MyReceiverManager {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
         context.registerReceiver(unlockReceiver, filter)
-        Log.d("unlock","unlock receiver registered")
-        MyPreferenceManager.setBoolean(context, "receiver_registered",true)
+        Log.d("unlock", "unlock receiver registered")
+        MyPreferenceManager.setBoolean(context, "receiver_registered", true)
     }
 
     fun unregisterReceiver(context: Context) {
-        if (MyPreferenceManager.getBoolean(context,"receiver_registered")) {
+        if (MyPreferenceManager.getBoolean(context, "receiver_registered")) {
             context.unregisterReceiver(unlockReceiver)
-            Log.d("unlock","unlock receiver unregistered")
-            MyPreferenceManager.setBoolean(context, "receiver_registered",false)
-        } else Log.d("unlock","unlock receiver is not registered")
+            Log.d("unlock", "unlock receiver unregistered")
+            MyPreferenceManager.setBoolean(context, "receiver_registered", false)
+        } else Log.d("unlock", "unlock receiver is not registered")
     }
 }
