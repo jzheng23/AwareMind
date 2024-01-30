@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
+import androidx.navigation.NavController
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -50,9 +51,8 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun DebugCard(
-//    userId: MutableState<String?>,
-    userId: String,
-    modifier: Modifier,
+    navController: NavController,
+    userId: String = "",
 ) {
     var isVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
@@ -94,13 +94,13 @@ fun DebugCard(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = modifier
+            modifier = Modifier
                 .padding(mediumPadding)
         ) {
             IconButton(
                 onClick = { isVisible = !isVisible },
                 modifier = Modifier.wrapContentSize()
-                ) {
+            ) {
                 Icon(
                     imageVector = if (isVisible) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
                     contentDescription = if (isVisible) "Collapse" else "Expand"
@@ -122,7 +122,7 @@ fun DebugCard(
                     isChecked = isNotificationShowing.value
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "ESM",
@@ -168,7 +168,7 @@ fun DebugCard(
                     buttonEnabled = isOverlayAllowed
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
                     title = "New Day",
@@ -183,7 +183,7 @@ fun DebugCard(
                     buttonText = "Simulate"
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
                     title = "Usage",
@@ -201,7 +201,7 @@ fun DebugCard(
                     buttonEnabled = isUsageAllowed
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "Input",
@@ -213,19 +213,19 @@ fun DebugCard(
                     isChecked = isInputRecording
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "Tutorial",
                     desc = "Set tutorial as completed",
                     onCheckedChange = {
                         MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
-                        MyPreferenceManager.setInt(context,"onceMet", if (it) 1 else 0)
+                        MyPreferenceManager.setInt(context, "onceMet", if (it) 1 else 0)
                     },
                     isChecked = isTutorialFinished
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "Data collection",
@@ -240,7 +240,18 @@ fun DebugCard(
                     isChecked = isDataCollecting.value
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
+                )
+                ButtonCard(
+                    title = "User ID",
+                    desc = "Change user ID",
+                    onAuthClick = {
+                        navController.navigate(AppRoutes.LOGIN)
+                    },
+                    buttonText = "Change"
+                )
+                Divider(
+                    color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
                     title = "Reset",

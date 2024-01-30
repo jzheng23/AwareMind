@@ -9,6 +9,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +21,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -52,12 +57,11 @@ import com.jianzheng.studyzero.tool.startEverything
 val mediumPadding = 12.dp
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
 ) {
-    val showDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val showPermissionCard by usePollState {
         !MyPermissionManager.checkAllPermissions(context)
@@ -72,76 +76,27 @@ fun HomeScreen(
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
 
-    if (showDialog.value) LoginPage(userId, userAlias, showDialog)
-    var clickOnUserCount by remember { mutableIntStateOf(0) }
-
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-                .padding(vertical = mediumPadding),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (userId == "") {
-                ArrowCard(
-                    title = "Login",
-                    desc = "Please login with the assigned user ID",
-                    onAuthClick = {
-                        showDialog.value = true
-                    }
-                )
-//                Text(
-//                    text = "Please login",
-//                    modifier = Modifier.semantics {
-//                        contentDescription = "Please login"
-//                    }
-//                )
-//                LoginButton(
-//                    showDialog = showDialog
-//                )
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    IconButton(
-                        onClick = {
-                            //TODO
-                        },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Back",
-                            tint = Color.Transparent, // Set the tint color to transparent
-                            modifier = Modifier.alpha(0f) // Set alpha to 0 for invisibility
-                        )
-                    }
-                    Text(
-                        text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .clickable {
-                                clickOnUserCount++
-                                if (clickOnUserCount > 2) showDialog.value = true
-                            }
-                            .align(Alignment.Center)
-                    )
-                }
-//                Divider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
+    if (userId == "") navController.navigate(AppRoutes.LOGIN)
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Hi, " + if (userAlias == "") userId else userAlias)
+                },
+            )
+        },
+        content = {
+            Surface(
+                modifier = Modifier.fillMaxSize()
+            ) {
                 Column(
                     modifier = Modifier
+                        .verticalScroll(rememberScrollState())
                         .fillMaxSize()
-                        .padding(horizontal = mediumPadding, vertical = 4.dp),
+                        .padding(it),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     if (showPermissionCard) {
                         ArrowCard(
                             title = "Permission",
@@ -180,21 +135,19 @@ fun HomeScreen(
                             Log.d("navigate", "to export")
                         }
                     }
+                    if (isTester) {
+                        DebugCard(
+                            navController,
+                            userId = userId,
+
+                            )
+                    }
                 }
-
-
-            }
-
-            if (isTester) {
-                DebugCard(
-                    userId = userId,
-                    modifier = modifier,
-                )
             }
         }
-    }
-
+    )
 }
+
 
 @Composable
 fun WelcomeInfo(
@@ -268,7 +221,12 @@ fun LogoAndContact() {
                     }
 
                     if (emailIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(Intent.createChooser(emailIntent, "Choose an email client"))
+                        context.startActivity(
+                            Intent.createChooser(
+                                emailIntent,
+                                "Choose an email client"
+                            )
+                        )
                         Log.d("email", "can do")
                     } else {
                         Log.d("email", "cannot do")

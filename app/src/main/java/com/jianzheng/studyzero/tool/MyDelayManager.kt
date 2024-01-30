@@ -33,6 +33,7 @@ object MyDelayManager {
 
     fun init(context: Context) {
 
+        Log.d("unlock", "My delay manager initialized")
         val sharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         if (sharedPreferences.getBoolean("using_once_triggers", false)) {
@@ -53,13 +54,8 @@ object MyDelayManager {
         }
         triggerList = originalTriggerList.shuffled().toMutableList()
 
-        val filter = IntentFilter().apply {
-            addAction(Intent.ACTION_USER_PRESENT)
-            addAction(Intent.ACTION_SCREEN_OFF)
-        }
         MyReceiverManager.registerReceiver(context)
         MyPreferenceManager.setBoolean(context, "unlock_registered", true)
-        Log.d("unlock", "unlock registered")
         Log.d("testing", "init length of trigger list: ${triggerList.size}")
 
     }

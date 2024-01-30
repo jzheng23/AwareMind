@@ -19,6 +19,11 @@ class ResponseCounter(context: Context) {
             .putInt("today_count", todayCount + 1)
             .putInt("total_count", totalCount + 1)
             .apply()
+        if (tag == "onceMet") {
+            editor.putBoolean("tutorial_finished", true)
+                .putBoolean("using_once_triggers", false)
+                .apply()
+        }
         Log.d("liveCounter", "Response counter: today is $todayCount, total is $totalCount")
     }
 
