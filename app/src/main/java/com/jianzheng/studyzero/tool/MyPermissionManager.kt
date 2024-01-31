@@ -96,7 +96,7 @@ object MyPermissionManager {
         (checkNotificationPermission(context)
                 and checkOverlayPermission(context)
                 and checkUserStatPermission(context)
-                and checkBatteryPermission(context)
+//                and checkBatteryPermission(context)
                 and checkAccessibilityPermission(context))
 }
 

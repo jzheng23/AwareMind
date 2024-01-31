@@ -162,7 +162,7 @@ fun ArrowCard(
             horizontalAlignment = Alignment.Start,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .padding(horizontal = mediumPadding, vertical = mediumPadding/3)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,

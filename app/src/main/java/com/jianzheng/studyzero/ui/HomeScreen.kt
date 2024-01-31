@@ -43,7 +43,7 @@ import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
 
-val mediumPadding = 12.dp
+val mediumPadding = 10.dp
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -76,13 +76,15 @@ fun HomeScreen(
         },
         content = {
             Surface(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
             ) {
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
                         .fillMaxSize()
-                        .padding(it),
+                        .padding(horizontal = mediumPadding),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
