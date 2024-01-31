@@ -63,7 +63,7 @@ class MyForegroundService : Service() {
             .setContentTitle(getString(R.string.app_name))
             .setContentText("$countFromPrefs prompts completed today")
 //            .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
-            .setSmallIcon(R.drawable.heart_full)
+            .setSmallIcon(R.drawable.heart_alt)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .build()
