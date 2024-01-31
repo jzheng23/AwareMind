@@ -8,8 +8,6 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationCompat
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
