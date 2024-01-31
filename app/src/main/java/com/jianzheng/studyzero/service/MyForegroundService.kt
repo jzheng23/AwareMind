@@ -8,6 +8,8 @@ import android.app.Service
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
 import androidx.core.app.NotificationCompat
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
@@ -53,13 +55,14 @@ class MyForegroundService : Service() {
         notificationManager.createNotificationChannel(channel)
     }
 
+
     private fun buildForegroundNotification(): Notification {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
         val countFromPrefs = MyPreferenceManager.getInt(this, "today_count")
         return NotificationCompat.Builder(this, channelId)
-            .setContentTitle("Study Zero")
+            .setContentTitle(getString(R.string.app_name))
             .setContentText("$countFromPrefs prompts completed today")
 //            .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
             .setSmallIcon(R.drawable.heart_full)

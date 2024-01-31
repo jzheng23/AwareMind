@@ -64,13 +64,19 @@ fun HomeScreen(
     val isTester by sharedPrefsViewModel.isTester.observeAsState(false)
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
-
     if (userId == "") navController.navigate(AppRoutes.LOGIN)
+    var clickOnUIDCount by remember { mutableIntStateOf(0) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = {
-                    Text("Hi, " + if (userAlias == "") userId else userAlias)
+                    Text(
+                        text = "Hi, " + if (userAlias == "") userId else userAlias,
+                        modifier = Modifier.clickable {
+                            clickOnUIDCount++
+                            if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)
+                        }
+                    )
                 },
             )
         },
@@ -144,11 +150,6 @@ fun HomeScreen(
 fun WelcomeInfo(
     onClickOfInput: () -> Unit = {}
 ) {
-//    val todayCount = remember { mutableIntStateOf(0) }
-//    val totalCount = remember { mutableIntStateOf(0) }
-//    val dayCount = remember { mutableIntStateOf(0) }
-
-
     val contextAsApp = LocalContext.current.applicationContext as Application
     val welcomeViewModel: WelcomeViewModel = viewModel(
         factory = WelcomeViewModelFactory(contextAsApp)

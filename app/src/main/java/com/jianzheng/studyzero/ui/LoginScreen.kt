@@ -49,13 +49,14 @@ fun LoginScreen(
             Surface(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(innerPadding)
 
             ) {
                 Column(
                     modifier = Modifier
                         .verticalScroll(rememberScrollState())
-                        .fillMaxSize()
-                        .padding(innerPadding),
+                        .padding(horizontal = mediumPadding)
+                        .fillMaxSize(),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {

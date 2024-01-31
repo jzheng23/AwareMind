@@ -17,14 +17,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MyUsageManager {
-    fun getUsageEvents(context: Context, currentTime: Long) {
+    fun getUsageEvents(context: Context, currentTime: Long, test: Boolean = true) {
 
         val currentTimeString = getDateTime(currentTime)
         Log.d("usageManager", "get usage events called @ $currentTimeString")
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
-        val usageEvents = usageStatsManager.queryEvents(currentTime - dayInMillis, currentTime)
+        val rangeMillis = if (test) dayInMillisTest else dayInMillis
+        val usageEvents = usageStatsManager.queryEvents(currentTime - rangeMillis, currentTime)
         val usageEvent = UsageEvents.Event()
 //        val eventsList = mutableListOf<UsageEventModel>()
 

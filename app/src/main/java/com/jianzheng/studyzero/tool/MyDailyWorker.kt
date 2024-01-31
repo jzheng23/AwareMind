@@ -31,7 +31,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private fun uploadData(context: Context) {
         val myUsageManager = MyUsageManager()
-        myUsageManager.getUsageEvents(context, System.currentTimeMillis())
+        myUsageManager.getUsageEvents(context, System.currentTimeMillis(), false)
     }
 
     private fun resetTriggerList(context: Context) {

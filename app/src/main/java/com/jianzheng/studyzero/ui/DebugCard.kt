@@ -124,6 +124,9 @@ fun DebugCard(
             Spacer(modifier = Modifier.height(2.dp))
             if (isVisible) {
                 Text("User ID is $userId, upload is ${validateUid(userId)}")
+                Divider(
+                    color = MaterialTheme.colorScheme.outline
+                )
                 SwitchCard(
                     title = "Notification",
                     desc = "Show a persistent notification",

@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -199,8 +198,8 @@ fun ShowEsm(
                     .align(Alignment.Center)
                     .padding(
                         top = mediumPadding,
-//                    start = mediumPadding,
-                        end = mediumPadding * 2
+//                        start = mediumPadding,
+                        end = mediumPadding * 3
                     )
             )
             IconButton(
@@ -257,7 +256,8 @@ fun ShowQuestion(
             .fillMaxWidth()
             .padding(
                 horizontal = mediumPadding,
-                vertical = mediumPadding / 2),
+                vertical = mediumPadding / 2
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
         shape = RoundedCornerShape(8.dp),
 //        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),

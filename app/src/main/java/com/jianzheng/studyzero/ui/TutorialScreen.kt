@@ -112,7 +112,6 @@ fun TutorialScreen(
                         )
                     } else Text(
                         text = "Tutorial finished!",
-                        style = MaterialTheme.typography.headlineSmall,
                         textAlign = TextAlign.Center
                     )
                 }

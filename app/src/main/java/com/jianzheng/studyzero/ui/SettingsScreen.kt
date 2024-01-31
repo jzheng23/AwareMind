@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.tool.MyPermissionManager
@@ -155,11 +156,9 @@ fun ScrollSettingContent(it: PaddingValues) {
             if (allAllowed) {
                 Text(
                     text = "All permissions have been allowed.",
-                    style = MaterialTheme.typography.headlineSmall,
                     textAlign = TextAlign.Center
                 )
             }
         }
     }
-
 }
