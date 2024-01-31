@@ -61,8 +61,8 @@ class MyForegroundService : Service() {
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle("Study Zero")
             .setContentText("$countFromPrefs prompts completed today")
-            .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
-            .setSmallIcon(R.drawable.ic_phone_android)
+//            .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
+            .setSmallIcon(R.drawable.heart_full)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
             .build()
