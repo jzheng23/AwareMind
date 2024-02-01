@@ -46,7 +46,7 @@ class MyAccessibilityService : AccessibilityService() {
     override fun onServiceConnected() {
         super.onServiceConnected()
         sharedPrefs = getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        inputToBeRecord = sharedPrefs.getBoolean("input_record", false)
+//        inputToBeRecord = sharedPrefs.getBoolean("input_record", false)
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             if (key == "input_record") {
                 inputToBeRecord = prefs.getBoolean(key, false)
@@ -75,129 +75,127 @@ class MyAccessibilityService : AccessibilityService() {
     }
 
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        if (inputToBeRecord) {
-            val currentTime = System.currentTimeMillis()
+        val currentTime = System.currentTimeMillis()
 
 
-            if ((currentTime - lastScrollEventTime > listenerInterval) and isScrolling) {
-                Log.d(
-                    "inputLogging",
-                    "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
-                )
-                val input1 = Input(
-                    startTime = getDateTime(currentTime),
-                    inputType = "scroll",
-                    extraX = totalDeltaX,
-                    extraY = totalDeltaY
-                )
-                writeData(input1)
-                isScrolling = false
-                totalDeltaX = 0
-                totalDeltaY = 0
-            }
-            when (event?.eventType) {
-                AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
-                    if (!isTextInputActive) {
-                        textInputStartTime = currentTime
-                        textChangeCount = 1
-                        isTextInputActive = true
-                    } else {
-                        // Continuing the series
-                        textChangeCount++
-                    }
+        if ((currentTime - lastScrollEventTime > listenerInterval) and isScrolling) {
+            Log.d(
+                "inputLogging",
+                "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
+            )
+            val input1 = Input(
+                startTime = getDateTime(currentTime),
+                inputType = "scroll",
+                extraX = totalDeltaX,
+                extraY = totalDeltaY
+            )
+            writeData(input1)
+            isScrolling = false
+            totalDeltaX = 0
+            totalDeltaY = 0
+        }
+        when (event?.eventType) {
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED -> {
+                if (!isTextInputActive) {
+                    textInputStartTime = currentTime
+                    textChangeCount = 1
+                    isTextInputActive = true
+                } else {
+                    // Continuing the series
+                    textChangeCount++
                 }
+            }
 
-                AccessibilityEvent.TYPE_VIEW_CLICKED -> {
-                    Log.d("inputLogging", "${getDateTime(currentTime)} click")
-                    val input2 = Input(
+            AccessibilityEvent.TYPE_VIEW_CLICKED -> {
+                Log.d("inputLogging", "${getDateTime(currentTime)} click")
+                val input2 = Input(
+                    startTime = getDateTime(currentTime),
+                    inputType = "click",
+                    extraX = 0,
+                    extraY = 0
+                )
+                writeData(input2)
+                if (isTextInputActive) {
+                    Log.d(
+                        "inputLogging",
+                        "${getDateTime(currentTime)} textChanged $textChangeCount"
+                    )
+                    val input3 = Input(
                         startTime = getDateTime(currentTime),
-                        inputType = "click",
-                        extraX = 0,
+                        inputType = "text",
+                        extraX = textChangeCount,
                         extraY = 0
                     )
-                    writeData(input2)
-                    if (isTextInputActive) {
-                        Log.d(
-                            "inputLogging",
-                            "${getDateTime(currentTime)} textChanged $textChangeCount"
-                        )
-                        val input3 = Input(
-                            startTime = getDateTime(currentTime),
-                            inputType = "text",
-                            extraX = textChangeCount,
-                            extraY = 0
-                        )
-                        writeData(input3)
-                        isTextInputActive = false
-                    }
+                    writeData(input3)
+                    isTextInputActive = false
                 }
-
-                AccessibilityEvent.TYPE_VIEW_SCROLLED -> {
-                    if (isTextInputActive) {
-                        Log.d(
-                            "inputLogging",
-                            "${getDateTime(currentTime)} textChanged $textChangeCount"
-                        )
-                        val input4 = Input(
-                            startTime = getDateTime(currentTime),
-                            inputType = "text",
-                            extraX = textChangeCount,
-                            extraY = 0
-                        )
-                        writeData(input4)
-                        isTextInputActive = false
-                    }
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                        if (!isScrolling) {
-                            // Start of a new scroll operation
-                            scrollStartTime = currentTime
-                            totalDeltaX = event.scrollDeltaX
-                            totalDeltaY = event.scrollDeltaY
-                            isScrolling = true
-                        } else {
-                            // Continuing the scroll operation
-                            totalDeltaX += event.scrollDeltaX
-                            totalDeltaY += event.scrollDeltaY
-                        }
-                    } else {
-                        if (!isScrolling) {
-                            // Start of a new scroll operation
-                            isScrolling = true
-                            totalDeltaX = 0
-                            totalDeltaY = 0
-                        } else {
-                            // Continuing the scroll operation
-                            val deltaX = event.scrollX - previousScrollX
-                            val deltaY = event.scrollY - previousScrollY
-                            totalDeltaX += deltaX
-                            totalDeltaY += deltaY
-                        }
-
-                        // Update previous scroll positions after calculations
-                        previousScrollX = event.scrollX
-                        previousScrollY = event.scrollY
-                    }
-
-                    lastScrollEventTime = currentTime
-                }
-
-                AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
-                    if (currentTime - lastWindowsChangeTime > listenerInterval) {
-                        Log.d("inputLogging", "${getDateTime(currentTime)} windows changed")
-                        val input5 = Input(
-                            startTime = getDateTime(currentTime),
-                            inputType = "window",
-                            extraX = 0,
-                            extraY = 0
-                        )
-                        writeData(input5)
-                    }
-                    lastWindowsChangeTime = currentTime
-
-                }
-
-                else -> {}
             }
+
+            AccessibilityEvent.TYPE_VIEW_SCROLLED -> {
+                if (isTextInputActive) {
+                    Log.d(
+                        "inputLogging",
+                        "${getDateTime(currentTime)} textChanged $textChangeCount"
+                    )
+                    val input4 = Input(
+                        startTime = getDateTime(currentTime),
+                        inputType = "text",
+                        extraX = textChangeCount,
+                        extraY = 0
+                    )
+                    writeData(input4)
+                    isTextInputActive = false
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    if (!isScrolling) {
+                        // Start of a new scroll operation
+                        scrollStartTime = currentTime
+                        totalDeltaX = event.scrollDeltaX
+                        totalDeltaY = event.scrollDeltaY
+                        isScrolling = true
+                    } else {
+                        // Continuing the scroll operation
+                        totalDeltaX += event.scrollDeltaX
+                        totalDeltaY += event.scrollDeltaY
+                    }
+                } else {
+                    if (!isScrolling) {
+                        // Start of a new scroll operation
+                        isScrolling = true
+                        totalDeltaX = 0
+                        totalDeltaY = 0
+                    } else {
+                        // Continuing the scroll operation
+                        val deltaX = event.scrollX - previousScrollX
+                        val deltaY = event.scrollY - previousScrollY
+                        totalDeltaX += deltaX
+                        totalDeltaY += deltaY
+                    }
+
+                    // Update previous scroll positions after calculations
+                    previousScrollX = event.scrollX
+                    previousScrollY = event.scrollY
+                }
+
+                lastScrollEventTime = currentTime
+            }
+
+//            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
+//                if (currentTime - lastWindowsChangeTime > listenerInterval) {
+//                    Log.d("inputLogging", "${getDateTime(currentTime)} windows changed")
+//                    val input5 = Input(
+//                        startTime = getDateTime(currentTime),
+//                        inputType = "window",
+//                        extraX = 0,
+//                        extraY = 0
+//                    )
+//                    writeData(input5)
+//                }
+//                lastWindowsChangeTime = currentTime
+//
+//            }
+
+            else -> {}
         }
     }
 

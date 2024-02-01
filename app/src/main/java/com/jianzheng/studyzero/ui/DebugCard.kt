@@ -219,18 +219,18 @@ fun DebugCard(
                     buttonText = "Get",
                     buttonEnabled = isUsageAllowed
                 )
-                Divider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                SwitchCard(
-                    title = "Input",
-                    desc = "Record input interaction",
-                    onCheckedChange = {
-                        MyPreferenceManager.setBoolean(context, "input_record", it)
-                    },
-                    isEnabled = isA11yAllowed,
-                    isChecked = isInputRecording
-                )
+//                Divider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                SwitchCard(
+//                    title = "Input",
+//                    desc = "Record input interaction",
+//                    onCheckedChange = {
+//                        MyPreferenceManager.setBoolean(context, "input_record", it)
+//                    },
+//                    isEnabled = isA11yAllowed,
+//                    isChecked = isInputRecording
+//                )
                 Divider(
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -258,17 +258,17 @@ fun DebugCard(
                     },
                     isChecked = isDataCollecting.value
                 )
-                Divider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                ButtonCard(
-                    title = "User ID",
-                    desc = "Change user ID",
-                    onAuthClick = {
-                        navController.navigate(AppRoutes.LOGIN)
-                    },
-                    buttonText = "Change"
-                )
+//                Divider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                ButtonCard(
+//                    title = "User ID",
+//                    desc = "Change user ID",
+//                    onAuthClick = {
+//                        navController.navigate(AppRoutes.LOGIN)
+//                    },
+//                    buttonText = "Change"
+//                )
                 Divider(
                     color = MaterialTheme.colorScheme.outline
                 )
