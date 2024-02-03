@@ -11,6 +11,7 @@ object AppRoutes {
     const val SETTINGS = "settings"
     const val TUTORIAL = "tutorial"
     const val EXPORT = "EXPORT"
+    const val LOGIN = "LOGIN"
 }
 
 @Composable
@@ -22,5 +23,6 @@ fun AppNavigation() {
         composable(AppRoutes.SETTINGS) { SettingsScreen(navController) }
         composable(AppRoutes.TUTORIAL) { TutorialScreen(navController) }
         composable(AppRoutes.EXPORT) { ExportScreen(navController) }
+        composable(AppRoutes.LOGIN) { LoginScreen(navController) }
     }
 }

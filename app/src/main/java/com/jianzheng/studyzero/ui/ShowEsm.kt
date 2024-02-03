@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -15,11 +14,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -70,12 +69,15 @@ fun ShowOverlay(
     onClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
-    var myViewModel: EsmViewModelInterface
+    val myViewModel: EsmViewModelInterface = if (!LocalInspectionMode.current) {
+        EsmViewModel(context)
+    } else {
+        MockEsmViewModel()
+    }
     val autoDismiss = remember { mutableStateOf(true) }
     //TODO need to tidy up
 
     if (!LocalInspectionMode.current) {
-        myViewModel = EsmViewModel(context)
         val handler = Handler(Looper.myLooper()!!)
         val displayTimeMillis = if (
             MyPreferenceManager.getBoolean(context, "using_testing_triggers")
@@ -88,9 +90,6 @@ fun ShowOverlay(
                 Log.d("unlock", "unanswered")
             }
         }, displayTimeMillis) // 10 seconds delay
-    } else {
-
-        myViewModel = MockEsmViewModel()
     }
     StudyZeroEsmTheme(darkTheme = darkTheme) {
         Surface(
@@ -194,12 +193,15 @@ fun ShowEsm(
         ) {
             Text(
                 text = stringResource(id = R.string.instruction),
+                textAlign = TextAlign.Center,
                 modifier = Modifier
                     .align(Alignment.Center)
-                    .padding(top = mediumPadding),
-                textAlign = TextAlign.Center
+                    .padding(
+                        top = mediumPadding,
+//                        start = mediumPadding,
+                        end = mediumPadding * 3
+                    )
             )
-
             IconButton(
                 onClick = {
                     onClick()
@@ -208,12 +210,14 @@ fun ShowEsm(
                 modifier = Modifier.align(Alignment.TopEnd)
             ) {
                 Icon(
-                    imageVector = Icons.Filled.Close,
+                    imageVector = Icons.Rounded.Close,
                     contentDescription = "Dismiss",
+                    Modifier.size(20.dp),
                     tint = MaterialTheme.colorScheme.onSurface,
                 )
             }
         }
+
         //show question 1
         ShowQuestion(
             questionString = R.string.question1,
@@ -242,15 +246,18 @@ fun ShowQuestion(
     labelSet: Int,
 //    autoDismiss: MutableState<Boolean>
 ) {
-    val options: List<Int> = listOf(1, 2, 3, 4, 5)
-    val labels1: List<String> = listOf("Very passively", "", "Moderately", "", "Very actively")
-    val labels2: List<String> = listOf("Strongly disagree", "", "Neutral", "", "Strongly agree")
+    val options: List<Int> = listOf(1, 2, 3, 4)
+    val labels1: List<String> = listOf("Passively", "", "", "Actively")
+    val labels2: List<String> = listOf("Stop", "", "", "Continue")
     val labels = if (labelSet == 1) labels1 else labels2
     val selectedValue = remember { mutableIntStateOf(0) }
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = mediumPadding, vertical = mediumPadding / 2),
+            .padding(
+                horizontal = mediumPadding,
+                vertical = mediumPadding / 2
+            ),
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
         shape = RoundedCornerShape(8.dp),
 //        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
@@ -298,7 +305,8 @@ fun ShowQuestion(
                         index = index,
                         myViewModel = myViewModel,
 //                        autoDismiss = autoDismiss,
-                        selectedValue = selectedValue
+                        selectedValue = selectedValue,
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
@@ -318,7 +326,8 @@ fun ChoiceWithLabel(
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
     )
     {
         RadioButton(
@@ -330,7 +339,7 @@ fun ChoiceWithLabel(
                 myViewModel.setAnswer(item, index)
                 Log.d("viewModel", "$item selected for q$index!")
             },
-            modifier = modifier
+            modifier = Modifier
                 .height(22.dp)
         )
         if (label != "") {
@@ -350,10 +359,8 @@ fun ChoiceWithLabel(
                         )
                     )
                 ),
-                modifier = modifier
-                    .width(68.dp)
 
-            )
+                )
         }
 
     }

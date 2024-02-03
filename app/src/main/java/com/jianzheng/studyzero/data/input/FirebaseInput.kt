@@ -1,6 +1,6 @@
 package com.jianzheng.studyzero.data.input
 
-data class FirebaseInput (
+data class FirebaseInput(
     val startTime: String,
     val inputType: String,
     val extraX: Int,

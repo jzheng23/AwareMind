@@ -1,11 +1,13 @@
 <resources>
-    <string name="app_name">Study Zero</string>
-    <string name="question1">Right now, I am using my phone...</string>
+    <string name="app_name">AwareFocus</string>
+    <string name="question1">Right now, I am using my phone … </string>
     <string name="question2">Right now, I should … using my phone.</string>
-    <string name="instruction">Please answer the questions reflecting on your current phone usage</string>
+    <string name="instruction_backup">Please answer the questions reflecting on your current phone usage</string>
+    <string name="instruction">Reflecting on my current phone usage</string>
     <string name="submit">Submit</string>
     <string name="_30met">30Met</string>
     <string name="_20met">20Met</string>
     <string name="random_met">randomMet</string>
     <string name="accessibility_service_description">To record the number of taps, scrolls, and text edits performed on the phone.</string>
+    <string name="awarefocus">AwareFocus</string>
 </resources>

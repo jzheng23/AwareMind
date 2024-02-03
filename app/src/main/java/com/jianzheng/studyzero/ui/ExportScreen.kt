@@ -2,15 +2,21 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
-import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,41 +35,58 @@ import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ExportScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
-    Surface(
-        modifier = modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(mediumPadding),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text("Export data to local files")
-            Button(
-                onClick = {
-                    shareDatabases(context, listOf("response_database", "input_database", "usage_database"), "com.jianzheng.studyzero.provider")
-//                    shareDatabaseBackup(context, "response_database", "com.jianzheng.studyzero.provider")
-
-                }
-            ) {
-                Text("Export")
-            }
-            Button(
-                onClick = {
-                    navController.navigate(AppRoutes.HOME)
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = { Text("Data files") },
+                navigationIcon = {
+                    IconButton(onClick = {
+                        navController.navigate(AppRoutes.HOME)
+                    }) {
+                        Icon(
+                            Icons.Filled.KeyboardArrowLeft,
+                            contentDescription = "back",
+                        )
+                    }
                 },
+                scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(rememberTopAppBarState())
+            )
+
+        },
+        content = {
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it),
             ) {
-                Text("Back")
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(horizontal = mediumPadding),
+                    verticalArrangement = Arrangement.Top,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    ArrowCard(
+                        title = "Export",
+                        desc = "Export the ",
+                        onAuthClick = {
+                            shareDatabases(
+                                context,
+                                listOf("response_database", "input_database", "usage_database"),
+                                "com.jianzheng.studyzero.provider"
+                            )
+                        }
+                    )
+                }
             }
         }
-    }
+    )
 }
 
 
@@ -110,26 +133,3 @@ fun shareDatabases(context: Context, databaseNames: List<String>, authority: Str
     }
 }
 
-fun shareDatabaseBackup(context: Context, databaseName: String, authority: String) {
-    // Original database file
-    val originalFile = File(context.getDatabasePath(databaseName).path)
-
-    // New file location in external files directory
-    val newFile = File(context.getExternalFilesDir(null), databaseName)
-
-    // Copy the database file to the external files directory
-    originalFile.copyTo(newFile, overwrite = true)
-
-    // Get URI for the new file
-    val fileUri = FileProvider.getUriForFile(context, authority, newFile)
-
-    // Intent to share the file
-    val shareIntent = Intent().apply {
-        action = Intent.ACTION_SEND
-        type = "application/octet-stream"
-        putExtra(Intent.EXTRA_STREAM, fileUri)
-        addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-    }
-
-    context.startActivity(Intent.createChooser(shareIntent, "Share Database"))
-}

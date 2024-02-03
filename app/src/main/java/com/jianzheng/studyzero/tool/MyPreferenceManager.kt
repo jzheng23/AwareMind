@@ -43,7 +43,7 @@ object MyPreferenceManager {
         }
     }
 
-    fun getLong(context: Context, key: String):Long =
+    fun getLong(context: Context, key: String): Long =
         getSharedPreferences(context).getLong(key, 0L)
 
     fun setLong(context: Context, key: String, value: Long) {

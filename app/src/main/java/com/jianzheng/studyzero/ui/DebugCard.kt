@@ -8,13 +8,16 @@ import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,11 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
@@ -50,9 +54,8 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun DebugCard(
-//    userId: MutableState<String?>,
-    userId: String,
-    modifier: Modifier,
+    navController: NavController,
+    userId: String = "",
 ) {
     var isVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
@@ -88,26 +91,42 @@ fun DebugCard(
 
     Card(
 //        modifier = Modifier.padding(16.dp),
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation))
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(vertical = 4.dp),
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
-            modifier = modifier
-                .padding(mediumPadding)
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = mediumPadding, vertical = mediumPadding / 3)
         ) {
-            IconButton(
-                onClick = { isVisible = !isVisible },
-                modifier = Modifier.wrapContentSize()
-                ) {
-                Icon(
-                    imageVector = if (isVisible) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                    contentDescription = if (isVisible) "Collapse" else "Expand"
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = "Debug",
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
                 )
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = { isVisible = !isVisible },
+                ) {
+                    Icon(
+                        imageVector = if (isVisible) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
+                        contentDescription = if (isVisible) "Collapse" else "Expand"
+                    )
+                }
             }
+            Spacer(modifier = Modifier.height(2.dp))
             if (isVisible) {
                 Text("User ID is $userId, upload is ${validateUid(userId)}")
+                Divider(
+                    color = MaterialTheme.colorScheme.outline
+                )
                 SwitchCard(
                     title = "Notification",
                     desc = "Show a persistent notification",
@@ -122,7 +141,7 @@ fun DebugCard(
                     isChecked = isNotificationShowing.value
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "ESM",
@@ -168,7 +187,7 @@ fun DebugCard(
                     buttonEnabled = isOverlayAllowed
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
                     title = "New Day",
@@ -183,7 +202,7 @@ fun DebugCard(
                     buttonText = "Simulate"
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
                     title = "Usage",
@@ -200,32 +219,32 @@ fun DebugCard(
                     buttonText = "Get",
                     buttonEnabled = isUsageAllowed
                 )
+//                Divider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                SwitchCard(
+//                    title = "Input",
+//                    desc = "Record input interaction",
+//                    onCheckedChange = {
+//                        MyPreferenceManager.setBoolean(context, "input_record", it)
+//                    },
+//                    isEnabled = isA11yAllowed,
+//                    isChecked = isInputRecording
+//                )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
-                )
-                SwitchCard(
-                    title = "Input",
-                    desc = "Record input interaction",
-                    onCheckedChange = {
-                        MyPreferenceManager.setBoolean(context, "input_record", it)
-                    },
-                    isEnabled = isA11yAllowed,
-                    isChecked = isInputRecording
-                )
-                Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "Tutorial",
                     desc = "Set tutorial as completed",
                     onCheckedChange = {
                         MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
-                        MyPreferenceManager.setInt(context,"onceMet", if (it) 1 else 0)
+                        MyPreferenceManager.setInt(context, "onceMet", if (it) 1 else 0)
                     },
                     isChecked = isTutorialFinished
                 )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
                     title = "Data collection",
@@ -239,8 +258,19 @@ fun DebugCard(
                     },
                     isChecked = isDataCollecting.value
                 )
+//                Divider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                ButtonCard(
+//                    title = "User ID",
+//                    desc = "Change user ID",
+//                    onAuthClick = {
+//                        navController.navigate(AppRoutes.LOGIN)
+//                    },
+//                    buttonText = "Change"
+//                )
                 Divider(
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.2f)
+                    color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
                     title = "Reset",

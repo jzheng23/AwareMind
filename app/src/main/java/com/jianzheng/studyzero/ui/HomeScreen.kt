@@ -7,7 +7,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -18,29 +17,24 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.CenterAlignedTopAppBar
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -49,15 +43,14 @@ import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
 
-val mediumPadding = 12.dp
+val mediumPadding = 10.dp
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     navController: NavController,
-    modifier: Modifier = Modifier
 ) {
-    val showDialog = remember { mutableStateOf(false) }
     val context = LocalContext.current
     val showPermissionCard by usePollState {
         !MyPermissionManager.checkAllPermissions(context)
@@ -71,77 +64,36 @@ fun HomeScreen(
     val isTester by sharedPrefsViewModel.isTester.observeAsState(false)
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
     val isDataCollecting by sharedPrefsViewModel.isDataCollecting.observeAsState(false)
-
-    if (showDialog.value) LoginPage(userId, userAlias, showDialog)
-    var clickOnUserCount by remember { mutableIntStateOf(0) }
-
-    Surface(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Column(
-            modifier = Modifier
-                .verticalScroll(rememberScrollState())
-                .fillMaxSize()
-                .padding(vertical = mediumPadding),
-            verticalArrangement = Arrangement.Top,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            if (userId == "") {
-                ArrowCard(
-                    title = "Login",
-                    desc = "Please login with the assigned user ID",
-                    onAuthClick = {
-                        showDialog.value = true
-                    }
-                )
-//                Text(
-//                    text = "Please login",
-//                    modifier = Modifier.semantics {
-//                        contentDescription = "Please login"
-//                    }
-//                )
-//                LoginButton(
-//                    showDialog = showDialog
-//                )
-            } else {
-                Box(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    IconButton(
-                        onClick = {
-                            //TODO
-                        },
-                        modifier = Modifier.align(Alignment.CenterStart)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.AccountCircle,
-                            contentDescription = "Back",
-                            tint = Color.Transparent, // Set the tint color to transparent
-                            modifier = Modifier.alpha(0f) // Set alpha to 0 for invisibility
-                        )
-                    }
+    if (userId == "") navController.navigate(AppRoutes.LOGIN)
+    var clickOnUIDCount by remember { mutableIntStateOf(0) }
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
                     Text(
-                        text = if (userAlias == "") "Hi, $userId!" else "Hi, $userAlias!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .clickable {
-                                clickOnUserCount++
-                                if (clickOnUserCount > 2) showDialog.value = true
-                            }
-                            .align(Alignment.Center)
+                        text = "Hi, " + if (userAlias == "") userId else userAlias,
+                        modifier = Modifier.clickable {
+                            clickOnUIDCount++
+                            if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)
+                        }
                     )
-                }
-//                Divider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
+                },
+            )
+        },
+        content = {
+            Surface(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(it)
+            ) {
                 Column(
                     modifier = Modifier
+                        .verticalScroll(rememberScrollState())
                         .fillMaxSize()
-                        .padding(horizontal = mediumPadding, vertical = 4.dp),
+                        .padding(horizontal = mediumPadding),
                     verticalArrangement = Arrangement.Top,
                     horizontalAlignment = Alignment.CenterHorizontally
-                ){
+                ) {
                     if (showPermissionCard) {
                         ArrowCard(
                             title = "Permission",
@@ -180,31 +132,24 @@ fun HomeScreen(
                             Log.d("navigate", "to export")
                         }
                     }
+                    if (isTester) {
+                        DebugCard(
+                            navController,
+                            userId = userId,
+
+                            )
+                    }
                 }
-
-
-            }
-
-            if (isTester) {
-                DebugCard(
-                    userId = userId,
-                    modifier = modifier,
-                )
             }
         }
-    }
-
+    )
 }
+
 
 @Composable
 fun WelcomeInfo(
     onClickOfInput: () -> Unit = {}
 ) {
-//    val todayCount = remember { mutableIntStateOf(0) }
-//    val totalCount = remember { mutableIntStateOf(0) }
-//    val dayCount = remember { mutableIntStateOf(0) }
-
-
     val contextAsApp = LocalContext.current.applicationContext as Application
     val welcomeViewModel: WelcomeViewModel = viewModel(
         factory = WelcomeViewModelFactory(contextAsApp)
@@ -268,7 +213,12 @@ fun LogoAndContact() {
                     }
 
                     if (emailIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(Intent.createChooser(emailIntent, "Choose an email client"))
+                        context.startActivity(
+                            Intent.createChooser(
+                                emailIntent,
+                                "Choose an email client"
+                            )
+                        )
                         Log.d("email", "can do")
                     } else {
                         Log.d("email", "cannot do")
