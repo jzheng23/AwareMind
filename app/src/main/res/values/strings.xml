@@ -10,4 +10,5 @@
     <string name="random_met">randomMet</string>
     <string name="accessibility_service_description">To record the number of taps, scrolls, and text edits performed on the phone.</string>
     <string name="awarefocus">AwareFocus</string>
+    <string name="url_privacy_policy">https://sites.google.com/umd.edu/awarefocus/privacy-policy</string>
 </resources>

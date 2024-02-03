@@ -1,7 +1,10 @@
 package com.jianzheng.studyzero.ui
 
 import android.app.Application
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -34,7 +37,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
@@ -71,7 +79,7 @@ fun HomeScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Hi, " + if (userAlias == "") userId else userAlias,
+                        text = "Hi, " + (if (userAlias == "") userId else userAlias) + "!",
                         modifier = Modifier.clickable {
                             clickOnUIDCount++
                             if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)
@@ -181,9 +189,11 @@ fun WelcomeInfo(
 
 }
 
+
 @Composable
 fun LogoAndContact() {
     val context = LocalContext.current
+    val url = stringResource(id = R.string.url_privacy_policy)
     Row(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
@@ -201,29 +211,56 @@ fun LogoAndContact() {
             modifier = Modifier
                 .weight(1f) // The weight is a ratio, so both use 1f to split space equally
                 .fillMaxWidth()
+                .padding(end = mediumPadding)
         ) {
-            Text("Jian Zheng")
+            val versionName = getVersionName(context)
             Text(
-                text = "jzheng23@umd.edu",
-                modifier = Modifier.clickable {
-                    val emailIntent = Intent(Intent.ACTION_SEND).apply {
-                        type = "message/rfc822" // MIME type for email
-                        putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
-                        putExtra(Intent.EXTRA_SUBJECT, "From Study Zero")
-                    }
+                text = stringResource(id = R.string.app_name)+ " " + versionName,
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Row{
+                Text("By",style = MaterialTheme.typography.bodyMedium)
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = "Jian Zheng",
+                    style = TextStyle(textDecoration = TextDecoration.Underline),
+                    modifier = Modifier
+                        .clickable {
+                            val emailIntent = Intent(Intent.ACTION_SEND).apply {
+                                type = "message/rfc822" // MIME type for email
+                                putExtra(Intent.EXTRA_EMAIL, arrayOf("jzheng23@umd.edu"))
+                                putExtra(Intent.EXTRA_SUBJECT, "From Study Zero")
+                            }
 
-                    if (emailIntent.resolveActivity(context.packageManager) != null) {
-                        context.startActivity(
-                            Intent.createChooser(
-                                emailIntent,
-                                "Choose an email client"
-                            )
-                        )
-                        Log.d("email", "can do")
-                    } else {
-                        Log.d("email", "cannot do")
+                            if (emailIntent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(
+                                    Intent.createChooser(
+                                        emailIntent,
+                                        "Choose an email client"
+                                    )
+                                )
+                                Log.d("email", "can do")
+                            } else {
+                                Log.d("email", "cannot do")
+                            }
+                        }
+                        .padding(end = 2.dp)
+                )
+            }
+
+            Text(
+                text = "Privacy Policy ",
+                style = TextStyle(textDecoration = TextDecoration.Underline),
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .clickable{
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                            context.startActivity(intent)
+                        } catch (e: Exception) {
+                            // Handle the exception when no Activity can handle the Intent
+                        }
                     }
-                }
             )
         }
     }
@@ -282,4 +319,32 @@ fun RowOfInfo(
     }
 }
 
+@Preview
+@Composable
+fun InfoPreview() {
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = mediumPadding),
+            verticalArrangement = Arrangement.Top,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LogoAndContact()
+        }
+    }
+}
 
+
+fun getVersionName(context: Context): String {
+    return try {
+        val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+        packageInfo.versionName
+    } catch (e: PackageManager.NameNotFoundException) {
+        // Handle the exception if the package name is not found
+        "Not Found"
+    }
+}

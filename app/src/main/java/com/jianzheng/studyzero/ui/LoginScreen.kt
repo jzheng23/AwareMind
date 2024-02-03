@@ -115,7 +115,7 @@ fun LoginScreen(
                                         imeAction = ImeAction.Done
                                     ),
                                     modifier = Modifier.semantics {
-                                        contentDescription = "Alias optional"
+                                        contentDescription = "Alias"
                                     }
                                 )
                                 Button(
