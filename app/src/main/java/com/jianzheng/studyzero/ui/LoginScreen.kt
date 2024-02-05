@@ -56,7 +56,7 @@ fun LoginScreen(
             ) {
                 Column(
                     modifier = Modifier
-                        .verticalScroll(rememberScrollState())
+//                        .verticalScroll(rememberScrollState())
                         .padding(horizontal = mediumPadding)
                         .fillMaxSize(),
                     verticalArrangement = Arrangement.Top,
@@ -74,7 +74,7 @@ fun LoginScreen(
                     Dialog(
                         onDismissRequest = {
                             showDialog = false
-                        }
+                        },
                     ) {
                         Card(
                             modifier = Modifier
