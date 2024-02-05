@@ -1,5 +1,7 @@
 package com.jianzheng.studyzero.ui
 
+import android.app.AlertDialog
+import android.content.Context
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -147,7 +149,9 @@ fun ScrollSettingContent(it: PaddingValues) {
                             "the number of characters you type, but not the content of the text. No " +
                             "personal or sensitive user data will be collected.",
                     onAuthClick = {
-                        MyPermissionManager.grantAccessibilityPermission(context)
+                        showAccessibilityConsentDialog(context) {
+                            MyPermissionManager.grantAccessibilityPermission(context)
+                        }
                     }
                 )
             }
@@ -160,3 +164,15 @@ fun ScrollSettingContent(it: PaddingValues) {
         }
     }
 }
+
+fun showAccessibilityConsentDialog(context: Context, onConsentGiven: () -> Unit) {
+    AlertDialog.Builder(context)
+        .setTitle("Accessibility Permission Required")
+        .setMessage("To understand how you use your phone, this app needs to access accessibility services. This includes recording taps, scrolls, and the number of characters typed. No personal or sensitive data will be collected.")
+        .setPositiveButton("Agree") { _, _ ->
+            onConsentGiven()
+        }
+        .setNegativeButton("Cancel", null)
+        .show()
+}
+
