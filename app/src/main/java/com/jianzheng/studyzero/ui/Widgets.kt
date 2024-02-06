@@ -156,10 +156,7 @@ fun ArrowCard(
             .fillMaxWidth()
             .wrapContentHeight()
             .clickable { onAuthClick() }
-            .padding(vertical = 4.dp)
-            .semantics {
-                contentDescription = "Card for $title, tap to $desc"
-            },
+            .padding(vertical = 4.dp),
 //        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
 
     ) {

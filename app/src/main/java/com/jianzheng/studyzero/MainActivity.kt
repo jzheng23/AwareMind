@@ -37,21 +37,12 @@ class MainActivity : ComponentActivity() {
 
     public override fun onStart() {
         super.onStart()
-        // Check if user is signed in (non-null) and update UI accordingly.
         auth.signInAnonymously()
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
-                    // Sign in success, update UI with the signed-in user's information
                     Log.d("Authentication", "signInAnonymously:success")
-//                    val user = auth.currentUser
                 } else {
-                    // If sign in fails, display a message to the user.
                     Log.w("Authentication", "signInAnonymously:failure", task.exception)
-//                    Toast.makeText(
-//                        baseContext,
-//                        "Authentication failed.",
-//                        Toast.LENGTH_SHORT,
-//                    ).show()
                 }
             }
     }

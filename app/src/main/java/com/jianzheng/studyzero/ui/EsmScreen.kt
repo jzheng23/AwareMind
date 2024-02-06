@@ -38,6 +38,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -106,9 +107,12 @@ fun ShowOverlay(
                         top = 40.dp,
                         end = mediumPadding,
                         start = mediumPadding,
-//                        bottom = mediumPadding
                     ),
-                elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = dimensionResource(
+                        id = R.dimen.elevation
+                    )
+                ),
                 shape = RoundedCornerShape(8.dp),
             ) {
                 Column(
@@ -117,10 +121,11 @@ fun ShowOverlay(
                     modifier = Modifier
                         .background(color = MaterialTheme.colorScheme.surface)
                 ) {
+                    ShowInstruction(
+                        onClick = onClick
+                    )
                     ShowEsm(
                         myViewModel = myViewModel,
-//                        autoDismiss = autoDismiss,
-                        onClick = onClick
                     )
                     SubmitButton(
                         tag = tag,
@@ -179,45 +184,50 @@ fun SubmitButton(
 }
 
 @Composable
+fun ShowInstruction(
+    onClick: () -> Unit = {},
+) {
+    Box(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = stringResource(id = R.string.instruction),
+            style = MaterialTheme.typography.bodyLarge,
+//            fontSize = 15.sp,
+            textAlign = TextAlign.Center,
+            modifier = Modifier
+                .align(Alignment.Center)
+                .padding(
+                    top = mediumPadding,
+//                        start = mediumPadding,
+                    end = mediumPadding * 3
+                )
+        )
+        IconButton(
+            onClick = {
+                onClick()
+                MyDelayManager.recycleTrigger()
+            },
+            modifier = Modifier.align(Alignment.TopEnd)
+        ) {
+            Icon(
+                imageVector = Icons.Rounded.Close,
+                contentDescription = "Dismiss",
+                Modifier.size(20.dp),
+                tint = MaterialTheme.colorScheme.onSurface,
+            )
+        }
+    }
+}
+
+@Composable
 fun ShowEsm(
     myViewModel: EsmViewModelInterface,
-    onClick: () -> Unit = {},
 ) {
     Column(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
-
-        Box(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = stringResource(id = R.string.instruction),
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .align(Alignment.Center)
-                    .padding(
-                        top = mediumPadding,
-//                        start = mediumPadding,
-                        end = mediumPadding * 3
-                    )
-            )
-            IconButton(
-                onClick = {
-                    onClick()
-                    MyDelayManager.recycleTrigger()
-                },
-                modifier = Modifier.align(Alignment.TopEnd)
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Close,
-                    contentDescription = "Dismiss",
-                    Modifier.size(20.dp),
-                    tint = MaterialTheme.colorScheme.onSurface,
-                )
-            }
-        }
-
         //show question 1
         ShowQuestion(
             questionString = R.string.question1,
