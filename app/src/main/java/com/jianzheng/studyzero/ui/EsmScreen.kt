@@ -257,8 +257,8 @@ fun ShowQuestion(
 //    autoDismiss: MutableState<Boolean>
 ) {
     val options: List<Int> = listOf(1, 2, 3, 4)
-    val labels1: List<String> = listOf("Passively", "", "", "Actively")
-    val labels2: List<String> = listOf("Stop", "", "", "Continue")
+    val labels1: List<String> = listOf("passively", "", "", "actively")
+    val labels2: List<String> = listOf("stop", "", "", "continue")
     val labels = if (labelSet == 1) labels1 else labels2
     val selectedValue = remember { mutableIntStateOf(0) }
     Card(

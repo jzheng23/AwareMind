@@ -1,9 +1,9 @@
 <resources>
     <string name="app_name">AwareMind</string>
-    <string name="question1">Right now, I am using my phone … </string>
-    <string name="question2">Right now, I should … using my phone.</string>
+    <string name="question1">Right now, I am using my phone _ </string>
+    <string name="question2">Right now, I should _ using my phone.</string>
     <string name="instruction_backup">Please answer the questions reflecting on your current phone usage</string>
-    <string name="instruction">Reflect on your current phone usage</string>
+    <string name="instruction">Reflecting on my phone usage …</string>
     <string name="submit">Submit</string>
     <string name="_30met">30Met</string>
     <string name="_20met">20Met</string>
