@@ -231,6 +231,17 @@ fun DebugCard(
 //                    isEnabled = isA11yAllowed,
 //                    isChecked = isInputRecording
 //                )
+
+                Divider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+                SwitchCard(
+                    title = "Driving",
+                    desc = "I am driving",
+                    onCheckedChange = {
+                        MyPreferenceManager.setBoolean(context, "is_driving", it)
+                    }
+                )
                 Divider(
                     color = MaterialTheme.colorScheme.outline
                 )

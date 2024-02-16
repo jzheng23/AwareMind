@@ -38,7 +38,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -81,6 +80,8 @@ fun ShowOverlay(
     if (!LocalInspectionMode.current) {
         val handler = Handler(Looper.myLooper()!!)
         val displayTimeMillis = if (
+            MyPreferenceManager.getBoolean(context, "is_driving")
+        ) 0L else if (
             MyPreferenceManager.getBoolean(context, "using_testing_triggers")
         ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
         handler.postDelayed({
@@ -92,52 +93,57 @@ fun ShowOverlay(
             }
         }, displayTimeMillis) // 10 seconds delay
     }
-    StudyZeroEsmTheme(darkTheme = darkTheme) {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            color = Color.White.copy(alpha = 0.5f),
-//            onClick = onClick
-        ) {
-            Card(
+    if (
+        !MyPreferenceManager.getBoolean(context, "is_driving")
+    ) {
+        StudyZeroEsmTheme(darkTheme = darkTheme) {
+            Surface(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(
-                        top = 40.dp,
-                        end = mediumPadding,
-                        start = mediumPadding,
-                    ),
-                elevation = CardDefaults.cardElevation(
-                    defaultElevation = dimensionResource(
-                        id = R.dimen.elevation
-                    )
-                ),
-                shape = RoundedCornerShape(8.dp),
+                    .fillMaxSize(),
+                color = Color.White.copy(alpha = 0.5f),
+//            onClick = onClick
             ) {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                Card(
                     modifier = Modifier
-                        .background(color = MaterialTheme.colorScheme.surface)
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(
+                            top = 40.dp,
+                            end = mediumPadding,
+                            start = mediumPadding,
+                        ),
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = dimensionResource(
+                            id = R.dimen.elevation
+                        )
+                    ),
+                    shape = RoundedCornerShape(8.dp),
                 ) {
-                    ShowInstruction(
-                        onClick = onClick
-                    )
-                    ShowEsm(
-                        myViewModel = myViewModel,
-                    )
-                    SubmitButton(
-                        tag = tag,
-                        unlockTime = unlockTime,
-                        myViewModel = myViewModel,
-                        isShowing = autoDismiss,
-                        onClick = onClick
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .background(color = MaterialTheme.colorScheme.surface)
+                    ) {
+                        ShowInstruction(
+                            onClick = onClick
+                        )
+                        ShowEsm(
+                            myViewModel = myViewModel,
+                        )
+                        SubmitButton(
+                            tag = tag,
+                            unlockTime = unlockTime,
+                            myViewModel = myViewModel,
+                            isShowing = autoDismiss,
+                            onClick = onClick
+                        )
+                    }
                 }
             }
         }
     }
+
 }
 
 @Composable
