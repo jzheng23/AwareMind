@@ -1,14 +1,18 @@
 package com.jianzheng.studyzero.tool
 
+import android.Manifest
+import android.app.Activity
 import android.app.AppOpsManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.os.PowerManager
 import android.provider.Settings
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import com.jianzheng.studyzero.service.MyAccessibilityService
 
@@ -77,25 +81,45 @@ object MyPermissionManager {
         return enabledServices?.contains(serviceName.flattenToString()) ?: false
     }
 
-    fun checkBatteryPermission(context: Context): Boolean {
-        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-        val packageName = context.packageName
-        return powerManager.isIgnoringBatteryOptimizations(packageName)
+    fun checkActivityPermission(context: Context): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
+                context,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            )
+        } else {
+            true
+        }
     }
 
-    fun grantBatteryPermission(context: Context) {
-        val packageName = context.packageName
-        val intent = Intent().apply {
-            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-            data = Uri.parse("package:$packageName")
+    fun grandActivityPermission(context: Context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            ActivityCompat.requestPermissions(
+                context as Activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
+                48
+            )
         }
-        context.startActivity(intent)
     }
+//    fun checkBatteryPermission(context: Context): Boolean {
+//        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
+//        val packageName = context.packageName
+//        return powerManager.isIgnoringBatteryOptimizations(packageName)
+//    }
+//
+//    fun grantBatteryPermission(context: Context) {
+//        val packageName = context.packageName
+//        val intent = Intent().apply {
+//            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
+//            data = Uri.parse("package:$packageName")
+//        }
+//        context.startActivity(intent)
+//    }
 
     fun checkAllPermissions(context: Context): Boolean =
         (checkNotificationPermission(context)
                 and checkOverlayPermission(context)
                 and checkUserStatPermission(context)
+                and checkActivityPermission(context)
 //                and checkBatteryPermission(context)
                 and checkAccessibilityPermission(context))
 }

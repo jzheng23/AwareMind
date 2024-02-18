@@ -75,6 +75,9 @@ fun ScrollSettingContent(it: PaddingValues) {
     val accessibilityAllowed by usePollState {
         MyPermissionManager.checkAccessibilityPermission(context)
     }
+    val activityAllowed by usePollState {
+        MyPermissionManager.checkActivityPermission(context)
+    }
 //    val batteryAllowed by usePollState {
 //        MyPermissionManager.checkBatteryPermission(context)
 //    }
@@ -125,6 +128,15 @@ fun ScrollSettingContent(it: PaddingValues) {
                 )
             }
 
+            if (!activityAllowed) {
+                ArrowCard(
+                    title = "Physical activity",
+                    desc = stringResource(id = R.string.physical_activity),
+                    onAuthClick = {
+                        MyPermissionManager.grandActivityPermission(context)
+                    }
+                )
+            }
 //            if (!batteryAllowed) {
 //                ArrowCard(
 //                    title = "Optimize battery usage",
