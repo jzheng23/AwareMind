@@ -18,7 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -54,7 +53,7 @@ import java.util.concurrent.TimeUnit
 
 @Composable
 fun DebugCard(
-    navController: NavController,
+//    navController: NavController,
     userId: String = "",
 ) {
     var isVisible by remember { mutableStateOf(true) }
@@ -67,19 +66,19 @@ fun DebugCard(
     val isUsageAllowed by remember {
         mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
     }
-    val isA11yAllowed by remember {
-        mutableStateOf(MyPermissionManager.checkAccessibilityPermission(context))
-    }
-    val isInputRecording by usePollState {
-        sharedPreferences.getBoolean("input_record", false)
-    }
+//    val isA11yAllowed by remember {
+//        mutableStateOf(MyPermissionManager.checkAccessibilityPermission(context))
+//    }
+//    val isInputRecording by usePollState {
+//        sharedPreferences.getBoolean("input_record", false)
+//    }
     val isTutorialFinished by usePollState {
         sharedPreferences.getBoolean("tutorial_finished", false)
     }
     val isDataCollecting by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
-    val isTestTriggers by remember {
+    val isTestTriggers by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("using_testing_triggers", false))
     }
     val isNotificationShowing by usePollState {
@@ -87,6 +86,12 @@ fun DebugCard(
     }
     val isUnlockReceiverRegistered by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("receiver_registered", false))
+    }
+//    val isDriving by usePollState {
+//        mutableStateOf(sharedPreferences.getBoolean("is_driving", false))
+//    }
+    val currentActivity by usePollState {
+        mutableStateOf(sharedPreferences.getString("current_activity", "unknown"))
     }
 
     Card(
@@ -124,7 +129,11 @@ fun DebugCard(
             Spacer(modifier = Modifier.height(2.dp))
             if (isVisible) {
                 Text("User ID is $userId, upload is ${validateUid(userId)}")
-                Divider(
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+                Text("Current activity: ${currentActivity.value}")
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
@@ -140,7 +149,7 @@ fun DebugCard(
                     isEnabled = MyPermissionManager.checkNotificationPermission(context),
                     isChecked = isNotificationShowing.value
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
@@ -175,7 +184,7 @@ fun DebugCard(
                         Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
                     },
                     isEnabled = isOverlayAllowed,
-                    isChecked = isTestTriggers
+                    isChecked = isTestTriggers.value
                 )
                 ButtonCard(
                     title = "",
@@ -186,7 +195,7 @@ fun DebugCard(
                     buttonText = "Test",
                     buttonEnabled = isOverlayAllowed
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
@@ -201,7 +210,7 @@ fun DebugCard(
                     },
                     buttonText = "Simulate"
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
@@ -232,7 +241,7 @@ fun DebugCard(
 //                    isChecked = isInputRecording
 //                )
 
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
@@ -242,7 +251,7 @@ fun DebugCard(
                         MyPreferenceManager.setBoolean(context, "is_driving", it)
                     }
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
@@ -254,7 +263,7 @@ fun DebugCard(
                     },
                     isChecked = isTutorialFinished
                 )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 SwitchCard(
@@ -280,7 +289,7 @@ fun DebugCard(
 //                    },
 //                    buttonText = "Change"
 //                )
-                Divider(
+                HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(

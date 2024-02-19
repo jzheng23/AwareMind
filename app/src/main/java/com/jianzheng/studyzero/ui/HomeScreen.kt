@@ -142,9 +142,7 @@ fun HomeScreen(
                     }
                     if (isTester) {
                         DebugCard(
-                            navController,
                             userId = userId,
-
                             )
                     }
                 }
