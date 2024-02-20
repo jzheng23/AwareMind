@@ -73,7 +73,8 @@
         <service
             android:name=".service.RebootService"
             android:enabled="true" />
-
+        <service android:name=".service.MyForegroundServiceATK"
+            android:foregroundServiceType="location" />
         <receiver
             android:name=".receiver.BootCompleteReceiver"
             android:enabled="true"

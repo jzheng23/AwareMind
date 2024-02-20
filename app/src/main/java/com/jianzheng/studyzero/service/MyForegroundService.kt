@@ -132,7 +132,8 @@ class MyForegroundService : Service() {
             .setActivityTransition(transitionType).build()
     }
     private fun initializeActivityTransition() {
-        val intent = Intent(this, TransitionsReceiver::class.java)
+//        val intent = Intent(this, TransitionsReceiver::class.java)
+        val intent = Intent(transitionsReceiverAction)
         mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
             this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )

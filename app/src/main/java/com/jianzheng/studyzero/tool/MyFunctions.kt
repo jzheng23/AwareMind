@@ -12,6 +12,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.service.MyForegroundService
+import com.jianzheng.studyzero.service.MyForegroundServiceATK
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -57,7 +58,8 @@ fun startMyForegroundService(context: Context) {
     if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
         ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
     }
-    val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
+//    val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
+    val myForegroundServiceIntent = Intent(context, MyForegroundServiceATK::class.java)
     ContextCompat.startForegroundService(context, myForegroundServiceIntent)
 }
 
