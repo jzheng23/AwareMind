@@ -20,6 +20,7 @@ import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 class MyForegroundServiceATK : Service() {
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
@@ -189,6 +190,17 @@ class MyForegroundServiceATK : Service() {
                     val currentActivity =
                         toActivityString(event.activityType) + " " + toTransitionType(event.transitionType)
                     val notification = createNotification("Current activity: $currentActivity")
+                    MyPreferenceManager.setString(context,"current_activity", currentActivity)
+                    if (event.activityType == 0) {
+                        when(event.transitionType) {
+                            0 -> {
+                                MyPreferenceManager.setBoolean(context,"is_driving", true)
+                            }
+                            1 -> {
+                                MyPreferenceManager.setBoolean(context,"is_driving", false)
+                            }
+                        }
+                    }
                     startForeground(1, notification)
                 }
             }
