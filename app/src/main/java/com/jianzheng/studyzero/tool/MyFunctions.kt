@@ -1,8 +1,12 @@
 package com.jianzheng.studyzero.tool
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.util.Log
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -50,6 +54,9 @@ fun startMyAccessibilityService(context: Context) {
 }
 
 fun startMyForegroundService(context: Context) {
+    if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        ActivityCompat.requestPermissions(context as Activity, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 0)
+    }
     val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
     ContextCompat.startForegroundService(context, myForegroundServiceIntent)
 }

@@ -8,6 +8,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
@@ -19,10 +20,10 @@ import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
+import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.receiver.TransitionsReceiver
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 
 class MyForegroundService : Service() {
@@ -95,8 +96,8 @@ class MyForegroundService : Service() {
         return START_STICKY
     }
 
-    private fun updateCount() {
-        val notification = buildForegroundNotification()
+    private fun updateCount(currentActivity: String = "unknown") {
+        val notification = buildForegroundNotification(currentActivity)
         startForeground(notificationId, notification)
         Log.d("notification", "count updated!")
     }
@@ -112,15 +113,14 @@ class MyForegroundService : Service() {
     }
 
 
-    private fun buildForegroundNotification(): Notification {
+    private fun buildForegroundNotification(currentActivity: String = "unknown"): Notification {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
         val countFromPrefs = MyPreferenceManager.getInt(this, "today_count")
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText("$countFromPrefs prompts completed today")
-//            .setSmallIcon(android.R.drawable.ic_dialog_info) // Set an icon for the notification
+            .setContentText("$countFromPrefs prompts completed today. Current activity: $currentActivity")
             .setSmallIcon(R.drawable.heart_alt)
             .setContentIntent(pendingIntent)
             .setOngoing(true)
@@ -150,10 +150,14 @@ class MyForegroundService : Service() {
 
             task.addOnSuccessListener {
                 // Handle success
+                MyPreferenceManager.setString(this,"current_activity", "initializing ...")
+                updateCount("initializing")
             }
 
             task.addOnFailureListener { e ->
                 // Handle failure
+                MyPreferenceManager.setString(this,"current_activity", "initializing failed")
+                updateCount("initializing failed")
             }
         }
     }
@@ -161,6 +165,49 @@ class MyForegroundService : Service() {
     companion object {
         const val notificationId = 1
         const val channelId = "timer_channel"
+    }
+
+    inner class TransitionsReceiver : BroadcastReceiver() {
+
+
+        override fun onReceive(context: Context, intent: Intent) {
+            if (ActivityTransitionResult.hasResult(intent)) {
+                val result = ActivityTransitionResult.extractResult(intent)
+                result?.transitionEvents?.forEach { event ->
+                    // Update notification with the current activity
+                    val currentActivity =
+                        toActivityString(event.activityType) + " " + toTransitionType(event.transitionType)
+                    MyPreferenceManager.setString(context, "current_activity", currentActivity)
+                    updateCount(currentActivity)
+                    if (event.activityType == 0) {
+                        when(event.transitionType) {
+                            0 -> {
+                                MyPreferenceManager.setBoolean(context,"is_driving", true)
+                            }
+                            1 -> {
+                                MyPreferenceManager.setBoolean(context,"is_driving", false)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun toActivityString(activity: Int) = when (activity) {
+        DetectedActivity.STILL -> "STILL"
+        DetectedActivity.WALKING -> "WALKING"
+        DetectedActivity.RUNNING -> "RUNNING"
+        DetectedActivity.IN_VEHICLE -> "IN_VEHICLE"
+        else -> "UNKNOWN"
+    }
+
+    private fun toTransitionType(transitionType: Int): String {
+        return when (transitionType) {
+            ActivityTransition.ACTIVITY_TRANSITION_ENTER -> "ENTER"
+            ActivityTransition.ACTIVITY_TRANSITION_EXIT -> "EXIT"
+            else -> "UNKNOWN"
+        }
     }
 
 }
