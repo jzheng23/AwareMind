@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.MyForegroundService
+import com.jianzheng.studyzero.service.MyForegroundServiceATK
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
@@ -173,7 +174,7 @@ fun SubmitButton(
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 myViewModel.saveAnswer(delay, startingTime)
-                val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
+                val myForegroundServiceIntent = Intent(context, MyForegroundServiceATK::class.java)
                 ContextCompat.startForegroundService(context, myForegroundServiceIntent)
             }
             isShowing.value = false

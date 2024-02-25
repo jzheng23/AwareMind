@@ -38,7 +38,7 @@ fun startEverything(context: Context) {
 }
 
 fun stopEverything(context: Context) {
-    context.stopService(Intent(context, MyForegroundService::class.java))
+    context.stopService(Intent(context, MyForegroundServiceATK::class.java))
     MyReceiverManager.unregisterReceiver(context)
     MyPreferenceManager.setBoolean(context, "input_record", false)
     MyPreferenceManager.setBoolean(context, "collecting_data", false)

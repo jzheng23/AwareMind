@@ -111,13 +111,13 @@ class MyForegroundServiceATK : Service() {
     }
 
     private fun startForegroundServiceWithNotification() {
-        val notification = createNotification("Activity Recognition Initialized")
+        val notification = createNotification("AwareMind is running.")
         startForeground(1, notification)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification =
-            createNotification("Initializing...") // Implement this method to create a notification
+            createNotification("AwareMind is running.") // Implement this method to create a notification
         startForeground(1, notification)
 
         // Place your activity recognition logic here
@@ -189,7 +189,7 @@ class MyForegroundServiceATK : Service() {
                     // Update notification with the current activity
                     val currentActivity =
                         toActivityString(event.activityType) + " " + toTransitionType(event.transitionType)
-                    val notification = createNotification("Current activity: $currentActivity")
+//                    val notification = createNotification("Current activity: $currentActivity")
                     MyPreferenceManager.setString(context,"current_activity", currentActivity)
                     if (event.activityType == 0) {
                         when(event.transitionType) {
@@ -201,7 +201,7 @@ class MyForegroundServiceATK : Service() {
                             }
                         }
                     }
-                    startForeground(1, notification)
+//                    startForeground(1, notification)
                 }
             }
         }
@@ -221,7 +221,5 @@ class MyForegroundServiceATK : Service() {
                 else -> "UNKNOWN"
             }
         }
-
-
     }
 }
