@@ -100,6 +100,16 @@ object MyPermissionManager {
             )
         }
     }
+
+//    fun checkLocationPermission(context: Context): Boolean {
+//        return false
+//    }
+//
+//    fun grandLocationPermission(context: Context): Boolean {
+//
+//    }
+
+
 //    fun checkBatteryPermission(context: Context): Boolean {
 //        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 //        val packageName = context.packageName
