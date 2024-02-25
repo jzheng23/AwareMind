@@ -111,13 +111,13 @@ class MyForegroundServiceATK : Service() {
     }
 
     private fun startForegroundServiceWithNotification() {
-        val notification = createNotification("AwareMind is running.")
+        val notification = createNotification()
         startForeground(1, notification)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification =
-            createNotification("AwareMind is running.") // Implement this method to create a notification
+            createNotification() // Implement this method to create a notification
         startForeground(1, notification)
 
         // Place your activity recognition logic here
@@ -137,17 +137,18 @@ class MyForegroundServiceATK : Service() {
         manager?.createNotificationChannel(serviceChannel)
     }
 
-    private fun createNotification(activityText: String): Notification {
+    private fun createNotification(): Notification {
         createNotificationChannel() // Ensure the channel is created before building the notification
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE
         )
-
-        return NotificationCompat.Builder(this, CHANNEL_ID).setContentTitle("Activity Recognition")
-            .setContentText(activityText)
-            .setSmallIcon(R.drawable.ic_launcher_foreground) // Replace with your own drawable resource
+        val countFromPrefs = MyPreferenceManager.getInt(this, "today_count")
+        return NotificationCompat.Builder(this, CHANNEL_ID)
+            .setContentTitle(getString(R.string.app_name))
+            .setContentText("$countFromPrefs prompts completed today.")
+            .setSmallIcon(R.drawable.heart_alt)
             .setContentIntent(pendingIntent).build()
     }
 

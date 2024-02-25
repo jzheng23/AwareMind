@@ -48,16 +48,16 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="explanation_for_special_use" />
         </service>
-        <service
-            android:name=".service.MyForegroundService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location"
-            android:permission="android.permission.BIND_FOREGROUND_SERVICE" >
-            <property
-                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="explanation_for_special_use" />
-        </service>
+<!--        <service-->
+<!--            android:name=".service.MyForegroundService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="false"-->
+<!--            android:foregroundServiceType="location"-->
+<!--            android:permission="android.permission.BIND_FOREGROUND_SERVICE" >-->
+<!--            <property-->
+<!--                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"-->
+<!--                android:value="explanation_for_special_use" />-->
+<!--        </service>-->
         <service
             android:name=".service.MyAccessibilityService"
             android:enabled="true"
@@ -74,7 +74,14 @@
             android:name=".service.RebootService"
             android:enabled="true" />
         <service android:name=".service.MyForegroundServiceATK"
-            android:foregroundServiceType="location" />
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            android:permission="android.permission.BIND_FOREGROUND_SERVICE" >
+            <property
+                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                android:value="explanation_for_special_use" />
+        </service>
         <receiver
             android:name=".receiver.BootCompleteReceiver"
             android:enabled="true"
