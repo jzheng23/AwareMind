@@ -8,12 +8,13 @@ import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
+//import android.net.Uri
 import android.os.Build
-import android.os.PowerManager
+//import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import com.jianzheng.studyzero.service.MyAccessibilityService
 
 
@@ -101,14 +102,23 @@ object MyPermissionManager {
         }
     }
 
-//    fun checkLocationPermission(context: Context): Boolean {
-//        return false
-//    }
-//
-//    fun grandLocationPermission(context: Context): Boolean {
-//
-//    }
+    fun checkLocationPermission(context: Context): Boolean {
+        return ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_FINE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
+        ) == PackageManager.PERMISSION_GRANTED
+    }
 
+    fun grandLocationPermission(context: Context) {
+        ActivityCompat.requestPermissions(
+            context as Activity,
+            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+            51
+        )
+    }
 
 //    fun checkBatteryPermission(context: Context): Boolean {
 //        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
@@ -132,5 +142,9 @@ object MyPermissionManager {
                 and checkActivityPermission(context)
 //                and checkBatteryPermission(context)
                 and checkAccessibilityPermission(context))
+
+
 }
+
+
 

@@ -78,6 +78,9 @@ fun ScrollSettingContent(it: PaddingValues) {
     val activityAllowed by usePollState {
         MyPermissionManager.checkActivityPermission(context)
     }
+    val locationAllowed by usePollState {
+        MyPermissionManager.checkLocationPermission(context)
+    }
 //    val batteryAllowed by usePollState {
 //        MyPermissionManager.checkBatteryPermission(context)
 //    }
@@ -137,6 +140,17 @@ fun ScrollSettingContent(it: PaddingValues) {
                     }
                 )
             }
+
+            if (!locationAllowed) {
+                ArrowCard(
+                    title = "Location",
+                    desc = stringResource(id = R.string.location),
+                    onAuthClick = {
+                        MyPermissionManager.grandLocationPermission(context)
+                    }
+                )
+            }
+
 //            if (!batteryAllowed) {
 //                ArrowCard(
 //                    title = "Optimize battery usage",

@@ -15,4 +15,5 @@
     <string name="app_usage">To understand how you use your phone, the app needs to access app usage history. Only the app information (e.g., App names, like &quot;Twitter&quot;, and time stamps, like &quot;2024–01–01 10:00:00:000&quot;) will be collected. No personal or sensitive user data will be collected.</string>
     <string name="accessibility">To understand how you use your phone, the app needs to record your interactions with the phone like taps, scrolls, and text edits. For text edits, it will only record the number of characters you type, but not the content of the text. No personal or sensitive user data will be collected.</string>
     <string name="physical_activity">To prevent the survey from showing while you are driving, the app uses Google Activity Recognition API, which requires the physical activity permission, to detect whether you are in a vehicle. </string>
+    <string name="location">Location is needed for recognizing physical activities. </string>
 </resources>
