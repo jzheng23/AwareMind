@@ -10,7 +10,9 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyReceiverManager
+import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.AppNavigation
 import com.jianzheng.studyzero.ui.theme.StudyZeroTheme
 
@@ -27,6 +29,11 @@ class MainActivity : ComponentActivity() {
                 AppNavigation()
             }
         }
+
+        if (MyPreferenceManager.getBoolean(this, "collecting_data")) {
+            startMyForegroundService(this)
+        }
+
         auth = Firebase.auth
     }
 
