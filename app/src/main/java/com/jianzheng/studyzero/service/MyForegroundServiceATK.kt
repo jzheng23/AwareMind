@@ -144,10 +144,11 @@ class MyForegroundServiceATK : Service() {
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE
         )
-        val countFromPrefs = MyPreferenceManager.getInt(this, "today_count")
+        val todayCount = MyPreferenceManager.getInt(this, "today_count")
+        val totalCount = MyPreferenceManager.getInt(this, "total_count")
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText("$countFromPrefs prompts completed today.")
+            .setContentText("Reports: $todayCount today/$totalCount total")
             .setSmallIcon(R.drawable.heart_alt)
             .setContentIntent(pendingIntent).build()
     }
