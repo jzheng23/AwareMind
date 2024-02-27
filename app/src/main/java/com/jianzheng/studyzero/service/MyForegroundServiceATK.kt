@@ -95,6 +95,7 @@ class MyForegroundServiceATK : Service() {
 
         // The Intent that will be fired when activities are detected
         val intent = Intent(transitionsReceiverAction)
+        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
         mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
             this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
