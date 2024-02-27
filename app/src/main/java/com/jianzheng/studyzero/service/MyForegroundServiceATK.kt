@@ -108,7 +108,7 @@ class MyForegroundServiceATK : Service() {
                 .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
 
             task.addOnSuccessListener {
-                startForegroundServiceWithNotification()
+//                startForegroundServiceWithNotification()
             }
 
             task.addOnFailureListener { e ->
