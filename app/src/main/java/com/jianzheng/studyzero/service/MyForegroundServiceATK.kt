@@ -1,5 +1,6 @@
 package com.jianzheng.studyzero.service
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -9,9 +10,11 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
 import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
@@ -96,18 +99,22 @@ class MyForegroundServiceATK : Service() {
             this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
-        // Register for transitions updates
-        val task = ActivityRecognition.getClient(this)
-            .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACTIVITY_RECOGNITION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            val task = ActivityRecognition.getClient(this)
+                .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
 
-        task.addOnSuccessListener {
-            // Handle success
-            startForegroundServiceWithNotification()
+            task.addOnSuccessListener {
+                startForegroundServiceWithNotification()
+            }
+
+            task.addOnFailureListener { e ->
+            }
         }
 
-        task.addOnFailureListener { e ->
-            // Handle failure
-        }
     }
 
     private fun startForegroundServiceWithNotification() {
@@ -168,12 +175,19 @@ class MyForegroundServiceATK : Service() {
     private fun disableActivityTransitions() {
         val activityRecognitionClient = ActivityRecognition.getClient(this)
         mActivityTransitionsPendingIntent?.let { pendingIntent ->
-            activityRecognitionClient.removeActivityTransitionUpdates(pendingIntent)
-                .addOnSuccessListener {
-                    // Handle success
-                }.addOnFailureListener { _ ->
-                    // Handle error
-                }
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACTIVITY_RECOGNITION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                activityRecognitionClient.removeActivityTransitionUpdates(pendingIntent)
+                    .addOnSuccessListener {
+                        // Handle success
+                    }.addOnFailureListener { _ ->
+                        // Handle error
+                    }
+            }
+
         }
     }
 
@@ -192,14 +206,15 @@ class MyForegroundServiceATK : Service() {
                     val currentActivity =
                         toActivityString(event.activityType) + " " + toTransitionType(event.transitionType)
 //                    val notification = createNotification("Current activity: $currentActivity")
-                    MyPreferenceManager.setString(context,"current_activity", currentActivity)
+                    MyPreferenceManager.setString(context, "current_activity", currentActivity)
                     if (event.activityType == 0) {
-                        when(event.transitionType) {
+                        when (event.transitionType) {
                             0 -> {
-                                MyPreferenceManager.setBoolean(context,"is_driving", true)
+                                MyPreferenceManager.setBoolean(context, "is_driving", true)
                             }
+
                             1 -> {
-                                MyPreferenceManager.setBoolean(context,"is_driving", false)
+                                MyPreferenceManager.setBoolean(context, "is_driving", false)
                             }
                         }
                     }
