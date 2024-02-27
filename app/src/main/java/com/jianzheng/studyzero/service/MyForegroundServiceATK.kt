@@ -148,7 +148,7 @@ class MyForegroundServiceATK : Service() {
         val totalCount = MyPreferenceManager.getInt(this, "total_count")
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
-            .setContentText("Reports: $todayCount today/$totalCount total")
+            .setContentText("Reports: $todayCount today/$totalCount total. Please don't dismiss this notification.")
             .setSmallIcon(R.drawable.heart_alt)
             .setContentIntent(pendingIntent).build()
     }
