@@ -117,10 +117,10 @@ class MyForegroundServiceATK : Service() {
 
     }
 
-    private fun startForegroundServiceWithNotification() {
-        val notification = createNotification()
-        startForeground(1, notification)
-    }
+//    private fun startForegroundServiceWithNotification() {
+//        val notification = createNotification()
+//        startForeground(1, notification)
+//    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification =
