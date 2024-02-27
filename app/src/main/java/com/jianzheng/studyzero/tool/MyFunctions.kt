@@ -32,7 +32,7 @@ fun startEverything(context: Context) {
     MyPreferenceManager.setBoolean(context, "using_testing_triggers", false)
     MyPreferenceManager.setBoolean(context, "using_once_triggers", false)
     MyPreferenceManager.setBoolean(context, "collecting_data", true)
-    MyDelayManager.init(context)
+//    MyDelayManager.init(context)
     scheduleDailyMaintenance(context)
     startMyAccessibilityService(context)
 }

@@ -29,7 +29,7 @@ class OverlayService : Service() {
     override fun onCreate() {
         super.onCreate()
         setTheme(R.style.Theme_StudyZero)
-        Log.d("unlock", "OverlayService OnCreate")
+//        Log.d("unlock", "OverlayService OnCreate")
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -42,10 +42,10 @@ class OverlayService : Service() {
                 callOverlay(tag)
                 isShowing = true
             }
-            Log.d("unlock", "OverlayService OnStartCommand with Intent: $intent")
+//            Log.d("unlock", "OverlayService OnStartCommand with Intent: $intent")
             START_STICKY
         } else {
-            Log.d("unlock", "OverlayService OnStartCommand without Intent")
+//            Log.d("unlock", "OverlayService OnStartCommand without Intent")
             START_REDELIVER_INTENT
         }
         // Your service logic here
@@ -106,7 +106,7 @@ class OverlayService : Service() {
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
         if (composeView.isAttachedToWindow) windowManager.removeView(composeView)
         isShowing = false
-        Log.d("unlock", "OverlayService OnDestroy")
+//        Log.d("unlock", "OverlayService OnDestroy")
     }
 
 }

@@ -20,7 +20,9 @@ import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
+import com.jianzheng.studyzero.tool.MyReceiverManager
 
 class MyForegroundServiceATK : Service() {
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
@@ -74,6 +76,10 @@ class MyForegroundServiceATK : Service() {
         mTransitionsReceiver = TransitionsReceiver().also {
             val filter = IntentFilter(transitionsReceiverAction)
             registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
+        }
+
+        if (!MyDelayManager.checkInited()) {MyDelayManager.init(this)} else {
+            MyReceiverManager.registerReceiver(this)
         }
     }
 
@@ -160,7 +166,7 @@ class MyForegroundServiceATK : Service() {
         mTransitionsReceiver?.let {
             unregisterReceiver(it)
         }
-
+        MyReceiverManager.registerReceiver(this)
         // Disable activity transitions
         disableActivityTransitions()
     }
