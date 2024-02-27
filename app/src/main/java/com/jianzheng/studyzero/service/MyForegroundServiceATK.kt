@@ -102,7 +102,7 @@ class MyForegroundServiceATK : Service() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACTIVITY_RECOGNITION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
             val task = ActivityRecognition.getClient(this)
                 .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
@@ -178,7 +178,7 @@ class MyForegroundServiceATK : Service() {
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACTIVITY_RECOGNITION
-                ) != PackageManager.PERMISSION_GRANTED
+                ) == PackageManager.PERMISSION_GRANTED
             ) {
                 activityRecognitionClient.removeActivityTransitionUpdates(pendingIntent)
                     .addOnSuccessListener {
