@@ -27,6 +27,7 @@ object MyDelayManager {
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
     private var tempTag: String = "randomMet"
+    var isInited = false
 
 
     fun init(context: Context) {
@@ -54,14 +55,23 @@ object MyDelayManager {
 
         MyReceiverManager.registerReceiver(context)
         MyPreferenceManager.setBoolean(context, "unlock_registered", true)
-        Log.d("testing", "init length of trigger list: ${triggerList.size}")
+        Log.d("unlock", "init length of trigger list: ${triggerList.size}")
+        isInited = true
 
     }
 
+    fun checkInited(): Boolean {
+        return isInited
+    }
 
     fun scheduleOverlayService(context: Context) {
+
         myWorkManager = WorkManager.getInstance(context)
         val responseCounter = ResponseCounter(context)
+        Log.d(
+            "unlock",
+            "TriggerIndex: $triggerIndex, triggerListSize: ${triggerList.size}, random completed: ${responseCounter.checkRandomComplete()}"
+        )
         val currentTimeMillis = System.currentTimeMillis()
         val lastSubmit = MyPreferenceManager.getLong(context, "lastSubmit")
         Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
@@ -83,7 +93,17 @@ object MyDelayManager {
                     "random trigger $triggerIndex is scheduled in ${triggerList[triggerIndex]} "
                 )
                 triggerIndex++
+            } else {
+                Log.d(
+                    "unlock",
+                    "random trigger needs to wait for 15 minutes."
+                )
             }
+        } else {
+            Log.d(
+                "unlock",
+                "random triggers completed."
+            )
         }
         if (!responseCounter.check20Complete()) {
             val twentyTriggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
@@ -113,6 +133,8 @@ object MyDelayManager {
             myWorkManager.enqueue(thirtyTriggerRequest)
             thirtyRequestID = thirtyTriggerRequest.id
             Log.d("unlock", "a fixed trigger is scheduled in 30 sec ")
+        } else {
+            Log.d("unlock", "fixed triggers completed.")
         }
     }
 
