@@ -211,9 +211,11 @@ class MyForegroundServiceATK : Service() {
                 result?.transitionEvents?.forEach { event ->
                     // Update notification with the current activity
                     val currentActivity =
-                        toActivityString(event.activityType) + " " + toTransitionType(event.transitionType)
+                        toActivityString(event.activityType)
 //                    val notification = createNotification("Current activity: $currentActivity")
-                    MyPreferenceManager.setString(context, "current_activity", currentActivity)
+                    if (event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
+                        MyPreferenceManager.setString(context, "current_activity", currentActivity)
+                    }
                     if (event.activityType == 0) {
                         when (event.transitionType) {
                             0 -> {
