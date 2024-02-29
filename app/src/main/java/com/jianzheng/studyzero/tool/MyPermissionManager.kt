@@ -115,7 +115,10 @@ object MyPermissionManager {
     fun grandLocationPermission(context: Context) {
         ActivityCompat.requestPermissions(
             context as Activity,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
             51
         )
     }

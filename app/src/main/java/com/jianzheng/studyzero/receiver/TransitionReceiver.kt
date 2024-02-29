@@ -15,12 +15,13 @@ class TransitionsReceiver : BroadcastReceiver() {
             result?.transitionEvents?.forEach { event ->
                 // Update notification with the current activity
                 if (event.activityType == 0) {
-                    when(event.transitionType) {
+                    when (event.transitionType) {
                         0 -> {
-                            MyPreferenceManager.setBoolean(context,"is_driving", true)
+                            MyPreferenceManager.setBoolean(context, "is_driving", true)
                         }
+
                         1 -> {
-                            MyPreferenceManager.setBoolean(context,"is_driving", false)
+                            MyPreferenceManager.setBoolean(context, "is_driving", false)
                         }
                     }
                 }

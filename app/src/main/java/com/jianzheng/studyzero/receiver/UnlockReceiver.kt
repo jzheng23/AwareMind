@@ -15,7 +15,11 @@ class UnlockReceiver : BroadcastReceiver() {
         when (intent?.action) {
             Intent.ACTION_USER_PRESENT -> {
                 if (context != null) {
-                    if (MyPreferenceManager.getBoolean(context, context.getString(R.string.unlock_registered))) {
+                    if (MyPreferenceManager.getBoolean(
+                            context,
+                            context.getString(R.string.unlock_registered)
+                        )
+                    ) {
                         val serviceIntent = Intent(context, OverlayService::class.java).apply {
                             putExtra("tag", "none")
                         }

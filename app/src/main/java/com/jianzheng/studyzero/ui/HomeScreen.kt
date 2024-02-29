@@ -116,7 +116,11 @@ fun HomeScreen(
                             onAuthClick = {
                                 if (!showPermissionCard) {
                                     navController.navigate(AppRoutes.TUTORIAL)
-                                    MyPreferenceManager.setInt(context, context.getString(R.string.count_random_met), 0)
+                                    MyPreferenceManager.setInt(
+                                        context,
+                                        context.getString(R.string.count_random_met),
+                                        0
+                                    )
                                 }
                             },
                             buttonEnabled = !showPermissionCard
@@ -143,7 +147,7 @@ fun HomeScreen(
                     if (isTester) {
                         DebugCard(
                             userId = userId,
-                            )
+                        )
                     }
                 }
             }
@@ -213,11 +217,11 @@ fun LogoAndContact() {
         ) {
             val versionName = getVersionName(context)
             Text(
-                text = stringResource(id = R.string.app_name)+ " " + versionName,
+                text = stringResource(id = R.string.app_name) + " " + versionName,
                 style = MaterialTheme.typography.bodyMedium
             )
-            Row{
-                Text("By",style = MaterialTheme.typography.bodyMedium)
+            Row {
+                Text("By", style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Jian Zheng",
@@ -251,7 +255,7 @@ fun LogoAndContact() {
                 style = TextStyle(textDecoration = TextDecoration.Underline),
                 textAlign = TextAlign.End,
                 modifier = Modifier
-                    .clickable{
+                    .clickable {
                         try {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             context.startActivity(intent)

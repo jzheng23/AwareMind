@@ -37,7 +37,7 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.service.MyForegroundService
+//import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.MyForegroundServiceATK
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
@@ -260,8 +260,16 @@ fun DebugCard(
                     title = "Tutorial",
                     desc = "Set tutorial as completed",
                     onCheckedChange = {
-                        MyPreferenceManager.setBoolean(context, context.getString(R.string.tutorial_finished), it)
-                        MyPreferenceManager.setInt(context, context.getString(R.string.count_once_met), if (it) 1 else 0)
+                        MyPreferenceManager.setBoolean(
+                            context,
+                            context.getString(R.string.tutorial_finished),
+                            it
+                        )
+                        MyPreferenceManager.setInt(
+                            context,
+                            context.getString(R.string.count_once_met),
+                            if (it) 1 else 0
+                        )
                     },
                     isChecked = isTutorialFinished
                 )

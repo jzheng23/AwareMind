@@ -72,7 +72,8 @@ object MyDelayManager {
             "TriggerIndex: $triggerIndex, triggerListSize: ${triggerList.size}, random completed: ${responseCounter.checkRandomComplete()}"
         )
         val currentTimeMillis = System.currentTimeMillis()
-        val lastSubmit = MyPreferenceManager.getLong(context, context.getString(R.string.last_submit))
+        val lastSubmit =
+            MyPreferenceManager.getLong(context, context.getString(R.string.last_submit))
         Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
         if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
             if ((tempTag == "count_once_met") or ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + 900_000L))) {

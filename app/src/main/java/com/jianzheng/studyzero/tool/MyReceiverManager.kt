@@ -21,14 +21,22 @@ object MyReceiverManager {
     }
 
     fun unregisterReceiver(context: Context) {
-        if (MyPreferenceManager.getBoolean(context, context.getString(R.string.unlock_registered))) {
+        if (MyPreferenceManager.getBoolean(
+                context,
+                context.getString(R.string.unlock_registered)
+            )
+        ) {
             try {
                 context.unregisterReceiver(unlockReceiver)
             } catch (e: IllegalArgumentException) {
                 Log.e("Receiver Error", "Error unregistering receiver: ${e.message}")
             }
             Log.d("unlock", "unlock receiver unregistered")
-            MyPreferenceManager.setBoolean(context, context.getString(R.string.unlock_registered), false)
+            MyPreferenceManager.setBoolean(
+                context,
+                context.getString(R.string.unlock_registered),
+                false
+            )
         } else Log.d("unlock", "unlock receiver is not registered")
     }
 }
