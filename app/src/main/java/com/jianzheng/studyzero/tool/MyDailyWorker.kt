@@ -23,8 +23,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     private fun dayCountPlusOne(context: Context) {
         val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
-        val dayCount = sharedPreferences.getInt("day_count", 0)
-        editor.putInt("day_count", dayCount + 1)
+        val dayCount = sharedPreferences.getInt("count_day", 0)
+        editor.putInt("count_day", dayCount + 1)
             .apply()
         Log.d("workManager", "day ${dayCount + 1}")
     }

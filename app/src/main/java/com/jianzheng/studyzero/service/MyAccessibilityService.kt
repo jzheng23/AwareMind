@@ -48,7 +48,7 @@ class MyAccessibilityService : AccessibilityService() {
         sharedPrefs = getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
 //        inputToBeRecord = sharedPrefs.getBoolean("input_record", false)
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == "input_record") {
+            if (key == "recording_input") {
                 inputToBeRecord = prefs.getBoolean(key, false)
             }
         }
@@ -66,7 +66,7 @@ class MyAccessibilityService : AccessibilityService() {
     private fun writeData(input: Input) {
         CoroutineScope(Dispatchers.IO).launch {
             val generatedId = inputDao.insert(input)
-            if (sharedPrefs.getBoolean("UID_valid", false)) {
+            if (sharedPrefs.getBoolean("is_UID_valid", false)) {
                 myRef.child(uid)
                     .child(generatedId.toString())
                     .setValue(input.copy(id = generatedId).toFirebaseInput())

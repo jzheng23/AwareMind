@@ -38,7 +38,7 @@ class OverlayService : Service() {
                 unlockTime = intent.getLongExtra("unlock", System.currentTimeMillis())
                 Log.d("delayTime", "received: $unlockTime")
                 var tag = intent.getStringExtra("tag")
-                if (tag == null) tag = "randomMet"
+                if (tag == null) tag = "count_random_met"
                 callOverlay(tag)
                 isShowing = true
             }
@@ -52,7 +52,7 @@ class OverlayService : Service() {
     }
 
 
-    private fun callOverlay(tag: String = "randomMet") {
+    private fun callOverlay(tag: String = "count_random_met") {
 
         val layoutFlag: Int =
             WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY

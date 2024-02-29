@@ -26,8 +26,8 @@ object MyDelayManager {
     private lateinit var randomRequestID: UUID
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
-    private var tempTag: String = "randomMet"
-    var isInited = false
+    private var tempTag: String = "count_random_met"
+    var isInitialed = false
 
 
     fun init(context: Context) {
@@ -39,7 +39,7 @@ object MyDelayManager {
             originalTriggerList = mutableListOf(1)
             extraTriggerThirty = 30L * 60 //30 minutes for real 30 seconds for testing
             extraTriggerTwenty = 20L * 60
-            tempTag = "onceMet"
+            tempTag = "count_once_met"
         } else if (
             sharedPreferences.getBoolean("using_testing_triggers", true)
         ) {//testing
@@ -54,14 +54,13 @@ object MyDelayManager {
         triggerList = originalTriggerList.shuffled().toMutableList()
 
         MyReceiverManager.registerReceiver(context)
-        MyPreferenceManager.setBoolean(context, "unlock_registered", true)
         Log.d("unlock", "init length of trigger list: ${triggerList.size}")
-        isInited = true
+        isInitialed = true
 
     }
 
-    fun checkInited(): Boolean {
-        return isInited
+    fun checkInitialed(): Boolean {
+        return isInitialed
     }
 
     fun scheduleOverlayService(context: Context) {
@@ -73,10 +72,10 @@ object MyDelayManager {
             "TriggerIndex: $triggerIndex, triggerListSize: ${triggerList.size}, random completed: ${responseCounter.checkRandomComplete()}"
         )
         val currentTimeMillis = System.currentTimeMillis()
-        val lastSubmit = MyPreferenceManager.getLong(context, "lastSubmit")
+        val lastSubmit = MyPreferenceManager.getLong(context, context.getString(R.string.last_submit))
         Log.d("delayTime", "passed in myDelayManager: $currentTimeMillis")
         if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
-            if ((tempTag == "onceMet") or ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + 900_000L))) {
+            if ((tempTag == "count_once_met") or ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + 900_000L))) {
                 val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
                     .setInitialDelay(triggerList[triggerIndex].toLong(), TimeUnit.SECONDS)
                     .setInputData(
@@ -111,7 +110,7 @@ object MyDelayManager {
                 .setInitialDelay(extraTriggerTwenty, TimeUnit.SECONDS)
                 .setInputData(
                     workDataOf(
-                        "tag" to context.getString(R.string._20met),
+                        "tag" to context.getString(R.string.count_20_met),
                         "unlock" to currentTimeMillis
                     )
                 )
@@ -125,7 +124,7 @@ object MyDelayManager {
                 .setInitialDelay(extraTriggerThirty, TimeUnit.SECONDS)
                 .setInputData(
                     workDataOf(
-                        "tag" to context.getString(R.string._30met),
+                        "tag" to context.getString(R.string.count_30_met),
                         "unlock" to currentTimeMillis
                     )
                 )

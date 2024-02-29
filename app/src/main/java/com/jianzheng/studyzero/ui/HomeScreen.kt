@@ -116,7 +116,7 @@ fun HomeScreen(
                             onAuthClick = {
                                 if (!showPermissionCard) {
                                     navController.navigate(AppRoutes.TUTORIAL)
-                                    MyPreferenceManager.setInt(context, "randomMet", 0)
+                                    MyPreferenceManager.setInt(context, context.getString(R.string.count_random_met), 0)
                                 }
                             },
                             buttonEnabled = !showPermissionCard

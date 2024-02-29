@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.MyForegroundServiceATK
 import com.jianzheng.studyzero.service.OverlayService
@@ -83,10 +84,10 @@ fun DebugCard(
         mutableStateOf(sharedPreferences.getBoolean("using_testing_triggers", false))
     }
     val isNotificationShowing by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("notification_showing", false))
+        mutableStateOf(sharedPreferences.getBoolean("showing_notification", false))
     }
     val isUnlockReceiverRegistered by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("receiver_registered", false))
+        mutableStateOf(sharedPreferences.getBoolean("unlock_registered", false))
     }
 //    val isDriving by usePollState {
 //        mutableStateOf(sharedPreferences.getBoolean("is_driving", false))
@@ -259,8 +260,8 @@ fun DebugCard(
                     title = "Tutorial",
                     desc = "Set tutorial as completed",
                     onCheckedChange = {
-                        MyPreferenceManager.setBoolean(context, "tutorial_finished", it)
-                        MyPreferenceManager.setInt(context, "onceMet", if (it) 1 else 0)
+                        MyPreferenceManager.setBoolean(context, context.getString(R.string.tutorial_finished), it)
+                        MyPreferenceManager.setInt(context, context.getString(R.string.count_once_met), if (it) 1 else 0)
                     },
                     isChecked = isTutorialFinished
                 )
@@ -315,13 +316,6 @@ fun DebugCard(
 
 
 fun newDayFunction(context: Context) {
-//    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-//    val editor = sharedPreferences.edit()
-//    val dayCount = sharedPreferences.getInt("day_count", 0)
-//    editor.putInt("day_count", dayCount + 1)
-//        .apply()
-//    MyUsageManager.getUsageEvents(context)
-//    resetTriggerFunction(context)
     val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(15, TimeUnit.MINUTES)
         .setInitialDelay(1000, TimeUnit.MILLISECONDS)
         .build()
@@ -345,7 +339,7 @@ fun resetTriggerFunction(context: Context) {
 
 fun testSurvey(context: Context) {
     val serviceIntent = Intent(context, OverlayService::class.java).apply {
-        putExtra("tag", "testMet")
+        putExtra("tag", "count_test_met")
     }
     context.startService(serviceIntent)
 }

@@ -81,7 +81,7 @@ class MyForegroundServiceATK : Service() {
             registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
         }
 
-        if (!MyDelayManager.checkInited()) {MyDelayManager.init(this)} else {
+        if (!MyDelayManager.checkInitialed()) {MyDelayManager.init(this)} else {
             MyReceiverManager.registerReceiver(this)
         }
     }
@@ -158,8 +158,8 @@ class MyForegroundServiceATK : Service() {
         val pendingIntent = PendingIntent.getActivity(
             this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE
         )
-        val todayCount = MyPreferenceManager.getInt(this, "today_count")
-        val totalCount = MyPreferenceManager.getInt(this, "total_count")
+        val todayCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_today))
+        val totalCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_total))
         return NotificationCompat.Builder(this, CHANNEL_ID)
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Reports: $todayCount today/$totalCount total. Please don't dismiss this notification.")
@@ -174,7 +174,7 @@ class MyForegroundServiceATK : Service() {
         mTransitionsReceiver?.let {
             unregisterReceiver(it)
         }
-        MyReceiverManager.registerReceiver(this)
+        MyReceiverManager.unregisterReceiver(this)
         // Disable activity transitions
         disableActivityTransitions()
     }

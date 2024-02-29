@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.MyForegroundServiceATK
 import java.text.SimpleDateFormat
@@ -28,30 +29,23 @@ fun getDateTime(timeInMillis: Long): String {
 
 fun startEverything(context: Context) {
     startMyForegroundService(context)
-//    initializeSharedPreference(context)
-    MyPreferenceManager.setBoolean(context, "using_testing_triggers", false)
-    MyPreferenceManager.setBoolean(context, "using_once_triggers", false)
-    MyPreferenceManager.setBoolean(context, "collecting_data", true)
-//    MyDelayManager.init(context)
     scheduleDailyMaintenance(context)
-    startMyAccessibilityService(context)
+    MyPreferenceManager.setBoolean(context,
+        context.getString(R.string.using_testing_triggers), false)
+    MyPreferenceManager.setBoolean(context, context.getString(R.string.using_once_triggers), false)
+    MyPreferenceManager.setBoolean(context, context.getString(R.string.recording_input), true)
+    MyPreferenceManager.setBoolean(context, context.getString(R.string.collecting_data), true)
 }
 
 fun stopEverything(context: Context) {
     context.stopService(Intent(context, MyForegroundServiceATK::class.java))
-    MyReceiverManager.unregisterReceiver(context)
-    MyPreferenceManager.setBoolean(context, "input_record", false)
-    MyPreferenceManager.setBoolean(context, "collecting_data", false)
     scheduleDailyMaintenance(context, 2592000000L)
+    MyPreferenceManager.setBoolean(context, context.getString(R.string.recording_input), false)
+    MyPreferenceManager.setBoolean(context, context.getString(R.string.collecting_data), false)
 }
 
 fun resetEverything(context: Context) {
     initializeSharedPreference(context)
-}
-
-
-fun startMyAccessibilityService(context: Context) {
-    MyPreferenceManager.setBoolean(context, "input_record", true)
 }
 
 fun startMyForegroundService(context: Context) {
@@ -80,14 +74,6 @@ fun scheduleDailyMaintenance(context: Context, initialDelay: Long = 5000L) {
     val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
     val workState = workInfo.get()?.state
     Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
-
-//        val workRequestTest = OneTimeWorkRequestBuilder<MyDailyWorker>()
-//            .setInitialDelay(initialDelay * 5, TimeUnit.MILLISECONDS)
-//            .build()
-//        myWorkManager.enqueue(workRequestTest)
-//        val workInfoTest = myWorkManager.getWorkInfoById(workRequestTest.id)
-//        val workStateTest = workInfoTest.get()?.state
-//        Log.d("workManager", "scheduled test! $workStateTest id ${workRequestTest.id}")
 }
 
 fun getInitialDelay(): Long {
@@ -111,28 +97,23 @@ fun getInitialDelay(): Long {
 fun initializeSharedPreference(context: Context) {
     val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
-    editor.putInt("today_count", 0)
-        .putInt("total_count", 0)
-        .putInt("day_count", 0)
-        .putBoolean("using_once_triggers", false)
-        .putBoolean("using_testing_triggers", false)
-        .putBoolean("first_run", false)
-        .putString("UID", "")
-        .putBoolean("UID_valid", false)
-        .putInt("20Met", 0)
-        .putInt("30Met", 0)
-        .putInt("onceMet", 0)
-        .putInt("randomMet", 0)
-        .putBoolean("input_record", false)
-        .putBoolean("tutorial_finished", false)
-        .putBoolean("collecting_data", false)
-        .putBoolean("is_tester", false)
-        .putBoolean("notification_showing", false)
+    editor.putInt(context.getString(R.string.count_today), 0)
+        .putInt(context.getString(R.string.count_total), 0)
+        .putInt(context.getString(R.string.count_day), 0)
+        .putBoolean(context.getString(R.string.using_once_triggers), false)
+        .putBoolean(context.getString(R.string.using_testing_triggers), false)
+        .putBoolean(context.getString(R.string.is_first_run), false)
+        .putString(context.getString(R.string.UID), "")
+        .putBoolean(context.getString(R.string.is_UID_valid), false)
+        .putInt(context.getString(R.string.count_20_met), 0)
+        .putInt(context.getString(R.string.count_30_met), 0)
+        .putInt(context.getString(R.string.count_once_met), 0)
+        .putInt(context.getString(R.string.count_random_met), 0)
+        .putBoolean(context.getString(R.string.recording_input), false)
+        .putBoolean(context.getString(R.string.tutorial_finished), false)
+        .putBoolean(context.getString(R.string.collecting_data), false)
+        .putBoolean(context.getString(R.string.is_tester), false)
+        .putBoolean(context.getString(R.string.showing_notification), false)
         .apply()
-//    if (sharedPreferences.getBoolean("first_run", true)) {
-//        editor.putBoolean("first_run", false)
-//            .putString("UID", "null")
-//            .apply()
-//    }
 }
 

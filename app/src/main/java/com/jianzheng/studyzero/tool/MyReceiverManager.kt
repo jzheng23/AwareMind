@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.util.Log
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.receiver.UnlockReceiver
 
 object MyReceiverManager {
@@ -16,18 +17,18 @@ object MyReceiverManager {
         }
         context.registerReceiver(unlockReceiver, filter)
         Log.d("unlock", "unlock receiver registered")
-        MyPreferenceManager.setBoolean(context, "receiver_registered", true)
+        MyPreferenceManager.setBoolean(context, context.getString(R.string.unlock_registered), true)
     }
 
     fun unregisterReceiver(context: Context) {
-        if (MyPreferenceManager.getBoolean(context, "receiver_registered")) {
+        if (MyPreferenceManager.getBoolean(context, context.getString(R.string.unlock_registered))) {
             try {
                 context.unregisterReceiver(unlockReceiver)
             } catch (e: IllegalArgumentException) {
                 Log.e("Receiver Error", "Error unregistering receiver: ${e.message}")
             }
             Log.d("unlock", "unlock receiver unregistered")
-            MyPreferenceManager.setBoolean(context, "receiver_registered", false)
+            MyPreferenceManager.setBoolean(context, context.getString(R.string.unlock_registered), false)
         } else Log.d("unlock", "unlock receiver is not registered")
     }
 }

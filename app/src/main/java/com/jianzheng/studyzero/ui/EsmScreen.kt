@@ -89,7 +89,7 @@ fun ShowOverlay(
             if (autoDismiss.value) {
                 autoDismiss.value = false
                 onClick()
-                if (tag == "randomMet") MyDelayManager.recycleTrigger()
+                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
                 Log.d("unlock", "unanswered")
             }
         }, displayTimeMillis) // 10 seconds delay
@@ -149,7 +149,7 @@ fun ShowOverlay(
 
 @Composable
 fun SubmitButton(
-    tag: String = "",
+    tag: String = "count_random_met",
     unlockTime: Long = 0L,
     myViewModel: EsmViewModelInterface,
     isShowing: MutableState<Boolean> = mutableStateOf(false),

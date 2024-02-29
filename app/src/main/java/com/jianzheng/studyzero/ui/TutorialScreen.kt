@@ -27,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 
@@ -40,7 +41,7 @@ fun TutorialScreen(
         mutableStateOf<Boolean>(false)
     }
     val onceMetCount by usePollState {
-        MyPreferenceManager.getInt(context, "onceMet")
+        MyPreferenceManager.getInt(context, context.getString(R.string.count_once_met))
     }
     if (onceMetCount > 0) navController.navigate(AppRoutes.HOME)
     Scaffold(
@@ -94,7 +95,7 @@ fun TutorialScreen(
                                         "using_once_triggers",
                                         true
                                     )
-                                    MyPreferenceManager.setInt(context, "onceMet", 0)
+                                    MyPreferenceManager.setInt(context, context.getString(R.string.count_once_met), 0)
 //                                    MyReceiverManager.unregisterReceiver(context)
                                     MyDelayManager.init(context)
                                     Handler(Looper.getMainLooper()).post {

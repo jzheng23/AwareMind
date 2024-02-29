@@ -155,7 +155,7 @@ fun saveUserId(
     val editor = sharedPreferences.edit()
     editor.putString("UID", userId)
         .putString("user_alias", userAlias)
-        .putBoolean("UID_valid", userIdIsValidate)
+        .putBoolean("is_UID_valid", userIdIsValidate)
         .putBoolean("is_tester", isTester)
         .apply()
     Log.d("userId", "UID is $userId, and tester? $isTester")

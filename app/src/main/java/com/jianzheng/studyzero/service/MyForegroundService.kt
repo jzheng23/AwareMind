@@ -92,7 +92,7 @@ class MyForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 //        createNotificationChannel()
         updateCount()
-        MyPreferenceManager.setBoolean(this, "notification_showing", true)
+        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
         return START_STICKY
     }
 
@@ -117,7 +117,7 @@ class MyForegroundService : Service() {
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent =
             PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE)
-        val countFromPrefs = MyPreferenceManager.getInt(this, "today_count")
+        val countFromPrefs = MyPreferenceManager.getInt(this, this.getString(R.string.count_today))
         return NotificationCompat.Builder(this, channelId)
             .setContentTitle(getString(R.string.app_name))
             .setContentText("$countFromPrefs prompts completed today. Current activity: $currentActivity")
