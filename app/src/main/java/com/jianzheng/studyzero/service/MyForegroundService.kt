@@ -1,6 +1,7 @@
 package com.jianzheng.studyzero.service
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -89,6 +90,7 @@ class MyForegroundService : Service() {
         }
     }
 
+    @SuppressLint("MutableImplicitPendingIntent")
     private fun initializeActivityTransition() {
 //        val intent = Intent(this, TransitionsReceiver::class.java)
 //        mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(

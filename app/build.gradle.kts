@@ -14,7 +14,7 @@ android {
     defaultConfig {
         applicationId = "com.jianzheng.studyzero"
         minSdk = 26
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 35
         versionName = "2.65b"
 
