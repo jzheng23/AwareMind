@@ -13,6 +13,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -27,7 +28,7 @@ import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyReceiverManager
 
-class MyForegroundServiceATK : Service() {
+class MyForegroundService : Service() {
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
     private var mTransitionsReceiver: BroadcastReceiver? = null
     private val transitionsReceiverAction = "com.jzheng23.atk.TRANSITIONS_RECEIVER_ACTION"
@@ -99,6 +100,7 @@ class MyForegroundServiceATK : Service() {
 //    }
 //
 //    private fun enableActivityTransitions() {
+        Log.d("ATR", "activity recognition initialized")
         val request = ActivityTransitionRequest(activityTransitions)
 
         // The Intent that will be fired when activities are detected
@@ -115,13 +117,18 @@ class MyForegroundServiceATK : Service() {
         ) {
             val task = ActivityRecognition.getClient(this)
                 .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
+            Log.d("ATR", "task created")
 
             task.addOnSuccessListener {
 //                startForegroundServiceWithNotification()
+                Log.d("ATR", "success lister")
             }
 
             task.addOnFailureListener { e ->
+                Log.d("ATR", "failure $e")
             }
+        } else {
+            Log.d("ATR", "activity recognition permission not allowed")
         }
 
     }
@@ -135,9 +142,7 @@ class MyForegroundServiceATK : Service() {
         val notification =
             createNotification() // Implement this method to create a notification
         startForeground(1, notification)
-
-        // Place your activity recognition logic here
-
+        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification),true)
         return START_STICKY
     }
 
@@ -173,6 +178,7 @@ class MyForegroundServiceATK : Service() {
     override fun onDestroy() {
         super.onDestroy()
         // Unregister the transitions receiver
+        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification),false)
         mTransitionsReceiver?.let {
             unregisterReceiver(it)
         }
@@ -208,6 +214,7 @@ class MyForegroundServiceATK : Service() {
 
 
         override fun onReceive(context: Context, intent: Intent) {
+            Log.d("ATR", "on receive")
             if (ActivityTransitionResult.hasResult(intent)) {
                 val result = ActivityTransitionResult.extractResult(intent)
                 result?.transitionEvents?.forEach { event ->
@@ -242,12 +249,12 @@ class MyForegroundServiceATK : Service() {
             else -> "UNKNOWN"
         }
 
-        private fun toTransitionType(transitionType: Int): String {
-            return when (transitionType) {
-                ActivityTransition.ACTIVITY_TRANSITION_ENTER -> "ENTER"
-                ActivityTransition.ACTIVITY_TRANSITION_EXIT -> "EXIT"
-                else -> "UNKNOWN"
-            }
-        }
+//        private fun toTransitionType(transitionType: Int): String {
+//            return when (transitionType) {
+//                ActivityTransition.ACTIVITY_TRANSITION_ENTER -> "ENTER"
+//                ActivityTransition.ACTIVITY_TRANSITION_EXIT -> "EXIT"
+//                else -> "UNKNOWN"
+//            }
+//        }
     }
 }

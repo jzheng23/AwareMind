@@ -28,18 +28,9 @@ class MainActivity : ComponentActivity() {
                 AppNavigation()
             }
         }
-
-        if (MyPreferenceManager.getBoolean(this, "collecting_data")) {
-            startMyForegroundService(this)
-        }
-
         auth = Firebase.auth
     }
 
-//    override fun onDestroy() {
-//        super.onDestroy()
-////        MyReceiverManager.unregisterReceiver(this)
-//    }
 
     public override fun onStart() {
         super.onStart()
@@ -51,6 +42,21 @@ class MainActivity : ComponentActivity() {
                     Log.w("Authentication", "signInAnonymously:failure", task.exception)
                 }
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (MyPreferenceManager.getBoolean(
+                this,
+                this.getString(R.string.collecting_data)
+            ) && !MyPreferenceManager.getBoolean(
+                this,
+                this.getString(R.string.showing_notification)
+            )
+        ) {
+            startMyForegroundService(this)
+        }
+
     }
 
 }

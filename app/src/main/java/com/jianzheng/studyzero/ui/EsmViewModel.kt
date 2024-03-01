@@ -66,11 +66,13 @@ class EsmViewModel(
     }
 
     private fun uploadToFirebase(newResponse: Response) {
-        if (sharedPreferences.getBoolean("is_UID_valid", false)) {
-            val uid = sharedPreferences.getString("UID", "null")
+        val uid = sharedPreferences.getString("UID", "null")
+        if (validateUid(uid)) {
+//            val uid = sharedPreferences.getString("UID", "null")
             myRef.child(uid.toString()).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
-        } else Log.d("userId", "invalid user id")
+            Log.d("data", "uploaded to user id ${uid.toString()}")
+        } else Log.d("data", "invalid user id ${uid.toString()}")
     }
 
 

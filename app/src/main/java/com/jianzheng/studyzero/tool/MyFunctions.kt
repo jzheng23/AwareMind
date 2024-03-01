@@ -13,7 +13,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
 //import com.jianzheng.studyzero.service.MyForegroundService
-import com.jianzheng.studyzero.service.MyForegroundServiceATK
+import com.jianzheng.studyzero.service.MyForegroundService
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -40,7 +40,7 @@ fun startEverything(context: Context) {
 }
 
 fun stopEverything(context: Context) {
-    context.stopService(Intent(context, MyForegroundServiceATK::class.java))
+    context.stopService(Intent(context, MyForegroundService::class.java))
     scheduleDailyMaintenance(context, 2592000000L)
     MyPreferenceManager.setBoolean(context, context.getString(R.string.recording_input), false)
     MyPreferenceManager.setBoolean(context, context.getString(R.string.collecting_data), false)
@@ -61,25 +61,27 @@ fun startMyForegroundService(context: Context) {
             arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
             0
         )
+    } else {
+        val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
+        ContextCompat.startForegroundService(context, myForegroundServiceIntent)
     }
-//    val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
-    val myForegroundServiceIntent = Intent(context, MyForegroundServiceATK::class.java)
-    ContextCompat.startForegroundService(context, myForegroundServiceIntent)
 }
 
-fun scheduleDailyMaintenance(context: Context, initialDelay: Long = 5000L) {
+fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
     val myWorkManager = WorkManager.getInstance(context)
 
+    val initialDelay = if (initialDelayInput == 0L) {
+        getInitialDelay()
+    } else {
+        initialDelayInput
+    }
     val workRequest = PeriodicWorkRequestBuilder<MyDailyWorker>(24, TimeUnit.HOURS)
-        // Additional configuration (like constraints)
-//        .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
-        .setInitialDelay(getInitialDelay(), TimeUnit.MILLISECONDS)
+        .setInitialDelay(initialDelay, TimeUnit.MILLISECONDS)
         .build()
     myWorkManager.enqueueUniquePeriodicWork(
         "daily_maintenance",
         ExistingPeriodicWorkPolicy.UPDATE, // KEEP or UPDATE
         workRequest
-//            workRequestTest
     )
     val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
     val workState = workInfo.get()?.state
