@@ -68,6 +68,7 @@ fun HomeScreen(
         factory = SharedPrefsViewModelFactory(context2)
     )
     val userId by sharedPrefsViewModel.userId.observeAsState("")
+    val isUserIdValid by sharedPrefsViewModel.isUserIdValid.observeAsState(false)
     val userAlias by sharedPrefsViewModel.userAlias.observeAsState("")
     val isTester by sharedPrefsViewModel.isTester.observeAsState(false)
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
@@ -79,7 +80,7 @@ fun HomeScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Hi, " + (if (userAlias == "") userId else userAlias) + "!",
+                        text = "Hi, " + (if (userAlias == "") userId else userAlias) + (if (isUserIdValid) "!" else "?"),
                         modifier = Modifier.clickable {
                             clickOnUIDCount++
                             if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)
