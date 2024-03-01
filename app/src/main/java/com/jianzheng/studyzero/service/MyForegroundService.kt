@@ -105,10 +105,16 @@ class MyForegroundService : Service() {
 
         // The Intent that will be fired when activities are detected
         val intent = Intent(transitionsReceiverAction)
-        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
-        mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
-            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-        )
+//        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
+        mActivityTransitionsPendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            PendingIntent.getBroadcast(
+                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
+            )
+        } else {
+            PendingIntent.getBroadcast(
+                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            )
+        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
