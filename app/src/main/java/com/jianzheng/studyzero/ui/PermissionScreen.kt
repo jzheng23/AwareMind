@@ -121,15 +121,7 @@ fun ScrollSettingContent(it: PaddingValues) {
 
             }
 
-            if (!usageStatAllowed) {
-                ArrowCard(
-                    title = "App usage",
-                    desc = stringResource(id = R.string.app_usage),
-                    onAuthClick = {
-                        MyPermissionManager.grantUserStatPermission(context)
-                    },
-                )
-            }
+
 
             if (!activityAllowed) {
                 ArrowCard(
@@ -161,6 +153,15 @@ fun ScrollSettingContent(it: PaddingValues) {
 //                    }
 //                )
 //            }
+            if (!usageStatAllowed) {
+                ArrowCard(
+                    title = "App usage",
+                    desc = stringResource(id = R.string.app_usage),
+                    onAuthClick = {
+                        MyPermissionManager.grantUserStatPermission(context)
+                    },
+                )
+            }
 
             if (!accessibilityAllowed) {
                 ArrowCard(
