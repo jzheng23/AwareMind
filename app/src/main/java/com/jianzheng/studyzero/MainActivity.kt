@@ -34,8 +34,7 @@ class MainActivity : ComponentActivity() {
 
     public override fun onStart() {
         super.onStart()
-        auth.signInAnonymously()
-            .addOnCompleteListener(this) { task ->
+        auth.signInAnonymously().addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     Log.d("Authentication", "signInAnonymously:success")
                 } else {
@@ -47,11 +46,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         if (MyPreferenceManager.getBoolean(
-                this,
-                this.getString(R.string.collecting_data)
-            ) && !MyPreferenceManager.getBoolean(
-                this,
-                this.getString(R.string.showing_notification)
+                this, this.getString(R.string.collecting_data)
             )
         ) {
             startMyForegroundService(this)
