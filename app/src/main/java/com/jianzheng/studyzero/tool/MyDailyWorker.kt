@@ -16,6 +16,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             dayCountPlusOne(context)
         }
         resetTriggerList(context)
+        startMyForegroundService(context)
         Log.d("workManager", "Do work la!")
         return Result.success()
     }

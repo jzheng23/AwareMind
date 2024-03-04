@@ -80,7 +80,7 @@ fun HomeScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Hi, " + (if (userAlias == "") userId else userAlias) + (if (isUserIdValid) "!" else "?"),
+                        text = if (isUserIdValid) ("Hi, " + (if (userAlias == "") userId else userAlias) + "!") else "Invalid UID",
                         modifier = Modifier.clickable {
                             clickOnUIDCount++
                             if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)

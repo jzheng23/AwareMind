@@ -58,6 +58,7 @@ import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
+import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -175,8 +176,9 @@ fun SubmitButton(
             coroutineScope.launch(Dispatchers.IO) {
                 myViewModel.saveAnswer(delay, startingTime)
                 Log.d("data","submit clicked")
-                val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
-                ContextCompat.startForegroundService(context, myForegroundServiceIntent)
+                startMyForegroundService(context)
+//                val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
+//                ContextCompat.startForegroundService(context, myForegroundServiceIntent)
             }
             isShowing.value = false
             responseCounter.responsePlusOne(tag)
