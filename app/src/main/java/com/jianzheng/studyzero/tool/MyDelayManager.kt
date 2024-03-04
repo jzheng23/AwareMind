@@ -59,7 +59,6 @@ object MyDelayManager {
         }
         triggerList = originalTriggerList.shuffled().toMutableList()
 
-
         Log.d("unlock", "init length of trigger list: ${triggerList.size}")
         isInitialed = true
 
