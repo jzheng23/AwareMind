@@ -27,6 +27,7 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyReceiverManager
+import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
 
 class MyForegroundService : Service() {
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
@@ -82,8 +83,11 @@ class MyForegroundService : Service() {
             registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
         }
 
+        scheduleDailyMaintenance(this)
+        MyDelayManager.init(this)
+        MyReceiverManager.registerReceiver(this)
 //        if (!MyDelayManager.checkInitialed()) {
-//            MyDelayManager.init(this)
+//
 //        } else {
 //            MyReceiverManager.registerReceiver(this)
 //        }

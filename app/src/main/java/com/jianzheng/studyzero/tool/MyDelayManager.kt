@@ -59,7 +59,7 @@ object MyDelayManager {
         }
         triggerList = originalTriggerList.shuffled().toMutableList()
 
-        MyReceiverManager.registerReceiver(context)
+
         Log.d("unlock", "init length of trigger list: ${triggerList.size}")
         isInitialed = true
 
@@ -214,4 +214,5 @@ object MyDelayManager {
         triggerIndex = 0
         Log.d("unlock", "trigger list is reset")
     }
+
 }
