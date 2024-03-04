@@ -31,7 +31,7 @@ class MyAccessibilityService : AccessibilityService() {
     private var scrollStartTime: Long = 0
     private var lastScrollEventTime: Long = 0
     private var textInputStartTime: Long = 0
-    private var lastWindowsChangeTime: Long = 0
+//    private var lastWindowsChangeTime: Long = 0
     private var inputToBeRecord = false
     private var uid = ""
     private lateinit var sharedPrefs: SharedPreferences
