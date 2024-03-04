@@ -15,7 +15,7 @@ android {
         applicationId = "com.jianzheng.studyzero"
         minSdk = 26
         targetSdk = 33
-        versionCode = 35
+        versionCode = 36
         versionName = "2.67a"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
