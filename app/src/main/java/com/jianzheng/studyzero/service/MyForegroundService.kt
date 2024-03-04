@@ -73,14 +73,18 @@ class MyForegroundService : Service() {
             .setActivityTransition(transitionType).build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate() {
         super.onCreate()
         initializeActivityTransition()
 
         mTransitionsReceiver = TransitionsReceiver().also {
             val filter = IntentFilter(transitionsReceiverAction)
-            registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                registerReceiver(it, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                registerReceiver(it, filter)
+            }
         }
 
         if (!MyDelayManager.checkInitialed()) {
@@ -106,17 +110,21 @@ class MyForegroundService : Service() {
         val request = ActivityTransitionRequest(activityTransitions)
 
         // The Intent that will be fired when activities are detected
-        val intent = Intent(transitionsReceiverAction)
-//        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
-        mActivityTransitionsPendingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            PendingIntent.getBroadcast(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-        }
+//        val intent = Intent(transitionsReceiverAction)
+        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
+        explicitIntent.action = transitionsReceiverAction
+        mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
+            this, 0, explicitIntent, PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+        )
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+//            PendingIntent.getBroadcast(
+//                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
+//            )
+//        } else {
+//            PendingIntent.getBroadcast(
+//                this, 0, intent, PendingIntent.FLAG_MUTABLE
+//            )
+//        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
