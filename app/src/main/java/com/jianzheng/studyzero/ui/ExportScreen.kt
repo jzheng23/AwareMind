@@ -49,9 +49,9 @@ fun ExportScreen(
     navController: NavController,
 ) {
     val context = LocalContext.current
-    val responseExist = checkExist(context,"response")
-    val inputExist = checkExist(context,"input")
-    val usageExist = checkExist(context,"usage")
+    val responseExist = checkExist(context, "response")
+    val inputExist = checkExist(context, "input")
+    val usageExist = checkExist(context, "usage")
     var responseToBeExport by remember { mutableStateOf(false) }
     var inputToBeExport by remember { mutableStateOf(false) }
     var usageToBeExport by remember { mutableStateOf(false) }
@@ -153,7 +153,12 @@ fun checkExist(context: Context, s: String): Boolean {
 
 
 @Composable
-fun ChecklistItem(item: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, enabled: Boolean) {
+fun ChecklistItem(
+    item: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean
+) {
 //    val isChecked = remember { mutableStateOf(checked) }
     Row(
         verticalAlignment = Alignment.CenterVertically,

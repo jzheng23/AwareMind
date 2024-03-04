@@ -31,7 +31,7 @@ class MyAccessibilityService : AccessibilityService() {
     private var scrollStartTime: Long = 0
     private var lastScrollEventTime: Long = 0
     private var textInputStartTime: Long = 0
-    private var lastWindowsChangeTime: Long = 0
+//    private var lastWindowsChangeTime: Long = 0
     private var inputToBeRecord = false
     private var uid = ""
     private lateinit var sharedPrefs: SharedPreferences
@@ -180,20 +180,6 @@ class MyAccessibilityService : AccessibilityService() {
                 lastScrollEventTime = currentTime
             }
 
-//            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
-//                if (currentTime - lastWindowsChangeTime > listenerInterval) {
-//                    Log.d("inputLogging", "${getDateTime(currentTime)} windows changed")
-//                    val input5 = Input(
-//                        startTime = getDateTime(currentTime),
-//                        inputType = "window",
-//                        extraX = 0,
-//                        extraY = 0
-//                    )
-//                    writeData(input5)
-//                }
-//                lastWindowsChangeTime = currentTime
-//
-//            }
 
             else -> {}
         }

@@ -71,7 +71,6 @@ class MyUsageManager {
                 if (sharedPreferences.getBoolean("is_UID_valid", false)) myRef.child(uid.toString())
                     .child(generatedId.toString())
                     .setValue(usage.copy(id = generatedId).toFirebaseUsage())
-//                Log.d("usageManager","${getEventTypeString(event.eventType)} ${event.className}, ${getDateTime(event.timeStamp)}")
                 Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
             }
         }

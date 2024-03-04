@@ -37,14 +37,12 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
-//import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.MyReceiverManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything

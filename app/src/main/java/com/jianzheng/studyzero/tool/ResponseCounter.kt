@@ -40,9 +40,9 @@ class ResponseCounter(context: Context) {
         return sharedPreferences.getInt("count_random_met", 0) >= lengthOfTriggerList
     }
 
-    fun checkComplete(): Boolean {
-        return (checkRandomComplete() and check20Complete() and check30Complete())
-    }
+//    fun checkComplete(): Boolean {
+//        return (checkRandomComplete() and check20Complete() and check30Complete())
+//    }
 
     fun resetCounter() {
         editor.putInt("count_20_Met", 0)

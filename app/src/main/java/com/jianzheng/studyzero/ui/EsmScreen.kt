@@ -1,6 +1,6 @@
 package com.jianzheng.studyzero.ui
 
-import android.content.Intent
+//import com.jianzheng.studyzero.service.MyForegroundService
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
@@ -51,10 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.jianzheng.studyzero.R
-//import com.jianzheng.studyzero.service.MyForegroundService
-import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
@@ -175,7 +172,7 @@ fun SubmitButton(
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 myViewModel.saveAnswer(delay, startingTime)
-                Log.d("data","submit clicked")
+                Log.d("data", "submit clicked")
                 startMyForegroundService(context)
 //                val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
 //                ContextCompat.startForegroundService(context, myForegroundServiceIntent)

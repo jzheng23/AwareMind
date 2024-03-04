@@ -14,9 +14,9 @@ android {
     defaultConfig {
         applicationId = "com.jianzheng.studyzero"
         minSdk = 26
-        targetSdk = 34
-        versionCode = 35
-        versionName = "3.00b"
+        targetSdk = 33
+        versionCode = 36
+        versionName = "2.67a"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.service
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -27,13 +26,13 @@ import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.MyReceiverManager
+import com.jianzheng.studyzero.tool.UnlockReceiverManager
 import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
 
 class MyForegroundService : Service() {
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
     private var mTransitionsReceiver: BroadcastReceiver? = null
-    private val transitionsReceiverAction = "com.jzheng23.atk.TRANSITIONS_RECEIVER_ACTION"
+    private val transitionsReceiverAction = "com.jzheng23.studyzero.TRANSITIONS_RECEIVER_ACTION"
     private val activityTransitions: List<ActivityTransition> by lazy {
         listOf(
             getUserActivity(
@@ -74,61 +73,31 @@ class MyForegroundService : Service() {
             .setActivityTransition(transitionType).build()
     }
 
-//    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override fun onCreate() {
         super.onCreate()
         initializeActivityTransition()
 
         mTransitionsReceiver = TransitionsReceiver().also {
             val filter = IntentFilter(transitionsReceiverAction)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                registerReceiver(it, filter, Context.RECEIVER_NOT_EXPORTED)
-            } else {
-                registerReceiver(it, filter)
-            }
+            registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
         }
 
         scheduleDailyMaintenance(this)
         MyDelayManager.init(this)
-        MyReceiverManager.registerReceiver(this)
-//        if (!MyDelayManager.checkInitialed()) {
-//
-//        } else {
-//            MyReceiverManager.registerReceiver(this)
-//        }
+        UnlockReceiverManager.registerReceiver(this)
     }
 
-    @SuppressLint("MutableImplicitPendingIntent")
     private fun initializeActivityTransition() {
-//        val intent = Intent(this, TransitionsReceiver::class.java)
-//        mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
-//            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-//        )
-//
-//        // Register for transitions updates
-//        enableActivityTransitions()
-//    }
-//
-//    private fun enableActivityTransitions() {
         Log.d("ATR", "activity recognition initialized")
         val request = ActivityTransitionRequest(activityTransitions)
 
         // The Intent that will be fired when activities are detected
-//        val intent = Intent(transitionsReceiverAction)
-        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
-        explicitIntent.action = transitionsReceiverAction
+        val intent = Intent(transitionsReceiverAction)
+//        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
         mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
-            this, 0, explicitIntent, PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-//            PendingIntent.getBroadcast(
-//                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
-//            )
-//        } else {
-//            PendingIntent.getBroadcast(
-//                this, 0, intent, PendingIntent.FLAG_MUTABLE
-//            )
-//        }
 
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -153,16 +122,12 @@ class MyForegroundService : Service() {
 
     }
 
-//    private fun startForegroundServiceWithNotification() {
-//        val notification = createNotification()
-//        startForeground(1, notification)
-//    }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         val notification =
             createNotification() // Implement this method to create a notification
         startForeground(1, notification)
-        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification),true)
+        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
         return START_STICKY
     }
 
@@ -198,11 +163,11 @@ class MyForegroundService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         // Unregister the transitions receiver
-        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification),false)
+        MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), false)
         mTransitionsReceiver?.let {
             unregisterReceiver(it)
         }
-        MyReceiverManager.unregisterReceiver(this)
+        UnlockReceiverManager.unregisterReceiver(this)
         // Disable activity transitions
         disableActivityTransitions()
     }
@@ -227,7 +192,7 @@ class MyForegroundService : Service() {
     }
 
     companion object {
-        const val CHANNEL_ID = "foregroundServiceChannel"
+        const val CHANNEL_ID = "AwareMindServiceChannel"
     }
 
     inner class TransitionsReceiver : BroadcastReceiver() {
@@ -241,7 +206,6 @@ class MyForegroundService : Service() {
                     // Update notification with the current activity
                     val currentActivity =
                         toActivityString(event.activityType)
-//                    val notification = createNotification("Current activity: $currentActivity")
                     if (event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         MyPreferenceManager.setString(context, "current_activity", currentActivity)
                     }
@@ -256,7 +220,6 @@ class MyForegroundService : Service() {
                             }
                         }
                     }
-//                    startForeground(1, notification)
                 }
             }
         }
@@ -268,13 +231,5 @@ class MyForegroundService : Service() {
             DetectedActivity.IN_VEHICLE -> "IN_VEHICLE"
             else -> "UNKNOWN"
         }
-
-//        private fun toTransitionType(transitionType: Int): String {
-//            return when (transitionType) {
-//                ActivityTransition.ACTIVITY_TRANSITION_ENTER -> "ENTER"
-//                ActivityTransition.ACTIVITY_TRANSITION_EXIT -> "EXIT"
-//                else -> "UNKNOWN"
-//            }
-//        }
     }
 }
