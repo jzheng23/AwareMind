@@ -27,12 +27,11 @@ object MyDelayManager {
     private lateinit var twentyRequestID: UUID
     private lateinit var thirtyRequestID: UUID
     private var tempTag: String = "count_random_met"
-    private var isInitialed = false
     private var countDelayManager = 0
 
 
     fun init(context: Context) {
-        countDelayManager ++
+        countDelayManager++
         Log.d("unlock", "My delay manager initialized $countDelayManager")
         if (MyPreferenceManager.getBoolean(
                 context,
@@ -60,13 +59,8 @@ object MyDelayManager {
         triggerList = originalTriggerList.shuffled().toMutableList()
 
         Log.d("unlock", "init length of trigger list: ${triggerList.size}")
-        isInitialed = true
-
     }
 
-    fun checkInitialed(): Boolean {
-        return isInitialed
-    }
 
     fun scheduleOverlayService(context: Context) {
 

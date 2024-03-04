@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 object MyPreferenceManager {
 
     private fun getSharedPreferences(context: Context): SharedPreferences {
-//        return context.applicationContext.getSharedPreferences(
         return context.getSharedPreferences(
             "MySharedPrefs",
             Context.MODE_PRIVATE

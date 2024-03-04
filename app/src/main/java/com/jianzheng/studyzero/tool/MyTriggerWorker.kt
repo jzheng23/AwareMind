@@ -8,7 +8,6 @@ import androidx.work.WorkerParameters
 import com.jianzheng.studyzero.service.OverlayService
 
 class MyTriggerWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
-    //    val inputData = params.inputData
     override fun doWork(): Result {
         val tag = inputData.getString("tag")
         val currentTimeMillis = inputData.getLong("unlock", System.currentTimeMillis())

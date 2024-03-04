@@ -41,7 +41,9 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
                 "UID" -> _userId.value = sharedPreferences.getString("UID", "")
                 "user_alias" -> _userAlias.value = sharedPreferences.getString("user_alias", "")
                 "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
-                "is_userIdValid" -> _isUserIdValid.value = sharedPreferences.getBoolean("is_UID_valid", false)
+                "is_userIdValid" -> _isUserIdValid.value =
+                    sharedPreferences.getBoolean("is_UID_valid", false)
+
                 "tutorial_finished" -> _isTutorialFinished.value =
                     sharedPreferences.getBoolean("tutorial_finished", false)
 

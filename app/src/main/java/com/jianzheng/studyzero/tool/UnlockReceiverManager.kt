@@ -7,7 +7,7 @@ import android.util.Log
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.receiver.UnlockReceiver
 
-object MyReceiverManager {
+object UnlockReceiverManager {
     private var unlockReceiver = UnlockReceiver()
 
     fun registerReceiver(context: Context) {
