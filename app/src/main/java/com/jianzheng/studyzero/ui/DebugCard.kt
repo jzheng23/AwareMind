@@ -86,9 +86,9 @@ fun DebugCard(
     val isNotificationShowing by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("showing_notification", false))
     }
-    val isUnlockReceiverRegistered by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("unlock_registered", false))
-    }
+//    val isUnlockReceiverRegistered by usePollState {
+//        mutableStateOf(sharedPreferences.getBoolean("unlock_registered", false))
+//    }
 //    val isDriving by usePollState {
 //        mutableStateOf(sharedPreferences.getBoolean("is_driving", false))
 //    }
@@ -154,20 +154,20 @@ fun DebugCard(
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
-                SwitchCard(
-                    title = "ESM",
-                    desc = "Schedule ESM after unlock",
-                    onCheckedChange = {
-                        if (it) {
-                            MyDelayManager.init(context)
-                        } else {
-                            MyReceiverManager.unregisterReceiver(context)
-                            Log.d("unlock", "unlock unregistered")
-                        }
-                    },
-                    isEnabled = isOverlayAllowed,
-                    isChecked = isUnlockReceiverRegistered.value
-                )
+//                SwitchCard(
+//                    title = "ESM",
+//                    desc = "Schedule ESM after unlock",
+//                    onCheckedChange = {
+//                        if (it) {
+//                            MyDelayManager.init(context)
+//                        } else {
+//                            MyReceiverManager.unregisterReceiver(context)
+//                            Log.d("unlock", "unlock unregistered")
+//                        }
+//                    },
+//                    isEnabled = isOverlayAllowed,
+//                    isChecked = isUnlockReceiverRegistered.value
+//                )
                 SwitchCard(
                     title = "",
                     desc = "Use testing triggers?",

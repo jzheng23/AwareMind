@@ -29,7 +29,9 @@ fun getDateTime(timeInMillis: Long): String {
 
 fun startEverything(context: Context) {
     startMyForegroundService(context)
-    scheduleDailyMaintenance(context)
+//    scheduleDailyMaintenance(context)
+//    MyDelayManager.init(context)
+//    MyReceiverManager.registerReceiver(context)
     MyPreferenceManager.setBoolean(
         context,
         context.getString(R.string.using_testing_triggers), false
@@ -41,6 +43,7 @@ fun startEverything(context: Context) {
 
 fun stopEverything(context: Context) {
     context.stopService(Intent(context, MyForegroundService::class.java))
+//    MyReceiverManager.unregisterReceiver(context)
     scheduleDailyMaintenance(context, 2592000000L)
     MyPreferenceManager.setBoolean(context, context.getString(R.string.recording_input), false)
     MyPreferenceManager.setBoolean(context, context.getString(R.string.collecting_data), false)
@@ -54,11 +57,17 @@ fun startMyForegroundService(context: Context) {
     if (ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.ACCESS_FINE_LOCATION
+        ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+            context,
+            Manifest.permission.ACCESS_COARSE_LOCATION
         ) != PackageManager.PERMISSION_GRANTED
     ) {
         ActivityCompat.requestPermissions(
             context as Activity,
-            arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+            arrayOf(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ),
             0
         )
     } else {
