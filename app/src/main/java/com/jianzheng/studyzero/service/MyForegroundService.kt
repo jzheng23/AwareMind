@@ -82,11 +82,11 @@ class MyForegroundService : Service() {
             registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
         }
 
-        if (!MyDelayManager.checkInitialed()) {
-            MyDelayManager.init(this)
-        } else {
-            MyReceiverManager.registerReceiver(this)
-        }
+//        if (!MyDelayManager.checkInitialed()) {
+//            MyDelayManager.init(this)
+//        } else {
+//            MyReceiverManager.registerReceiver(this)
+//        }
     }
 
     private fun initializeActivityTransition() {

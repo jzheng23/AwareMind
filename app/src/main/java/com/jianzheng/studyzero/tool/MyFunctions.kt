@@ -30,6 +30,7 @@ fun getDateTime(timeInMillis: Long): String {
 fun startEverything(context: Context) {
     startMyForegroundService(context)
     scheduleDailyMaintenance(context)
+    MyDelayManager.init(context)
     MyPreferenceManager.setBoolean(
         context,
         context.getString(R.string.using_testing_triggers), false

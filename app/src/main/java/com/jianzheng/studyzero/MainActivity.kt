@@ -10,6 +10,7 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.AppNavigation
@@ -29,6 +30,10 @@ class MainActivity : ComponentActivity() {
             }
         }
         auth = Firebase.auth
+        if (MyPreferenceManager.getBoolean(this, this.getString(R.string.collecting_data))){
+            MyDelayManager.init(this)
+            startMyForegroundService(this)
+        }
     }
 
 
