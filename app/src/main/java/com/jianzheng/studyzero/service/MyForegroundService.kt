@@ -153,6 +153,7 @@ class MyForegroundService : Service() {
             .setContentTitle(getString(R.string.app_name))
             .setContentText("Reports: $todayCount today/$totalCount total. Please don't dismiss this notification.")
             .setSmallIcon(R.drawable.heart_alt)
+            .setOngoing(true)
             .setContentIntent(pendingIntent).build()
     }
 

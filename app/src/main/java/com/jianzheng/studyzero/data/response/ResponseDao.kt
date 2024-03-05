@@ -21,4 +21,6 @@ interface ResponseDao {
     @Query("SELECT * FROM response WHERE id = (SELECT MAX(id) FROM response)")
     fun getLastResponse(): Response
 
+    @Query("SELECT * FROM response")
+    suspend fun getAllOnce(): List<Response>
 }

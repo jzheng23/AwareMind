@@ -205,21 +205,21 @@ fun DebugCard(
 //                HorizontalDivider(
 //                    color = MaterialTheme.colorScheme.outline
 //                )
-//                ButtonCard(
-//                    title = "New Day",
-//                    desc = "Simulating a new day starts",
-//                    onAuthClick = {
-//                        newDayFunction(context)
-//                        Handler(Looper.getMainLooper()).post {
-//                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
-//                            toast.show()
-//                        }
-//                    },
-//                    buttonText = "Simulate"
-//                )
-//                HorizontalDivider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
+                ButtonCard(
+                    title = "New Day",
+                    desc = "Simulating a new day starts",
+                    onAuthClick = {
+                        newDayFunction(context)
+                        Handler(Looper.getMainLooper()).post {
+                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
+                            toast.show()
+                        }
+                    },
+                    buttonText = "Simulate"
+                )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
 //                ButtonCard(
 //                    title = "Usage",
 //                    desc = "Get usage in last 10 seconds",
@@ -328,21 +328,21 @@ fun DebugCard(
 }
 
 
-//fun newDayFunction(context: Context) {
-//    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(15, TimeUnit.MINUTES)
+fun newDayFunction(context: Context) {
+    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
+        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+        .build()
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "daily_maintenance_test",
+        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+        workRequestTest
+    )
+//    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
-//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-//        "daily_maintenance_test",
-//        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
-//        workRequestTest
-//    )
-////    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
-////        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
-////        .build()
-////    WorkManager.getInstance(context).enqueue(workRequestOneTime)
-//    Log.d("dayCount", "new day reset")
-//}
+//    WorkManager.getInstance(context).enqueue(workRequestOneTime)
+    Log.d("dayCount", "new day reset")
+}
 
 fun resetTriggerFunction(context: Context) {
     val responseCounter = ResponseCounter(context)

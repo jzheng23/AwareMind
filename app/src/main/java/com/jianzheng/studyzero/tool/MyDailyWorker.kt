@@ -2,8 +2,14 @@ package com.jianzheng.studyzero.tool
 
 import android.content.Context
 import android.util.Log
+import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
+import com.jianzheng.studyzero.data.response.ResponseDatabase
+import com.jianzheng.studyzero.data.response.ResponseNoId
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -12,7 +18,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     override fun doWork(): Result {
         val context: Context = applicationContext
         CoroutineScope(Dispatchers.IO).launch {
-            uploadData(context)
+            uploadUsageData(context)
+            uploadResponsesData(context)
             dayCountPlusOne(context)
         }
         resetTriggerList(context)
@@ -21,6 +28,22 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         val currentTime = System.currentTimeMillis()
         MyPreferenceManager.setString(context, "last_maintenance", getDateTime(currentTime))
         return Result.success()
+    }
+
+    private suspend fun uploadResponsesData(context: Context) {
+        val uid = MyPreferenceManager.getString(context,"UID")
+        if (validateUid(uid)) {
+            val responseDao =
+                Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .responseDao()
+            val myRef = Firebase.database.getReference("ESM")
+            responseDao.getAllOnce().forEach{entry ->
+                myRef.child(uid).child(entry.id.toString())
+                    .setValue(ResponseNoId.fromResponse(entry))
+            }
+        }
     }
 
     private fun dayCountPlusOne(context: Context) {
@@ -32,7 +55,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         Log.d("workManager", "day ${dayCount + 1}")
     }
 
-    private fun uploadData(context: Context) {
+    private fun uploadUsageData(context: Context) {
         val myUsageManager = MyUsageManager()
         myUsageManager.getUsageEvents(context, System.currentTimeMillis(), false)
     }
