@@ -172,14 +172,14 @@ fun SubmitButton(
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 myViewModel.saveAnswer(delay, startingTime)
-                Log.d("data", "submit clicked")
-                startMyForegroundService(context)
 //                val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
 //                ContextCompat.startForegroundService(context, myForegroundServiceIntent)
             }
-            isShowing.value = false
             responseCounter.responsePlusOne(tag)
+            startMyForegroundService(context)
+            isShowing.value = false
             onClick()
+            Log.d("data", "submit clicked")
         },
         shape = RoundedCornerShape(8.dp)
     ) {
