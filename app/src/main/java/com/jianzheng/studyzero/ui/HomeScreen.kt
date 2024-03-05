@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -81,6 +82,7 @@ fun HomeScreen(
                 title = {
                     Text(
                         text = if (isUserIdValid) ("Hi, " + (if (userAlias == "") userId else userAlias) + "!") else "Invalid UID",
+                        color = if (isUserIdValid) MaterialTheme.colorScheme.onSurface else Color.Red,
                         modifier = Modifier.clickable {
                             clickOnUIDCount++
                             if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)

@@ -18,6 +18,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         resetTriggerList(context)
         startMyForegroundService(context)
         Log.d("workManager", "Do work la!")
+        val currentTime = System.currentTimeMillis()
+        MyPreferenceManager.setString(context, "last_maintenance", getDateTime(currentTime))
         return Result.success()
     }
 

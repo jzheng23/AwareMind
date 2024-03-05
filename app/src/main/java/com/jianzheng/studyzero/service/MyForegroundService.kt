@@ -77,12 +77,10 @@ class MyForegroundService : Service() {
     override fun onCreate() {
         super.onCreate()
         initializeActivityTransition()
-
         mTransitionsReceiver = TransitionsReceiver().also {
             val filter = IntentFilter(transitionsReceiverAction)
             registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
         }
-
         scheduleDailyMaintenance(this)
         MyDelayManager.init(this)
         UnlockReceiverManager.registerReceiver(this)
@@ -91,7 +89,6 @@ class MyForegroundService : Service() {
     private fun initializeActivityTransition() {
         Log.d("ATR", "activity recognition initialized")
         val request = ActivityTransitionRequest(activityTransitions)
-
         // The Intent that will be fired when activities are detected
         val intent = Intent(transitionsReceiverAction)
 //        val explicitIntent = Intent(this, TransitionsReceiver::class.java)

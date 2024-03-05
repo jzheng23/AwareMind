@@ -72,6 +72,9 @@ fun DebugCard(
 //    val isInputRecording by usePollState {
 //        sharedPreferences.getBoolean("input_record", false)
 //    }
+    val lastMaintenance by usePollState(interval = 3_600_000L) {
+        sharedPreferences.getString("last_maintenance","unknown")
+    }
     val isTutorialFinished by usePollState {
         sharedPreferences.getBoolean("tutorial_finished", false)
     }
@@ -133,6 +136,10 @@ fun DebugCard(
 //                    color = MaterialTheme.colorScheme.outline
 //                )
                 Text("Current activity: ${currentActivity.value}")
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+                Text("Synced at: $lastMaintenance")
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
