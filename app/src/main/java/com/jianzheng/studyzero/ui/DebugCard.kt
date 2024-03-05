@@ -128,10 +128,10 @@ fun DebugCard(
             }
             Spacer(modifier = Modifier.height(2.dp))
             if (isVisible) {
-                Text("User ID is $userId, upload is ${validateUid(userId)}")
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
+//                Text("User ID is $userId, upload is ${validateUid(userId)}")
+//                HorizontalDivider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
                 Text("Current activity: ${currentActivity.value}")
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
@@ -195,39 +195,39 @@ fun DebugCard(
                     buttonText = "Test",
                     buttonEnabled = isOverlayAllowed
                 )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                ButtonCard(
-                    title = "New Day",
-                    desc = "Simulating a new day starts",
-                    onAuthClick = {
-                        newDayFunction(context)
-                        Handler(Looper.getMainLooper()).post {
-                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
-                    },
-                    buttonText = "Simulate"
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                ButtonCard(
-                    title = "Usage",
-                    desc = "Get usage in last 10 seconds",
-                    onAuthClick = {
-                        val myUsageManager = MyUsageManager()
-                        myUsageManager.getUsageEvents(context, System.currentTimeMillis())
-                        Handler(Looper.getMainLooper()).post {
-                            val toast =
-                                Toast.makeText(context, "Usage uploaded!", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
-                    },
-                    buttonText = "Get",
-                    buttonEnabled = isUsageAllowed
-                )
+//                HorizontalDivider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                ButtonCard(
+//                    title = "New Day",
+//                    desc = "Simulating a new day starts",
+//                    onAuthClick = {
+//                        newDayFunction(context)
+//                        Handler(Looper.getMainLooper()).post {
+//                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
+//                            toast.show()
+//                        }
+//                    },
+//                    buttonText = "Simulate"
+//                )
+//                HorizontalDivider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                ButtonCard(
+//                    title = "Usage",
+//                    desc = "Get usage in last 10 seconds",
+//                    onAuthClick = {
+//                        val myUsageManager = MyUsageManager()
+//                        myUsageManager.getUsageEvents(context, System.currentTimeMillis())
+//                        Handler(Looper.getMainLooper()).post {
+//                            val toast =
+//                                Toast.makeText(context, "Usage uploaded!", Toast.LENGTH_SHORT)
+//                            toast.show()
+//                        }
+//                    },
+//                    buttonText = "Get",
+//                    buttonEnabled = isUsageAllowed
+//                )
 //                Divider(
 //                    color = MaterialTheme.colorScheme.outline
 //                )
@@ -241,16 +241,16 @@ fun DebugCard(
 //                    isChecked = isInputRecording
 //                )
 
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                SwitchCard(
-                    title = "Driving",
-                    desc = "I am driving",
-                    onCheckedChange = {
-                        MyPreferenceManager.setBoolean(context, "is_driving", it)
-                    }
-                )
+//                HorizontalDivider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                SwitchCard(
+//                    title = "Driving",
+//                    desc = "I am driving",
+//                    onCheckedChange = {
+//                        MyPreferenceManager.setBoolean(context, "is_driving", it)
+//                    }
+//                )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -321,21 +321,21 @@ fun DebugCard(
 }
 
 
-fun newDayFunction(context: Context) {
-    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(15, TimeUnit.MINUTES)
-        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
-        .build()
-    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "daily_maintenance_test",
-        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
-        workRequestTest
-    )
-//    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
+//fun newDayFunction(context: Context) {
+//    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(15, TimeUnit.MINUTES)
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
-//    WorkManager.getInstance(context).enqueue(workRequestOneTime)
-    Log.d("dayCount", "new day reset")
-}
+//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//        "daily_maintenance_test",
+//        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+//        workRequestTest
+//    )
+////    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
+////        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+////        .build()
+////    WorkManager.getInstance(context).enqueue(workRequestOneTime)
+//    Log.d("dayCount", "new day reset")
+//}
 
 fun resetTriggerFunction(context: Context) {
     val responseCounter = ResponseCounter(context)

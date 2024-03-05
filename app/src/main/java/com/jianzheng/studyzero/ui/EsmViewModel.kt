@@ -52,7 +52,6 @@ class EsmViewModel(
         val newResponse = uiState.value.toResponse(delay, startingTime)
         responseDao.insert(newResponse)
         uploadToFirebase(responseDao.getLastResponse())
-        Log.d("data", responseDao.getLastResponse().startingTime)
         MyPreferenceManager.setLong(
             context,
             context.getString(R.string.last_submit),
@@ -62,13 +61,12 @@ class EsmViewModel(
             val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
             toast.show()
         }
-
+        Log.d("data", "answer saved at ${responseDao.getLastResponse().startingTime}")
     }
 
     private fun uploadToFirebase(newResponse: Response) {
         val uid = sharedPreferences.getString("UID", "null")
         if (validateUid(uid)) {
-//            val uid = sharedPreferences.getString("UID", "null")
             myRef.child(uid.toString()).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
             Log.d("data", "uploaded to user id ${uid.toString()}")

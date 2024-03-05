@@ -99,7 +99,7 @@ fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
 
 fun getInitialDelay(): Long {
     val currentDate = Calendar.getInstance()
-    val hourInt = 4
+    val hourInt = 3
     val randomInt = Random.nextInt(0, 60)
     val dueDate = Calendar.getInstance().apply {
         // Set time to 11 AM for testing, 4 AM for real
