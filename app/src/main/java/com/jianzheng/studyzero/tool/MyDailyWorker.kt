@@ -8,6 +8,8 @@ import androidx.work.WorkerParameters
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.input.InputDatabase
+import com.jianzheng.studyzero.data.input.InputNoId
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
 import com.jianzheng.studyzero.ui.validateUid
@@ -15,16 +17,22 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
+
+    private val zoneId = ZoneId.systemDefault()
+    private val todayStart = LocalDate.now().atStartOfDay(zoneId).toInstant().toEpochMilli()
+    private val yesterdayStart = todayStart - ChronoUnit.DAYS.duration.toMillis()
+    private val yesterdayDate = LocalDate.now().minusDays(1).toString()
+    private val uid = MyPreferenceManager.getString(ctx, ctx.getString(R.string.user_ID))
     override fun doWork(): Result {
         val context: Context = applicationContext
         CoroutineScope(Dispatchers.IO).launch {
             uploadUsageData(context)
-            uploadResponsesData(context)
+            uploadResponseData(context)
+            uploadInputData(context)
             dayCountPlusOne(context)
         }
         resetTriggerList(context)
@@ -35,14 +43,25 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         return Result.success()
     }
 
-    private suspend fun uploadResponsesData(context: Context) {
-        val uid = MyPreferenceManager.getString(context,context.getString(R.string.user_ID))
-        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-        val startOfToday = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS)
-        val startOfYesterday = startOfToday.minusDays(1)
-        val startOfYesterdayString = startOfYesterday.format(formatter)
-        val startOfTodayString = startOfToday.format(formatter)
-        val yesterdayDate = LocalDate.now().minusDays(1).toString()
+    private suspend fun uploadInputData(context: Context) {
+        if (validateUid(uid)) {
+            val inputDao =
+                Room.databaseBuilder(context, InputDatabase::class.java, "input_database")
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .inputDao()
+            val myRef = Firebase.database.getReference("Input")
+            inputDao.getAllYesterday(yesterdayStart, todayStart)
+                .forEach { entry ->
+                    myRef.child(uid)
+                        .child(yesterdayDate)
+                        .child(entry.id.toString())
+                        .setValue(InputNoId.fromInput(entry))
+                }
+        }
+    }
+
+    private suspend fun uploadResponseData(context: Context) {
         if (validateUid(uid)) {
             val responseDao =
                 Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
@@ -50,12 +69,13 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
                     .build()
                     .responseDao()
             val myRef = Firebase.database.getReference("ESM")
-            responseDao.getAllYesterday(startOfYesterdayString, startOfTodayString).forEach{entry ->
-                myRef.child(uid)
-                    .child(yesterdayDate)
-                    .child(entry.id.toString())
-                    .setValue(ResponseNoId.fromResponse(entry))
-            }
+            responseDao.getAllYesterday(yesterdayStart, todayStart)
+                .forEach { entry ->
+                    myRef.child(uid)
+                        .child(yesterdayDate)
+                        .child(entry.id.toString())
+                        .setValue(ResponseNoId.fromResponse(entry))
+                }
         }
     }
 

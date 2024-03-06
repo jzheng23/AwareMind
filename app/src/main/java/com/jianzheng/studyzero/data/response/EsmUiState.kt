@@ -12,6 +12,6 @@ fun EsmUiState.toResponse(delay: Long, startingTime: Long): Response = Response(
     delay = delay,
     answer1 = answer[0],
     answer2 = answer[1],
-    startingTime = getDateTime(startingTime),
-    submittingTime = getDateTime(System.currentTimeMillis())
+    startingTime = startingTime,
+    submittingTime = System.currentTimeMillis()
 )

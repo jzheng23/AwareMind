@@ -25,5 +25,5 @@ interface ResponseDao {
     suspend fun getAllOnce(): List<Response>
 
     @Query("SELECT * FROM response WHERE submittingTime >= :startOfYesterday AND submittingTime < :startOfToday")
-    suspend fun getAllYesterday(startOfYesterday: String, startOfToday: String): List<Response>
+    suspend fun getAllYesterday(startOfYesterday: Long, startOfToday: Long): List<Response>
 }

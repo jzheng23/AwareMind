@@ -4,8 +4,8 @@ data class ResponseNoId(
     val delay: Long,
     val answer1: Int,
     val answer2: Int,
-    val startingTime: String,
-    val submittingTime: String
+    val startingTime: Long,
+    val submittingTime: Long
 ) {
     companion object {
         fun fromResponse(response: Response): ResponseNoId {

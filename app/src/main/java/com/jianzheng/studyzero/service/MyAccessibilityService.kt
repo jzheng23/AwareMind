@@ -87,8 +87,8 @@ class MyAccessibilityService : AccessibilityService() {
                 "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
             )
             val input1 = Input(
-                startTime = getDateTime(currentTime),
-                inputType = "scroll",
+                startTime = currentTime,
+                inputType = 1,
                 extraX = totalDeltaX,
                 extraY = totalDeltaY
             )
@@ -112,8 +112,8 @@ class MyAccessibilityService : AccessibilityService() {
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
                 Log.d("inputLogging", "${getDateTime(currentTime)} click")
                 val input2 = Input(
-                    startTime = getDateTime(currentTime),
-                    inputType = "click",
+                    startTime = currentTime,
+                    inputType = 2,
                     extraX = 0,
                     extraY = 0
                 )
@@ -124,8 +124,8 @@ class MyAccessibilityService : AccessibilityService() {
                         "${getDateTime(currentTime)} textChanged $textChangeCount"
                     )
                     val input3 = Input(
-                        startTime = getDateTime(currentTime),
-                        inputType = "text",
+                        startTime = currentTime,
+                        inputType = 3,
                         extraX = textChangeCount,
                         extraY = 0
                     )
@@ -141,8 +141,8 @@ class MyAccessibilityService : AccessibilityService() {
                         "${getDateTime(currentTime)} textChanged $textChangeCount"
                     )
                     val input4 = Input(
-                        startTime = getDateTime(currentTime),
-                        inputType = "text",
+                        startTime = currentTime,
+                        inputType = 3,
                         extraX = textChangeCount,
                         extraY = 0
                     )
