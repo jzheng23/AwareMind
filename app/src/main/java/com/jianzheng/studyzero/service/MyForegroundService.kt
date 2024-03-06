@@ -93,7 +93,7 @@ class MyForegroundService : Service() {
         val intent = Intent(transitionsReceiverAction)
 //        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
         mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
-            this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            this, TRANSITION_INTENT_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
         if (ActivityCompat.checkSelfPermission(
@@ -145,7 +145,7 @@ class MyForegroundService : Service() {
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, 0, notificationIntent, PendingIntent.FLAG_MUTABLE
+            this, NOTIFICATION_INTENT_CODE, notificationIntent, PendingIntent.FLAG_MUTABLE
         )
         val todayCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_today))
         val totalCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_total))
@@ -191,6 +191,8 @@ class MyForegroundService : Service() {
 
     companion object {
         const val CHANNEL_ID = "AwareMindServiceChannel"
+        const val NOTIFICATION_INTENT_CODE = 1
+        const val TRANSITION_INTENT_CODE = 2
     }
 
     inner class TransitionsReceiver : BroadcastReceiver() {
