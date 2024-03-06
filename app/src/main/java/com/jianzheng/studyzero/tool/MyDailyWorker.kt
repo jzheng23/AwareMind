@@ -14,6 +14,10 @@ import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 
 class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
     override fun doWork(): Result {
@@ -33,6 +37,12 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private suspend fun uploadResponsesData(context: Context) {
         val uid = MyPreferenceManager.getString(context,context.getString(R.string.user_ID))
+        val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        val startOfToday = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS)
+        val startOfYesterday = startOfToday.minusDays(1)
+        val startOfYesterdayString = startOfYesterday.format(formatter)
+        val startOfTodayString = startOfToday.format(formatter)
+        val yesterdayDate = LocalDate.now().minusDays(1).toString()
         if (validateUid(uid)) {
             val responseDao =
                 Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
@@ -40,8 +50,10 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
                     .build()
                     .responseDao()
             val myRef = Firebase.database.getReference("ESM")
-            responseDao.getAllOnce().forEach{entry ->
-                myRef.child(uid).child(entry.id.toString())
+            responseDao.getAllYesterday(startOfYesterdayString, startOfTodayString).forEach{entry ->
+                myRef.child(uid)
+                    .child(yesterdayDate)
+                    .child(entry.id.toString())
                     .setValue(ResponseNoId.fromResponse(entry))
             }
         }

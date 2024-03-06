@@ -16,6 +16,7 @@ import com.jianzheng.studyzero.data.usage.toFirebaseUsage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class MyUsageManager {
     fun getUsageEvents(context: Context, currentTime: Long, test: Boolean = true) {
@@ -40,6 +41,7 @@ class MyUsageManager {
         val usageDao = db.usageDao()
         val usages = mutableListOf<Usage>()
         val sessionStartTimes = mutableMapOf<Pair<String, String>, Long>()
+        val yesterdayDate = LocalDate.now().minusDays(1).toString()
 
         while (usageEvents?.hasNextEvent() == true) {
             val event = UsageEvents.Event()
@@ -70,6 +72,7 @@ class MyUsageManager {
             usages.forEach { usage ->
                 val generatedId = usageDao.insert(usage)
                 if (sharedPreferences.getBoolean("is_UID_valid", false)) myRef.child(uid.toString())
+                    .child(yesterdayDate)
                     .child(generatedId.toString())
                     .setValue(usage.copy(id = generatedId).toFirebaseUsage())
                 Log.d("usageManager", usage.className + usage.startTime + usage.endTime)

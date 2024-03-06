@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 
 class EsmViewModel(
     val context: Context
@@ -66,8 +67,9 @@ class EsmViewModel(
 
     private fun uploadToFirebase(newResponse: Response) {
         val uid = sharedPreferences.getString("user_ID", "")
+        val todayDate = LocalDate.now().toString()
         if (validateUid(uid)) {
-            myRef.child(uid.toString()).child(newResponse.id.toString())
+            myRef.child(uid.toString()).child(todayDate).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
             Log.d("data", "uploaded to user id ${uid.toString()}")
         } else Log.d("data", "invalid user id ${uid.toString()}")

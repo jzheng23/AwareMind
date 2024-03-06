@@ -19,6 +19,7 @@ import com.jianzheng.studyzero.tool.getDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class MyAccessibilityService : AccessibilityService() {
     private val listenerInterval = 300L
@@ -63,12 +64,13 @@ class MyAccessibilityService : AccessibilityService() {
         Log.d("inputLogging", "connected")
     }
 
-
     private fun writeData(input: Input) {
+        val todayDate = LocalDate.now().toString()
         CoroutineScope(Dispatchers.IO).launch {
             val generatedId = inputDao.insert(input)
             if (sharedPrefs.getBoolean("is_UID_valid", false)) {
                 myRef.child(uid)
+                    .child(todayDate)
                     .child(generatedId.toString())
                     .setValue(input.copy(id = generatedId).toFirebaseInput())
             }
