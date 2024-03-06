@@ -91,8 +91,8 @@ fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
         ExistingPeriodicWorkPolicy.UPDATE, // KEEP or UPDATE
         workRequest
     )
-    val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
-    val workState = workInfo.get()?.state
+//    val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
+//    val workState = workInfo.get()?.state
 //    Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
 }
 

@@ -52,7 +52,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun DebugCard(
 //    navController: NavController,
-    userId: String = "",
+//    userId: String = "",
 ) {
     var isVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
@@ -61,9 +61,9 @@ fun DebugCard(
     val isOverlayAllowed by remember {
         mutableStateOf(MyPermissionManager.checkOverlayPermission(context))
     }
-    val isUsageAllowed by remember {
-        mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
-    }
+//    val isUsageAllowed by remember {
+//        mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
+//    }
 //    val isA11yAllowed by remember {
 //        mutableStateOf(MyPermissionManager.checkAccessibilityPermission(context))
 //    }

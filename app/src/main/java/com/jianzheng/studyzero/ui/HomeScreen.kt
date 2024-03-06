@@ -149,7 +149,7 @@ fun HomeScreen(
                     }
                     if (isTester) {
                         DebugCard(
-                            userId = userId,
+//                            userId = userId,
                         )
                     }
                 }

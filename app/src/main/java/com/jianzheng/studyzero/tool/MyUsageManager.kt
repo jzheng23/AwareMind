@@ -20,7 +20,7 @@ import java.time.LocalDate
 class MyUsageManager {
     fun getUsageEvents(context: Context, currentTime: Long, test: Boolean = true) {
 
-        val currentTimeString = getDateTime(currentTime)
+//        val currentTimeString = getDateTime(currentTime)
 //        Log.d("usageManager", "get usage events called @ $currentTimeString")
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
