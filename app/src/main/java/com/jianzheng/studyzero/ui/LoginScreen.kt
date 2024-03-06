@@ -159,7 +159,7 @@ fun saveUserId(
         .putBoolean(context.getString(R.string.is_UID_valid), userIdIsValidate)
         .putBoolean(context.getString(R.string.is_tester), isTester)
         .apply()
-    Log.d("userId", "UID is $userId, and tester? $isTester")
+//    Log.d("userId", "UID is $userId, and tester? $isTester")
 }
 
 fun isTester(userId: String?): Boolean {

@@ -62,7 +62,7 @@ class EsmViewModel(
             val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
             toast.show()
         }
-        Log.d("data", "answer saved at ${responseDao.getLastResponse().startingTime}")
+//        Log.d("data", "answer saved at ${responseDao.getLastResponse().startingTime}")
     }
 
     private fun uploadToFirebase(newResponse: Response) {
@@ -71,7 +71,7 @@ class EsmViewModel(
         if (validateUid(uid)) {
             myRef.child(uid.toString()).child(todayDate).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
-            Log.d("data", "uploaded to user id ${uid.toString()}")
+//            Log.d("data", "uploaded to user id ${uid.toString()}")
         } else Log.d("data", "invalid user id ${uid.toString()}")
     }
 

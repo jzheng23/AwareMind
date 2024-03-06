@@ -341,7 +341,7 @@ fun newDayFunction(context: Context) {
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
 //    WorkManager.getInstance(context).enqueue(workRequestOneTime)
-    Log.d("dayCount", "new day reset")
+//    Log.d("dayCount", "new day reset")
 }
 
 fun resetTriggerFunction(context: Context) {

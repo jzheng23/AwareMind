@@ -88,7 +88,7 @@ fun ShowOverlay(
                 autoDismiss.value = false
                 onClick()
                 if (tag == "count_random_met") MyDelayManager.recycleTrigger()
-                Log.d("unlock", "unanswered")
+//                Log.d("unlock", "unanswered")
             }
         }, displayTimeMillis) // 10 seconds delay
     }
@@ -155,7 +155,7 @@ fun SubmitButton(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val startingTime = System.currentTimeMillis()
-    Log.d("delayTime", "displaying: ${System.currentTimeMillis()}")
+//    Log.d("delayTime", "displaying: ${System.currentTimeMillis()}")
     val delay = startingTime - unlockTime
     val context = LocalContext.current
     val responseCounter = ResponseCounter(context)
@@ -179,7 +179,7 @@ fun SubmitButton(
             startMyForegroundService(context)
             isShowing.value = false
             onClick()
-            Log.d("data", "submit clicked")
+//            Log.d("data", "submit clicked")
         },
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -354,7 +354,7 @@ fun ChoiceWithLabel(
                 selectedValue.value = item
 //                autoDismiss.value = false
                 myViewModel.setAnswer(item, index)
-                Log.d("viewModel", "$item selected for q$index!")
+//                Log.d("viewModel", "$item selected for q$index!")
             },
             modifier = Modifier
                 .height(22.dp)

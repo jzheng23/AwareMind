@@ -33,7 +33,7 @@ class UnlockReceiver : BroadcastReceiver() {
                             putExtra("tag", "none")
                         }
                         context.stopService(serviceIntent)
-                        Log.d("unlock", "unlocked: ${System.currentTimeMillis()}")
+//                        Log.d("unlock", "unlocked: ${System.currentTimeMillis()}")
                         MyDelayManager.scheduleOverlayService(context)
                         logUnlockOrLock(context, true)
                     } else Log.d("unlock", "receiver not registered")

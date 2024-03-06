@@ -38,9 +38,9 @@ class MainActivity : ComponentActivity() {
         super.onStart()
         auth.signInAnonymously().addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
-                Log.d("Authentication", "signInAnonymously:success")
+//                Log.d("Authentication", "signInAnonymously:success")
             } else {
-                Log.w("Authentication", "signInAnonymously:failure", task.exception)
+//                Log.w("Authentication", "signInAnonymously:failure", task.exception)
             }
         }
     }

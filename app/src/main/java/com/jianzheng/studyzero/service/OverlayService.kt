@@ -35,7 +35,7 @@ class OverlayService : Service() {
         return if (intent != null) {
             if (!isShowing) {
                 unlockTime = intent.getLongExtra("unlock", System.currentTimeMillis())
-                Log.d("delayTime", "received: $unlockTime")
+//                Log.d("delayTime", "received: $unlockTime")
                 var tag = intent.getStringExtra("tag")
                 if (tag == null) tag = "count_random_met"
                 callOverlay(tag)

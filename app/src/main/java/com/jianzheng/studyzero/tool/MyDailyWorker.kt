@@ -37,7 +37,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         }
         resetTriggerList(context)
         startMyForegroundService(context)
-        Log.d("workManager", "Do work la!")
+//        Log.d("workManager", "Do work la!")
         val currentTime = System.currentTimeMillis()
         MyPreferenceManager.setString(context, "last_maintenance", getDateTime(currentTime))
         return Result.success()
@@ -85,7 +85,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         val dayCount = sharedPreferences.getInt("count_day", 0)
         editor.putInt("count_day", dayCount + 1)
             .apply()
-        Log.d("workManager", "day ${dayCount + 1}")
+//        Log.d("workManager", "day ${dayCount + 1}")
     }
 
     private fun uploadUsageData(context: Context) {

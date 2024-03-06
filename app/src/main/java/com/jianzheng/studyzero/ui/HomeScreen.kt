@@ -144,7 +144,7 @@ fun HomeScreen(
                     if (isDataCollecting) {
                         WelcomeInfo {
                             navController.navigate(AppRoutes.EXPORT)
-                            Log.d("navigate", "to export")
+//                            Log.d("navigate", "to export")
                         }
                     }
                     if (isTester) {
@@ -244,7 +244,7 @@ fun LogoAndContact() {
                                         "Choose an email client"
                                     )
                                 )
-                                Log.d("email", "can do")
+//                                Log.d("email", "can do")
                             } else {
                                 Log.d("email", "cannot do")
                             }

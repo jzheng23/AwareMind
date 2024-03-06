@@ -22,7 +22,7 @@ class MyUsageManager {
     fun getUsageEvents(context: Context, currentTime: Long, test: Boolean = true) {
 
         val currentTimeString = getDateTime(currentTime)
-        Log.d("usageManager", "get usage events called @ $currentTimeString")
+//        Log.d("usageManager", "get usage events called @ $currentTimeString")
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
@@ -75,7 +75,7 @@ class MyUsageManager {
                     .child(yesterdayDate)
                     .child(generatedId.toString())
                     .setValue(usage.copy(id = generatedId).toFirebaseUsage())
-                Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
+//                Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
             }
         }
 

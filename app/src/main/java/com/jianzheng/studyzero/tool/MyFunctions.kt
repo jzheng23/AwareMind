@@ -94,7 +94,7 @@ fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
     )
     val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
     val workState = workInfo.get()?.state
-    Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
+//    Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
 }
 
 fun getInitialDelay(): Long {
@@ -111,7 +111,7 @@ fun getInitialDelay(): Long {
             add(Calendar.HOUR_OF_DAY, 24)
         }
     }
-    Log.d("workManager", "Set at $hourInt:$randomInt")
+//    Log.d("workManager", "Set at $hourInt:$randomInt")
     return dueDate.timeInMillis - currentDate.timeInMillis
 }
 

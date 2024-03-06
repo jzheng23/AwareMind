@@ -14,9 +14,9 @@ class MyTriggerWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, para
         val serviceIntent = Intent(applicationContext, OverlayService::class.java).apply {
             putExtra("tag", tag)
             putExtra("unlock", currentTimeMillis)
-            Log.d("delayTime", "passed in myWorker: $currentTimeMillis")
+//            Log.d("delayTime", "passed in myWorker: $currentTimeMillis")
         }
-        Log.d("unlock", "triggered by $tag")
+//        Log.d("unlock", "triggered by $tag")
         applicationContext.startService(serviceIntent)
         return Result.success()
     }

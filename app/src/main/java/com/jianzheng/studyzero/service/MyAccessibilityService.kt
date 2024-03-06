@@ -61,7 +61,7 @@ class MyAccessibilityService : AccessibilityService() {
             .fallbackToDestructiveMigration()
             .build()
         inputDao = db.inputDao()
-        Log.d("inputLogging", "connected")
+//        Log.d("inputLogging", "connected")
     }
 
     private fun writeData(input: Input) {
@@ -82,10 +82,10 @@ class MyAccessibilityService : AccessibilityService() {
 
 
         if ((currentTime - lastScrollEventTime > listenerInterval) and isScrolling) {
-            Log.d(
-                "inputLogging",
-                "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
-            )
+//            Log.d(
+//                "inputLogging",
+//                "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
+//            )
             val input1 = Input(
                 startTime = currentTime,
                 inputType = 1,
@@ -110,7 +110,7 @@ class MyAccessibilityService : AccessibilityService() {
             }
 
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
-                Log.d("inputLogging", "${getDateTime(currentTime)} click")
+//                Log.d("inputLogging", "${getDateTime(currentTime)} click")
                 val input2 = Input(
                     startTime = currentTime,
                     inputType = 2,
@@ -119,10 +119,10 @@ class MyAccessibilityService : AccessibilityService() {
                 )
                 writeData(input2)
                 if (isTextInputActive) {
-                    Log.d(
-                        "inputLogging",
-                        "${getDateTime(currentTime)} textChanged $textChangeCount"
-                    )
+//                    Log.d(
+//                        "inputLogging",
+//                        "${getDateTime(currentTime)} textChanged $textChangeCount"
+//                    )
                     val input3 = Input(
                         startTime = currentTime,
                         inputType = 3,
@@ -136,10 +136,10 @@ class MyAccessibilityService : AccessibilityService() {
 
             AccessibilityEvent.TYPE_VIEW_SCROLLED -> {
                 if (isTextInputActive) {
-                    Log.d(
-                        "inputLogging",
-                        "${getDateTime(currentTime)} textChanged $textChangeCount"
-                    )
+//                    Log.d(
+//                        "inputLogging",
+//                        "${getDateTime(currentTime)} textChanged $textChangeCount"
+//                    )
                     val input4 = Input(
                         startTime = currentTime,
                         inputType = 3,
@@ -190,12 +190,12 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {
         // Handle the service being interrupted
-        Log.d("inputLogging", "interrupted")
+//        Log.d("inputLogging", "interrupted")
     }
 
     override fun onDestroy() {
         sharedPrefs.unregisterOnSharedPreferenceChangeListener(prefsListener)
-        Log.d("inputLogging", "destroyed")
+//        Log.d("inputLogging", "destroyed")
         super.onDestroy()
     }
 }
