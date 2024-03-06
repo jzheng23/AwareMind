@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.IBinder
-import android.util.Log
 import android.view.WindowManager
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle

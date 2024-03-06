@@ -1,18 +1,17 @@
 package com.jianzheng.studyzero.tool
 
+//import com.jianzheng.studyzero.service.MyForegroundService
 import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
-//import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.MyForegroundService
 import java.text.SimpleDateFormat
 import java.util.Calendar

@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
-import android.util.Log
 
 class ResponseCounter(context: Context) {
     private val sharedPreferences =

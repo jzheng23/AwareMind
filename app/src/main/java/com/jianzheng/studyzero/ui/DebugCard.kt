@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,6 @@ import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything
 import com.jianzheng.studyzero.tool.startEverything
@@ -73,7 +71,7 @@ fun DebugCard(
 //        sharedPreferences.getBoolean("input_record", false)
 //    }
     val lastMaintenance by usePollState(interval = 3_600_000L) {
-        sharedPreferences.getString("last_maintenance","unknown")
+        sharedPreferences.getString("last_maintenance", "unknown")
     }
     val isTutorialFinished by usePollState {
         sharedPreferences.getBoolean("tutorial_finished", false)

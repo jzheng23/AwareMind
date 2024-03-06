@@ -3,7 +3,6 @@ package com.jianzheng.studyzero.ui
 //import com.jianzheng.studyzero.service.MyForegroundService
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement

@@ -93,7 +93,10 @@ class MyForegroundService : Service() {
         val intent = Intent(transitionsReceiverAction)
 //        val explicitIntent = Intent(this, TransitionsReceiver::class.java)
         mActivityTransitionsPendingIntent = PendingIntent.getBroadcast(
-            this, TRANSITION_INTENT_CODE, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            this,
+            TRANSITION_INTENT_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
         if (ActivityCompat.checkSelfPermission(

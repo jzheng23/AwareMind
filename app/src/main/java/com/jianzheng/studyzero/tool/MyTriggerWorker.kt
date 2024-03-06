@@ -2,7 +2,6 @@ package com.jianzheng.studyzero.tool
 
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.jianzheng.studyzero.service.OverlayService

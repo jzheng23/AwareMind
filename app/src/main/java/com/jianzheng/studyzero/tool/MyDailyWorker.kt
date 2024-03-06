@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters

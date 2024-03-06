@@ -4,7 +4,6 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.room.Room
 import com.google.firebase.Firebase
@@ -15,7 +14,6 @@ import com.jianzheng.studyzero.data.input.InputDao
 import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.toFirebaseInput
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.getDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -33,7 +31,8 @@ class MyAccessibilityService : AccessibilityService() {
     private var scrollStartTime: Long = 0
     private var lastScrollEventTime: Long = 0
     private var textInputStartTime: Long = 0
-//    private var lastWindowsChangeTime: Long = 0
+
+    //    private var lastWindowsChangeTime: Long = 0
     private var inputToBeRecord = false
     private var uid = ""
     private lateinit var sharedPrefs: SharedPreferences

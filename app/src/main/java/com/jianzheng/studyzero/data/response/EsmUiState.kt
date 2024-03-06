@@ -1,7 +1,5 @@
 package com.jianzheng.studyzero.data.response
 
-import com.jianzheng.studyzero.tool.getDateTime
-
 data class EsmUiState(
     val answer: List<Int> = mutableListOf<Int>(),
     val isAnswerValid: Boolean
