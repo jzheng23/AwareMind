@@ -9,6 +9,7 @@ import android.view.accessibility.AccessibilityEvent
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.input.Input
 import com.jianzheng.studyzero.data.input.InputDao
 import com.jianzheng.studyzero.data.input.InputDatabase
@@ -53,7 +54,7 @@ class MyAccessibilityService : AccessibilityService() {
             }
         }
         sharedPrefs.registerOnSharedPreferenceChangeListener(prefsListener)
-        uid = MyPreferenceManager.getString(this, "UID")
+        uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
 
         db = Room.databaseBuilder(this, InputDatabase::class.java, "input_database")
             .fallbackToDestructiveMigration()

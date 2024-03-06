@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.usage.Usage
 import com.jianzheng.studyzero.data.usage.UsageDatabase
 import com.jianzheng.studyzero.data.usage.toFirebaseUsage
@@ -31,7 +32,7 @@ class MyUsageManager {
         //use MyPrefsManager
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val uid = sharedPreferences.getString("UID", "null")
+        val uid = sharedPreferences.getString(context.getString(R.string.user_ID), "")
         val db =
             Room.databaseBuilder(context, UsageDatabase::class.java, "usage_database")
                 .fallbackToDestructiveMigration()

@@ -124,7 +124,7 @@ fun initializeSharedPreference(context: Context) {
         .putBoolean(context.getString(R.string.using_once_triggers), false)
         .putBoolean(context.getString(R.string.using_testing_triggers), false)
         .putBoolean(context.getString(R.string.is_first_run), false)
-        .putString(context.getString(R.string.UID), "")
+        .putString(context.getString(R.string.user_ID), "")
         .putBoolean(context.getString(R.string.is_UID_valid), false)
         .putInt(context.getString(R.string.count_20_met), 0)
         .putInt(context.getString(R.string.count_30_met), 0)

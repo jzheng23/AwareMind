@@ -7,6 +7,7 @@ import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
 import com.jianzheng.studyzero.ui.validateUid
@@ -31,7 +32,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     }
 
     private suspend fun uploadResponsesData(context: Context) {
-        val uid = MyPreferenceManager.getString(context,"UID")
+        val uid = MyPreferenceManager.getString(context,context.getString(R.string.user_ID))
         if (validateUid(uid)) {
             val responseDao =
                 Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")

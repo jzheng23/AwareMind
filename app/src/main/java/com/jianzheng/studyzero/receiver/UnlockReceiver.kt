@@ -71,7 +71,7 @@ class UnlockReceiver : BroadcastReceiver() {
 
     private
     fun uploadUnlockToFirebase(context: Context, unlock: Unlock, generatedId: Long) {
-        val uid = MyPreferenceManager.getString(context, "UID")
+        val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
         val firebaseUnlock = unlock.toFirebaseUnlock()
         // Obtain a reference to your Firebase database
         val databaseReference = FirebaseDatabase.getInstance().getReference("Unlocks")

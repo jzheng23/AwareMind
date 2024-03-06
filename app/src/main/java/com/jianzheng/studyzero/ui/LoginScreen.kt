@@ -32,6 +32,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.jianzheng.studyzero.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +94,7 @@ fun LoginScreen(
                                     value = userIdInput,
                                     onValueChange = {
                                         userIdInput = it
-//            MyPreferenceManager.setString(context, "UID", it)
+//            MyPreferenceManager.setString(context, "user_ID", it)
                                     },
                                     label = { Text("User ID") },
                                     singleLine = true,
@@ -153,10 +154,10 @@ fun saveUserId(
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     val editor = sharedPreferences.edit()
-    editor.putString("UID", userId)
-        .putString("user_alias", userAlias)
-        .putBoolean("is_UID_valid", userIdIsValidate)
-        .putBoolean("is_tester", isTester)
+    editor.putString(context.getString(R.string.user_ID), userId)
+        .putString(context.getString(R.string.user_alias), userAlias)
+        .putBoolean(context.getString(R.string.is_UID_valid), userIdIsValidate)
+        .putBoolean(context.getString(R.string.is_tester), isTester)
         .apply()
     Log.d("userId", "UID is $userId, and tester? $isTester")
 }
