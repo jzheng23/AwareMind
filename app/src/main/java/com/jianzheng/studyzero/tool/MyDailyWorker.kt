@@ -7,10 +7,13 @@ import androidx.work.WorkerParameters
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.InputNoId
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
+import com.jianzheng.studyzero.data.unlock.UnlockDatabase
+import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
 import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -32,6 +35,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             uploadUsageData(context)
             uploadResponseData(context)
             uploadInputData(context)
+            uploadActivityData(context)
+            uploadUnlockData(context)
             dayCountPlusOne(context)
         }
         resetTriggerList(context)
@@ -40,6 +45,42 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         val currentTime = System.currentTimeMillis()
         MyPreferenceManager.setString(context, "last_maintenance", getDateTime(currentTime))
         return Result.success()
+    }
+
+    private suspend fun uploadUnlockData(context: Context) {
+        if (validateUid(uid)) {
+            val unlockDao =
+                Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .unlockDao()
+            val myRef = Firebase.database.getReference("Unlock")
+            unlockDao.getAllYesterday(yesterdayStart, todayStart)
+                .forEach { entry ->
+                    myRef.child(uid)
+                        .child(yesterdayDate)
+                        .child(entry.id.toString())
+                        .setValue(entry.toFirebaseUnlock())
+                }
+        }
+    }
+
+    private suspend fun uploadActivityData(context: Context) {
+        if (validateUid(uid)) {
+            val activityDao =
+                Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
+                    .fallbackToDestructiveMigration()
+                    .build()
+                    .activityDao()
+            val myRef = Firebase.database.getReference("Activity")
+            activityDao.getAllYesterday(yesterdayStart, todayStart)
+                .forEach { entry ->
+                    myRef.child(uid)
+                        .child(yesterdayDate)
+                        .child(entry.id.toString())
+                        .setValue(entry)
+                }
+        }
     }
 
     private suspend fun uploadInputData(context: Context) {

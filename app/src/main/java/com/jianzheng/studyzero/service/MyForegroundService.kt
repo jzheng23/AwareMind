@@ -24,10 +24,15 @@ import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.StudyZeroApp
+import com.jianzheng.studyzero.data.activity.PhysicalActivity
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.UnlockReceiverManager
 import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class MyForegroundService : Service() {
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
@@ -213,6 +218,7 @@ class MyForegroundService : Service() {
                         toActivityString(event.activityType)
                     if (event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         MyPreferenceManager.setString(context, "current_activity", currentActivity)
+                        logActivity(context, event.activityType)
                     }
                     if (event.activityType == 0) {
                         when (event.transitionType) {
@@ -236,5 +242,16 @@ class MyForegroundService : Service() {
             DetectedActivity.IN_VEHICLE -> "IN_VEHICLE"
             else -> "UNKNOWN"
         }
+    }
+
+    private fun logActivity(context: Context, activityType: Int) {
+        val currentTime = System.currentTimeMillis()
+        val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
+        val activityDao = (context.applicationContext as StudyZeroApp).activityDatabase.activityDao()
+
+        CoroutineScope(Dispatchers.IO).launch {
+            activityDao.insert(activityRecord)
+        }
+
     }
 }

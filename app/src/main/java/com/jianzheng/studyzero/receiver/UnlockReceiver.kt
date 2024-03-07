@@ -56,7 +56,7 @@ class UnlockReceiver : BroadcastReceiver() {
     private fun logUnlockOrLock(context: Context, isUnlock: Boolean) {
         val currentTime = System.currentTimeMillis()
         val unlockRecord = Unlock(startTime = getDateTime(currentTime), isUnlock = isUnlock)
-        val unlockDao = (context.applicationContext as StudyZeroApp).database.unlockDao()
+        val unlockDao = (context.applicationContext as StudyZeroApp).unlockDatabase.unlockDao()
 
 
         // Use an AsyncTask or a background thread to insert the record into the database
