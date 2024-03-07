@@ -73,7 +73,8 @@ class MyForegroundService : Service() {
             .setActivityTransition(transitionType).build()
     }
 
-    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate() {
         super.onCreate()
         initializeActivityTransition()
@@ -86,6 +87,7 @@ class MyForegroundService : Service() {
         UnlockReceiverManager.registerReceiver(this)
     }
 
+    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     private fun initializeActivityTransition() {
 //        Log.d("ATR", "activity recognition initialized")
         val request = ActivityTransitionRequest(activityTransitions)
@@ -96,7 +98,7 @@ class MyForegroundService : Service() {
             this,
             TRANSITION_INTENT_CODE,
             intent,
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_ALLOW_UNSAFE_IMPLICIT_INTENT
         )
 
         if (ActivityCompat.checkSelfPermission(
@@ -113,7 +115,7 @@ class MyForegroundService : Service() {
 //                Log.d("ATR", "success lister")
             }
 
-            task.addOnFailureListener { e ->
+            task.addOnFailureListener { _ ->
 //                Log.d("ATR", "failure $e")
             }
         } else {
