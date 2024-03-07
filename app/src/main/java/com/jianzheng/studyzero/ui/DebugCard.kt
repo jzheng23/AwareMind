@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -43,7 +42,6 @@ import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything
 import com.jianzheng.studyzero.tool.startEverything
@@ -54,7 +52,7 @@ import java.util.concurrent.TimeUnit
 @Composable
 fun DebugCard(
 //    navController: NavController,
-    userId: String = "",
+//    userId: String = "",
 ) {
     var isVisible by remember { mutableStateOf(true) }
     val context = LocalContext.current
@@ -63,15 +61,18 @@ fun DebugCard(
     val isOverlayAllowed by remember {
         mutableStateOf(MyPermissionManager.checkOverlayPermission(context))
     }
-    val isUsageAllowed by remember {
-        mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
-    }
+//    val isUsageAllowed by remember {
+//        mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
+//    }
 //    val isA11yAllowed by remember {
 //        mutableStateOf(MyPermissionManager.checkAccessibilityPermission(context))
 //    }
 //    val isInputRecording by usePollState {
 //        sharedPreferences.getBoolean("input_record", false)
 //    }
+    val lastMaintenance by usePollState(interval = 3_600_000L) {
+        sharedPreferences.getString("last_maintenance", "unknown")
+    }
     val isTutorialFinished by usePollState {
         sharedPreferences.getBoolean("tutorial_finished", false)
     }
@@ -133,6 +134,10 @@ fun DebugCard(
 //                    color = MaterialTheme.colorScheme.outline
 //                )
                 Text("Current activity: ${currentActivity.value}")
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+                Text("Synced at: $lastMaintenance")
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -198,21 +203,21 @@ fun DebugCard(
 //                HorizontalDivider(
 //                    color = MaterialTheme.colorScheme.outline
 //                )
-//                ButtonCard(
-//                    title = "New Day",
-//                    desc = "Simulating a new day starts",
-//                    onAuthClick = {
-//                        newDayFunction(context)
-//                        Handler(Looper.getMainLooper()).post {
-//                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
-//                            toast.show()
-//                        }
-//                    },
-//                    buttonText = "Simulate"
-//                )
-//                HorizontalDivider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
+                ButtonCard(
+                    title = "New Day",
+                    desc = "Simulating a new day starts",
+                    onAuthClick = {
+                        newDayFunction(context)
+                        Handler(Looper.getMainLooper()).post {
+                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
+                            toast.show()
+                        }
+                    },
+                    buttonText = "Simulate"
+                )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
 //                ButtonCard(
 //                    title = "Usage",
 //                    desc = "Get usage in last 10 seconds",
@@ -321,21 +326,21 @@ fun DebugCard(
 }
 
 
-//fun newDayFunction(context: Context) {
-//    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(15, TimeUnit.MINUTES)
+fun newDayFunction(context: Context) {
+    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
+        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+        .build()
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "daily_maintenance_test",
+        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+        workRequestTest
+    )
+//    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
-//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-//        "daily_maintenance_test",
-//        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
-//        workRequestTest
-//    )
-////    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
-////        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
-////        .build()
-////    WorkManager.getInstance(context).enqueue(workRequestOneTime)
+//    WorkManager.getInstance(context).enqueue(workRequestOneTime)
 //    Log.d("dayCount", "new day reset")
-//}
+}
 
 fun resetTriggerFunction(context: Context) {
     val responseCounter = ResponseCounter(context)

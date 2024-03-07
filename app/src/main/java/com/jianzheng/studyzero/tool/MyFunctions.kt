@@ -1,18 +1,17 @@
 package com.jianzheng.studyzero.tool
 
+//import com.jianzheng.studyzero.service.MyForegroundService
 import android.Manifest
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
-//import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.MyForegroundService
 import java.text.SimpleDateFormat
 import java.util.Calendar
@@ -92,9 +91,9 @@ fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
         ExistingPeriodicWorkPolicy.UPDATE, // KEEP or UPDATE
         workRequest
     )
-    val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
-    val workState = workInfo.get()?.state
-    Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
+//    val workInfo = myWorkManager.getWorkInfoById(workRequest.id)
+//    val workState = workInfo.get()?.state
+//    Log.d("workManager", "scheduled! $workState id ${workRequest.id}")
 }
 
 fun getInitialDelay(): Long {
@@ -111,7 +110,7 @@ fun getInitialDelay(): Long {
             add(Calendar.HOUR_OF_DAY, 24)
         }
     }
-    Log.d("workManager", "Set at $hourInt:$randomInt")
+//    Log.d("workManager", "Set at $hourInt:$randomInt")
     return dueDate.timeInMillis - currentDate.timeInMillis
 }
 
@@ -124,7 +123,7 @@ fun initializeSharedPreference(context: Context) {
         .putBoolean(context.getString(R.string.using_once_triggers), false)
         .putBoolean(context.getString(R.string.using_testing_triggers), false)
         .putBoolean(context.getString(R.string.is_first_run), false)
-        .putString(context.getString(R.string.UID), "")
+        .putString(context.getString(R.string.user_ID), "")
         .putBoolean(context.getString(R.string.is_UID_valid), false)
         .putInt(context.getString(R.string.count_20_met), 0)
         .putInt(context.getString(R.string.count_30_met), 0)

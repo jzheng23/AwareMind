@@ -8,9 +8,7 @@ import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
 import android.content.pm.PackageManager
-//import android.net.Uri
 import android.os.Build
-//import android.os.PowerManager
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
@@ -122,7 +120,6 @@ object MyPermissionManager {
             51
         )
     }
-
 //    fun checkBatteryPermission(context: Context): Boolean {
 //        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
 //        val packageName = context.packageName

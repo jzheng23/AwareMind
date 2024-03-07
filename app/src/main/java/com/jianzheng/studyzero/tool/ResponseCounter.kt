@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
-import android.util.Log
 
 class ResponseCounter(context: Context) {
     private val sharedPreferences =
@@ -24,7 +23,7 @@ class ResponseCounter(context: Context) {
                 .putBoolean("using_once_triggers", false)
                 .apply()
         }
-        Log.d("liveCounter", "Response counter: today is $todayCount, total is $totalCount")
+//        Log.d("liveCounter", "Response counter: today is $todayCount, total is $totalCount")
     }
 
     fun check20Complete(): Boolean {
@@ -36,7 +35,7 @@ class ResponseCounter(context: Context) {
     }
 
     fun checkRandomComplete(): Boolean {
-        Log.d("testing", "length of random trigger: $lengthOfTriggerList")
+//        Log.d("testing", "length of random trigger: $lengthOfTriggerList")
         return sharedPreferences.getInt("count_random_met", 0) >= lengthOfTriggerList
     }
 
@@ -51,6 +50,6 @@ class ResponseCounter(context: Context) {
             .putInt("count_once_met", 0)
             .putInt("count_today", 0)
             .apply()
-        Log.d("unlock", "counter of responses is reset")
+//        Log.d("unlock", "counter of responses is reset")
     }
 }

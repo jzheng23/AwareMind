@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero
 
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -36,12 +35,12 @@ class MainActivity : ComponentActivity() {
 
     public override fun onStart() {
         super.onStart()
-        auth.signInAnonymously().addOnCompleteListener(this) { task ->
-            if (task.isSuccessful) {
-                Log.d("Authentication", "signInAnonymously:success")
-            } else {
-                Log.w("Authentication", "signInAnonymously:failure", task.exception)
-            }
+        auth.signInAnonymously().addOnCompleteListener(this) {
+//            if (task.isSuccessful) {
+////                Log.d("Authentication", "signInAnonymously:success")
+//            } else {
+////                Log.w("Authentication", "signInAnonymously:failure", task.exception)
+//            }
         }
     }
 

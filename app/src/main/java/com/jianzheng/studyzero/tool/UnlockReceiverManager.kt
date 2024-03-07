@@ -16,7 +16,7 @@ object UnlockReceiverManager {
             addAction(Intent.ACTION_SCREEN_OFF)
         }
         context.registerReceiver(unlockReceiver, filter)
-        Log.d("unlock", "unlock receiver registered")
+//        Log.d("unlock", "unlock receiver registered")
         MyPreferenceManager.setBoolean(context, context.getString(R.string.unlock_registered), true)
     }
 
@@ -31,7 +31,7 @@ object UnlockReceiverManager {
             } catch (e: IllegalArgumentException) {
                 Log.e("Receiver Error", "Error unregistering receiver: ${e.message}")
             }
-            Log.d("unlock", "unlock receiver unregistered")
+//            Log.d("unlock", "unlock receiver unregistered")
             MyPreferenceManager.setBoolean(
                 context,
                 context.getString(R.string.unlock_registered),

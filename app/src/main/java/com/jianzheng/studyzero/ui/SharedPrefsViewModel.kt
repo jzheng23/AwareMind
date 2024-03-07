@@ -38,10 +38,10 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                "UID" -> _userId.value = sharedPreferences.getString("UID", "")
+                "user_ID" -> _userId.value = sharedPreferences.getString("user_ID", "")
                 "user_alias" -> _userAlias.value = sharedPreferences.getString("user_alias", "")
                 "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
-                "is_userIdValid" -> _isUserIdValid.value =
+                "is_UID_valid" -> _isUserIdValid.value =
                     sharedPreferences.getBoolean("is_UID_valid", false)
 
                 "tutorial_finished" -> _isTutorialFinished.value =
@@ -54,7 +54,7 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
 
     init {
         // Initialize LiveData with current preferences values
-        _userId.value = sharedPreferences.getString("UID", "")
+        _userId.value = sharedPreferences.getString("user_ID", "")
         _userAlias.value = sharedPreferences.getString("user_alias", "")
         _isTester.value = sharedPreferences.getBoolean("is_tester", false)
         _isUserIdValid.value = sharedPreferences.getBoolean("is_UID_valid", false)

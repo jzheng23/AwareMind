@@ -16,6 +16,7 @@ import com.jianzheng.studyzero.tool.getDateTime
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class UnlockReceiver : BroadcastReceiver() {
 
@@ -32,7 +33,7 @@ class UnlockReceiver : BroadcastReceiver() {
                             putExtra("tag", "none")
                         }
                         context.stopService(serviceIntent)
-                        Log.d("unlock", "unlocked: ${System.currentTimeMillis()}")
+//                        Log.d("unlock", "unlocked: ${System.currentTimeMillis()}")
                         MyDelayManager.scheduleOverlayService(context)
                         logUnlockOrLock(context, true)
                     } else Log.d("unlock", "receiver not registered")
@@ -71,7 +72,8 @@ class UnlockReceiver : BroadcastReceiver() {
 
     private
     fun uploadUnlockToFirebase(context: Context, unlock: Unlock, generatedId: Long) {
-        val uid = MyPreferenceManager.getString(context, "UID")
+        val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
+        val todayDate = LocalDate.now().toString()
         val firebaseUnlock = unlock.toFirebaseUnlock()
         // Obtain a reference to your Firebase database
         val databaseReference = FirebaseDatabase.getInstance().getReference("Unlocks")
@@ -81,15 +83,18 @@ class UnlockReceiver : BroadcastReceiver() {
 
 
         key?.let {
-            databaseReference.child(uid).child(generatedId.toString()).setValue(firebaseUnlock)
-                .addOnSuccessListener {
-                    // Handle successful upload, e.g., logging or UI feedback
-                    Log.d("Firebase", "Data successfully uploaded.")
-                }
-                .addOnFailureListener {
-                    // Handle failed upload
-                    Log.e("Firebase", "Failed to upload data.", it)
-                }
+            databaseReference.child(uid)
+                .child(todayDate)
+                .child(generatedId.toString())
+                .setValue(firebaseUnlock)
+//                .addOnSuccessListener {
+//                    // Handle successful upload, e.g., logging or UI feedback
+//                    Log.d("Firebase", "Data successfully uploaded.")
+//                }
+//                .addOnFailureListener {
+//                    // Handle failed upload
+//                    Log.e("Firebase", "Failed to upload data.", it)
+//                }
         }
     }
 }

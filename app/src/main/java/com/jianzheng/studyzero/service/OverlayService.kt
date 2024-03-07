@@ -4,7 +4,6 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.IBinder
-import android.util.Log
 import android.view.WindowManager
 import androidx.compose.ui.platform.ComposeView
 import androidx.lifecycle.Lifecycle
@@ -35,7 +34,7 @@ class OverlayService : Service() {
         return if (intent != null) {
             if (!isShowing) {
                 unlockTime = intent.getLongExtra("unlock", System.currentTimeMillis())
-                Log.d("delayTime", "received: $unlockTime")
+//                Log.d("delayTime", "received: $unlockTime")
                 var tag = intent.getStringExtra("tag")
                 if (tag == null) tag = "count_random_met"
                 callOverlay(tag)
