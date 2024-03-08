@@ -22,19 +22,28 @@ import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
 import com.google.android.gms.location.ActivityTransitionResult
 import com.google.android.gms.location.DetectedActivity
+import com.google.firebase.Firebase
+import com.google.firebase.database.database
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.StudyZeroApp
 import com.jianzheng.studyzero.data.activity.PhysicalActivity
+import com.jianzheng.studyzero.data.activity.toFirebaseActivity
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.UnlockReceiverManager
 import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class MyForegroundService : Service() {
+    //    private lateinit var db: ActivityDatabase
+//    private lateinit var activityDao: ActivityDao
+    private lateinit var uid: String
+    private val myRefActivity = Firebase.database.getReference("Activity")
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
     private var mTransitionsReceiver: BroadcastReceiver? = null
     private val transitionsReceiverAction = "com.jzheng23.studyzero.TRANSITIONS_RECEIVER_ACTION"
@@ -82,6 +91,8 @@ class MyForegroundService : Service() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate() {
         super.onCreate()
+        uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
+//        activityDao = Room.databaseBuilder(this, ActivityDatabase::class.java, "activity_database")
         initializeActivityTransition()
         mTransitionsReceiver = TransitionsReceiver().also {
             val filter = IntentFilter(transitionsReceiverAction)
@@ -246,12 +257,17 @@ class MyForegroundService : Service() {
 
     private fun logActivity(context: Context, activityType: Int) {
         val currentTime = System.currentTimeMillis()
+        val todayDate = LocalDate.now().toString()
         val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
         val activityDao =
             (context.applicationContext as StudyZeroApp).activityDatabase.activityDao()
 
         CoroutineScope(Dispatchers.IO).launch {
             activityDao.insert(activityRecord)
+            if (validateUid(uid)) {
+                myRefActivity.child(uid).child(todayDate).child(activityRecord.id.toString())
+                    .setValue(activityRecord.toFirebaseActivity())
+            }
         }
 
     }
