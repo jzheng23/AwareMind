@@ -102,14 +102,14 @@ fun TutorialScreen(
                                     )
 //                                    MyReceiverManager.unregisterReceiver(context)
                                     MyDelayManager.init(context)
-                                    Handler(Looper.getMainLooper()).post {
-                                        val toast = Toast.makeText(
-                                            context,
-                                            "Please lock and then unlock your phone.",
-                                            Toast.LENGTH_SHORT
-                                        )
-                                        toast.show()
-                                    }
+//                                    Handler(Looper.getMainLooper()).post {
+//                                        val toast = Toast.makeText(
+//                                            context,
+//                                            "Please lock and then unlock your phone.",
+//                                            Toast.LENGTH_SHORT
+//                                        )
+//                                        toast.show()
+//                                    }
                                 }
                             },
                             buttonEnabled = testShown.value

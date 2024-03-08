@@ -247,7 +247,8 @@ class MyForegroundService : Service() {
     private fun logActivity(context: Context, activityType: Int) {
         val currentTime = System.currentTimeMillis()
         val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
-        val activityDao = (context.applicationContext as StudyZeroApp).activityDatabase.activityDao()
+        val activityDao =
+            (context.applicationContext as StudyZeroApp).activityDatabase.activityDao()
 
         CoroutineScope(Dispatchers.IO).launch {
             activityDao.insert(activityRecord)

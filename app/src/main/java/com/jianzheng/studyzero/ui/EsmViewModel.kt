@@ -2,10 +2,7 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
@@ -58,10 +55,10 @@ class EsmViewModel(
             context.getString(R.string.last_submit),
             System.currentTimeMillis()
         )
-        Handler(Looper.getMainLooper()).post {
-            val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
-            toast.show()
-        }
+//        Handler(Looper.getMainLooper()).post {
+//            val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
+//            toast.show()
+//        }
 //        Log.d("data", "answer saved at ${responseDao.getLastResponse().startingTime}")
     }
 

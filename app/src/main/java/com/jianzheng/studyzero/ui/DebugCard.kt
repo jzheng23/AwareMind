@@ -178,15 +178,15 @@ fun DebugCard(
                         MyPreferenceManager.setBoolean(context, "using_testing_triggers", it)
                         MyDelayManager.init(context)
                         resetTriggerFunction(context)
-                        val triggerType = if (it) "testing" else "real"
-                        val toast =
-                            Toast.makeText(
-                                context,
-                                "Using $triggerType triggers",
-                                Toast.LENGTH_SHORT
-                            )
-                        Handler(Looper.getMainLooper()).post { toast.show() }
-                        Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
+//                        val triggerType = if (it) "testing" else "real"
+//                        val toast =
+//                            Toast.makeText(
+//                                context,
+//                                "Using $triggerType triggers",
+//                                Toast.LENGTH_SHORT
+//                            )
+//                        Handler(Looper.getMainLooper()).post { toast.show() }
+//                        Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
                     },
                     isEnabled = isOverlayAllowed,
                     isChecked = isTestTriggers.value
@@ -208,10 +208,10 @@ fun DebugCard(
                     desc = "Simulating a new day starts",
                     onAuthClick = {
                         newDayFunction(context)
-                        Handler(Looper.getMainLooper()).post {
-                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
+//                        Handler(Looper.getMainLooper()).post {
+//                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
+//                            toast.show()
+//                        }
                     },
                     buttonText = "Simulate"
                 )
@@ -310,11 +310,11 @@ fun DebugCard(
                     desc = "Reset to default",
                     onAuthClick = {
                         resetEverything(context)
-                        Handler(Looper.getMainLooper()).post {
-                            val toast =
-                                Toast.makeText(context, "Reset to default!", Toast.LENGTH_SHORT)
-                            toast.show()
-                        }
+//                        Handler(Looper.getMainLooper()).post {
+//                            val toast =
+//                                Toast.makeText(context, "Reset to default!", Toast.LENGTH_SHORT)
+//                            toast.show()
+//                        }
                     },
                     buttonText = "Reset"
                 )
