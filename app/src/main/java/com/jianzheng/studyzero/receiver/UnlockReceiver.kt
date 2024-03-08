@@ -76,7 +76,7 @@ class UnlockReceiver : BroadcastReceiver() {
         val todayDate = LocalDate.now().toString()
         val firebaseUnlock = unlock.toFirebaseUnlock()
         // Obtain a reference to your Firebase database
-        val databaseReference = FirebaseDatabase.getInstance().getReference("Unlocks")
+        val databaseReference = FirebaseDatabase.getInstance().getReference("Unlock")
 
         // Create a unique key for each unlock event, or use a specific key if you want to overwrite existing data
         val key = databaseReference.push().key
