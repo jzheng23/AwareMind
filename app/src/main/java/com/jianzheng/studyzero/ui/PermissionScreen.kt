@@ -187,7 +187,7 @@ fun ScrollSettingContent(it: PaddingValues) {
 fun showAccessibilityConsentDialog(context: Context, onConsentGiven: () -> Unit) {
     AlertDialog.Builder(context)
         .setTitle("Accessibility Permission Required")
-        .setMessage("To understand how you use your phone, this app needs to access accessibility services. This includes recording taps, scrolls, and the number of characters typed. No personal or sensitive data will be collected.")
+        .setMessage(context.getString(R.string.accessibility_dialogue))
         .setPositiveButton("Agree") { _, _ ->
             onConsentGiven()
         }

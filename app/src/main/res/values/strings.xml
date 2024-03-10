@@ -35,4 +35,5 @@
     <string name="is_driving">is_driving</string>
     <string name="current_activity">current_activity</string>
     <string name="unlock_registered">unlock_registered</string>
+    <string name="accessibility_dialogue"><![CDATA[Go to Accessibility settings -> Installed apps -> AwareMind, and allow the permission.]]></string>
 </resources>

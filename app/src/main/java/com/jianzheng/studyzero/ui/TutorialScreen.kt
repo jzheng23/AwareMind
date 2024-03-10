@@ -1,8 +1,5 @@
 package com.jianzheng.studyzero.ui
 
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,70 +36,65 @@ fun TutorialScreen(
 ) {
     val context = LocalContext.current
     val testShown = remember {
-        mutableStateOf<Boolean>(false)
+        mutableStateOf(false)
+    }
+    val unlockScheduled = remember {
+        mutableStateOf(false)
     }
     val onceMetCount by usePollState {
         MyPreferenceManager.getInt(context, context.getString(R.string.count_once_met))
     }
     if (onceMetCount > 0) navController.navigate(AppRoutes.HOME)
-    Scaffold(
-        topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Tutorial") },
-                navigationIcon = {
-                    IconButton(onClick = {
-                        navController.navigate(AppRoutes.HOME)
-                    }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
-                            contentDescription = "back"
-                        )
-                    }
-                }
-            )
-        },
-        content = {
-            Surface(
+    Scaffold(topBar = {
+        CenterAlignedTopAppBar(title = { Text("Tutorial") }, navigationIcon = {
+            IconButton(onClick = {
+                navController.navigate(AppRoutes.HOME)
+            }) {
+                Icon(
+                    Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = "back"
+                )
+            }
+        })
+    }, content = {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(it)
+                    .padding(horizontal = mediumPadding)
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement = Arrangement.Top,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(horizontal = mediumPadding)
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.Top,
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    if (onceMetCount == 0) {
-                        ArrowCard(
-                            title = "Test the Survey Page",
-                            desc = "Please test and see the survey page.",
-                            onAuthClick = {
-                                testSurvey(context)
-                                testShown.value = true
-                            }
-                        )
-                        ArrowCard(
-                            title = "Schedule a Survey",
-                            desc = if (testShown.value) "Tap the Schedule button and the survey page will appear after next unlock " +
-                                    "of the phone. Please answer the questions. DO NOT dismiss the survey page." else
-                                "Please test the Survey Page first.",
-                            onAuthClick = {
-                                if (testShown.value) {
-                                    MyPreferenceManager.setBoolean(
-                                        context,
-                                        "using_once_triggers",
-                                        true
-                                    )
-                                    MyPreferenceManager.setInt(
-                                        context,
-                                        context.getString(R.string.count_once_met),
-                                        0
-                                    )
-                                    UnlockReceiverManager.registerReceiver(context)
-                                    MyDelayManager.init(context)
+                if (onceMetCount == 0) {
+                    ArrowCard(
+                        title = "Test the Survey Page",
+                        desc = if (testShown.value) "You can test again if you would like to." else "Please test and see the survey page.",
+                        onAuthClick = {
+                            testSurvey(context)
+                            testShown.value = true
+                        })
+                    ArrowCard(
+                        title = "Schedule a Survey", desc = if (unlockScheduled.value) {
+                            "Please lock and then unlock your phone."
+                        } else if (testShown.value) {
+                            "Schedule the survey page to appear after next unlock " + "of the phone. Please answer the questions. DO NOT dismiss the survey page."
+                        } else {
+                            "Please test the Survey Page first."
+                        }, onAuthClick = {
+                            if (testShown.value) {
+                                MyPreferenceManager.setBoolean(
+                                    context, "using_once_triggers", true
+                                )
+                                MyPreferenceManager.setInt(
+                                    context, context.getString(R.string.count_once_met), 0
+                                )
+                                UnlockReceiverManager.registerReceiver(context)
+                                MyDelayManager.init(context)
+                                unlockScheduled.value = true
 //                                    Handler(Looper.getMainLooper()).post {
 //                                        val toast = Toast.makeText(
 //                                            context,
@@ -111,19 +103,16 @@ fun TutorialScreen(
 //                                        )
 //                                        toast.show()
 //                                    }
-                                }
-                            },
-                            buttonEnabled = testShown.value
-                        )
-                    } else Text(
-                        text = "Tutorial finished!",
-                        textAlign = TextAlign.Center
+                            }
+                        }, buttonEnabled = testShown.value
                     )
-                }
-
+                } else Text(
+                    text = "Tutorial finished!", textAlign = TextAlign.Center
+                )
             }
+
         }
-    )
+    })
 
 
 }
