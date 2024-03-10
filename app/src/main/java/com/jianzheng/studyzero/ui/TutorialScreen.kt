@@ -30,6 +30,7 @@ import androidx.navigation.NavController
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
+import com.jianzheng.studyzero.tool.UnlockReceiverManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -100,7 +101,7 @@ fun TutorialScreen(
                                         context.getString(R.string.count_once_met),
                                         0
                                     )
-//                                    MyReceiverManager.unregisterReceiver(context)
+                                    UnlockReceiverManager.registerReceiver(context)
                                     MyDelayManager.init(context)
 //                                    Handler(Looper.getMainLooper()).post {
 //                                        val toast = Toast.makeText(

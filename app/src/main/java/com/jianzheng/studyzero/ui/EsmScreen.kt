@@ -175,7 +175,9 @@ fun SubmitButton(
 //                ContextCompat.startForegroundService(context, myForegroundServiceIntent)
             }
             responseCounter.responsePlusOne(tag)
-            startMyForegroundService(context)
+            if (tag != "count_test_met") {
+                startMyForegroundService(context)
+            }
             isShowing.value = false
             onClick()
 //            Log.d("data", "submit clicked")
