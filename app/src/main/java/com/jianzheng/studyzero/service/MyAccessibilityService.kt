@@ -14,6 +14,7 @@ import com.jianzheng.studyzero.data.input.InputDao
 import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.toFirebaseInput
 import com.jianzheng.studyzero.tool.MyPreferenceManager
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -67,7 +68,7 @@ class MyAccessibilityService : AccessibilityService() {
         val todayDate = LocalDate.now().toString()
         CoroutineScope(Dispatchers.IO).launch {
             val generatedId = inputDao.insert(input)
-            if (sharedPrefs.getBoolean("is_UID_valid", false)) {
+            if (validateUid(uid)) {
                 myRef.child(uid)
                     .child(todayDate)
                     .child(generatedId.toString())

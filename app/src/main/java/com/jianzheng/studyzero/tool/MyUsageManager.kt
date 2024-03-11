@@ -12,6 +12,7 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.usage.Usage
 import com.jianzheng.studyzero.data.usage.UsageDatabase
 import com.jianzheng.studyzero.data.usage.toFirebaseUsage
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -32,7 +33,7 @@ class MyUsageManager {
         //use MyPrefsManager
         val sharedPreferences: SharedPreferences =
             context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val uid = sharedPreferences.getString(context.getString(R.string.user_ID), "")
+        val uid = MyPreferenceManager.getString(context,context.getString(R.string.user_ID))
         val db =
             Room.databaseBuilder(context, UsageDatabase::class.java, "usage_database")
                 .fallbackToDestructiveMigration()
@@ -70,7 +71,8 @@ class MyUsageManager {
         CoroutineScope(Dispatchers.IO).launch {
             usages.forEach { usage ->
                 val generatedId = usageDao.insert(usage)
-                if (sharedPreferences.getBoolean("is_UID_valid", false)) myRef.child(uid.toString())
+                if (validateUid(uid)) myRef
+                    .child(uid)
                     .child(yesterdayDate)
                     .child(generatedId.toString())
                     .setValue(usage.copy(id = generatedId).toFirebaseUsage())

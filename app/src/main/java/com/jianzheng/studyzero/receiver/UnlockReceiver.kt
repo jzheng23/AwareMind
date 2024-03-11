@@ -4,15 +4,18 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import androidx.room.Room
 import com.google.firebase.database.FirebaseDatabase
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.StudyZeroApp
 import com.jianzheng.studyzero.data.unlock.Unlock
+import com.jianzheng.studyzero.data.unlock.UnlockDatabase
 import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.getDateTime
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -55,16 +58,19 @@ class UnlockReceiver : BroadcastReceiver() {
 
     private fun logUnlockOrLock(context: Context, isUnlock: Boolean) {
         val currentTime = System.currentTimeMillis()
+        val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
         val unlockRecord = Unlock(startTime = getDateTime(currentTime), isUnlock = isUnlock)
-        val unlockDao = (context.applicationContext as StudyZeroApp).unlockDatabase.unlockDao()
+        val unlockDao = Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
+            .fallbackToDestructiveMigration()
+            .build()
+            .unlockDao()
 
 
         // Use an AsyncTask or a background thread to insert the record into the database
         // For Kotlin coroutines, you can launch a coroutine here if this method is called from a CoroutineScope
         CoroutineScope(Dispatchers.IO).launch {
-            unlockDao.insert(unlockRecord)
-            if (MyPreferenceManager.getBoolean(context, "is_UID_valid")) {
-                val generatedId = unlockDao.insert(unlockRecord)
+            val generatedId = unlockDao.insert(unlockRecord)
+            if (validateUid(uid)) {
                 uploadUnlockToFirebase(context, unlockRecord, generatedId)
             }
         }

@@ -23,7 +23,7 @@
     <string name="is_first_run">is_first_run</string>
     <string name="user_ID">user_ID</string>
     <string name="user_alias">user_alias</string>
-    <string name="is_UID_valid">is_UID_valid</string>
+<!--    <string name="is_UID_valid">is_UID_valid</string>-->
     <string name="count_20_met">count_20_met</string>
     <string name="count_30_met">count_30_met</string>
     <string name="count_once_met">count_once_met</string>

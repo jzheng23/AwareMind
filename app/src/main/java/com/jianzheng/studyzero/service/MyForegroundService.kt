@@ -17,6 +17,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.room.Room
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
 import com.google.android.gms.location.ActivityTransitionRequest
@@ -27,6 +28,7 @@ import com.google.firebase.database.database
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.StudyZeroApp
+import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.activity.PhysicalActivity
 import com.jianzheng.studyzero.data.activity.toFirebaseActivity
 import com.jianzheng.studyzero.tool.MyDelayManager
@@ -260,8 +262,10 @@ class MyForegroundService : Service() {
         val currentTime = System.currentTimeMillis()
         val todayDate = LocalDate.now().toString()
         val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
-        val activityDao =
-            (context.applicationContext as StudyZeroApp).activityDatabase.activityDao()
+        val activityDao = Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
+            .fallbackToDestructiveMigration()
+            .build()
+            .activityDao()
 
         CoroutineScope(Dispatchers.IO).launch {
             activityDao.insert(activityRecord)
