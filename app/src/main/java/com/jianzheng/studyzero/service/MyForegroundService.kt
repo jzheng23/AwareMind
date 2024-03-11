@@ -268,9 +268,12 @@ class MyForegroundService : Service() {
             .activityDao()
 
         CoroutineScope(Dispatchers.IO).launch {
-            activityDao.insert(activityRecord)
+            val generatedId = activityDao.insert(activityRecord)
             if (validateUid(uid)) {
-                myRefActivity.child(uid).child(todayDate).child(activityRecord.id.toString())
+                myRefActivity
+                    .child(uid)
+                    .child(todayDate)
+                    .child(generatedId.toString())
                     .setValue(activityRecord.toFirebaseActivity())
             }
         }

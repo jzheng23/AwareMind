@@ -101,11 +101,10 @@ fun getInitialDelay(): Long {
     val hourInt = 3
     val randomInt = Random.nextInt(0, 60)
     val dueDate = Calendar.getInstance().apply {
-        // Set time to 11 AM for testing, 4 AM for real
         set(Calendar.HOUR_OF_DAY, hourInt)
         set(Calendar.MINUTE, randomInt)
         set(Calendar.SECOND, 0)
-        // If it's after or equal 4 AM, schedule for the next day
+        // If it's after or equal 3 AM, schedule for the next day
         if (before(currentDate)) {
             add(Calendar.HOUR_OF_DAY, 24)
         }

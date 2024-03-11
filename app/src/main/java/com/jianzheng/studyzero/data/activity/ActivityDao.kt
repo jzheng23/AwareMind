@@ -9,7 +9,7 @@ import androidx.room.Query
 interface ActivityDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(activity: PhysicalActivity)
+    suspend fun insert(activity: PhysicalActivity): Long
 
     @Query("SELECT * FROM activity WHERE startTime >= :startOfYesterday AND startTime < :startOfToday")
     suspend fun getAllYesterday(startOfYesterday: Long, startOfToday: Long): List<PhysicalActivity>

@@ -93,14 +93,6 @@ class UnlockReceiver : BroadcastReceiver() {
                 .child(todayDate)
                 .child(generatedId.toString())
                 .setValue(firebaseUnlock)
-//                .addOnSuccessListener {
-//                    // Handle successful upload, e.g., logging or UI feedback
-//                    Log.d("Firebase", "Data successfully uploaded.")
-//                }
-//                .addOnFailureListener {
-//                    // Handle failed upload
-//                    Log.e("Firebase", "Failed to upload data.", it)
-//                }
         }
     }
 }
