@@ -27,7 +27,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.StudyZeroApp
 import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.activity.PhysicalActivity
 import com.jianzheng.studyzero.data.activity.toFirebaseActivity
@@ -262,10 +261,11 @@ class MyForegroundService : Service() {
         val currentTime = System.currentTimeMillis()
         val todayDate = LocalDate.now().toString()
         val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
-        val activityDao = Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
-            .fallbackToDestructiveMigration()
-            .build()
-            .activityDao()
+        val activityDao =
+            Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
+                .fallbackToDestructiveMigration()
+                .build()
+                .activityDao()
 
         CoroutineScope(Dispatchers.IO).launch {
             val generatedId = activityDao.insert(activityRecord)

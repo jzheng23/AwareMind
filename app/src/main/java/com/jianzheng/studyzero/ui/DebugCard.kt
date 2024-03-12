@@ -2,9 +2,6 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -138,22 +135,22 @@ fun DebugCard(
                     color = MaterialTheme.colorScheme.outline
                 )
                 Text("Synced at: $lastMaintenance")
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                SwitchCard(
-                    title = "Notification",
-                    desc = "Show a persistent notification",
-                    onCheckedChange = {
-                        if (it) {
-                            startMyForegroundService(context)
-                        } else {
-                            context.stopService(Intent(context, MyForegroundService::class.java))
-                        }
-                    },
-                    isEnabled = MyPermissionManager.checkNotificationPermission(context),
-                    isChecked = isNotificationShowing.value
-                )
+//                HorizontalDivider(
+//                    color = MaterialTheme.colorScheme.outline
+//                )
+//                SwitchCard(
+//                    title = "Notification",
+//                    desc = "Show a persistent notification",
+//                    onCheckedChange = {
+//                        if (it) {
+//                            startMyForegroundService(context)
+//                        } else {
+//                            context.stopService(Intent(context, MyForegroundService::class.java))
+//                        }
+//                    },
+//                    isEnabled = MyPermissionManager.checkNotificationPermission(context),
+//                    isChecked = isNotificationShowing.value
+//                )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )

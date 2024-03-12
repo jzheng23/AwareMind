@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.room.Room
 import com.google.firebase.database.FirebaseDatabase
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.StudyZeroApp
 import com.jianzheng.studyzero.data.unlock.Unlock
 import com.jianzheng.studyzero.data.unlock.UnlockDatabase
 import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
