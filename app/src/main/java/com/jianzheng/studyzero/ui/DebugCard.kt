@@ -33,7 +33,6 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.service.MyForegroundService
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
 import com.jianzheng.studyzero.tool.MyDelayManager
@@ -42,7 +41,6 @@ import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything
 import com.jianzheng.studyzero.tool.startEverything
-import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.tool.stopEverything
 import java.util.concurrent.TimeUnit
 
@@ -79,9 +77,9 @@ fun DebugCard(
     val isTestTriggers by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("using_testing_triggers", false))
     }
-    val isNotificationShowing by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("showing_notification", false))
-    }
+//    val isNotificationShowing by usePollState {
+//        mutableStateOf(sharedPreferences.getBoolean("showing_notification", false))
+//    }
 //    val isUnlockReceiverRegistered by usePollState {
 //        mutableStateOf(sharedPreferences.getBoolean("unlock_registered", false))
 //    }

@@ -31,8 +31,8 @@ class MyUsageManager {
         val database = Firebase.database
         val myRef = database.getReference("Usage")
         //use MyPrefsManager
-        val sharedPreferences: SharedPreferences =
-            context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+//        val sharedPreferences: SharedPreferences =
+//            context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
         val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
         val db =
             Room.databaseBuilder(context, UsageDatabase::class.java, "usage_database")
