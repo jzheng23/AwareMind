@@ -4,7 +4,6 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Context.USAGE_STATS_SERVICE
-import android.content.SharedPreferences
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
