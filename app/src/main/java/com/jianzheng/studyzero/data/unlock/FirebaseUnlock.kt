@@ -1,7 +1,7 @@
 package com.jianzheng.studyzero.data.unlock
 
 data class FirebaseUnlock(
-    val startTime: String,
+    val startTime: Long,
     val isUnlock: Boolean
 )
 

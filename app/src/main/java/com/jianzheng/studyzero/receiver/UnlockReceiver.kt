@@ -58,7 +58,7 @@ class UnlockReceiver : BroadcastReceiver() {
     private fun logUnlockOrLock(context: Context, isUnlock: Boolean) {
         val currentTime = System.currentTimeMillis()
         val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
-        val unlockRecord = Unlock(startTime = getDateTime(currentTime), isUnlock = isUnlock)
+        val unlockRecord = Unlock(startTime = currentTime, isUnlock = isUnlock)
         val unlockDao = Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
             .fallbackToDestructiveMigration()
             .build()

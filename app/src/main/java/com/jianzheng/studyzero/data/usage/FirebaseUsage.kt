@@ -3,8 +3,8 @@ package com.jianzheng.studyzero.data.usage
 data class FirebaseUsage(
     val packageName: String,
     val className: String,
-    val startTime: String,
-    val endTime: String
+    val startTime: Long,
+    val endTime: Long
 )
 
 fun Usage.toFirebaseUsage(): FirebaseUsage {

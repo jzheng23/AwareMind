@@ -9,6 +9,6 @@ data class Usage(
     val id: Long = 0L,
     val packageName: String,
     val className: String,
-    val startTime: String,
-    val endTime: String
+    val startTime: Long,
+    val endTime: Long
 )

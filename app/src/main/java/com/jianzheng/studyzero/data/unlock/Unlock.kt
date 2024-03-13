@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class Unlock(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val startTime: String,
+    val startTime: Long,
     val isUnlock: Boolean
 )

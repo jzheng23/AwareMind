@@ -56,8 +56,8 @@ class MyUsageManager {
                         val usage = Usage(
                             packageName = event.packageName,
                             className = event.className,
-                            startTime = getDateTime(startTime),
-                            endTime = getDateTime(event.timeStamp)
+                            startTime = startTime,
+                            endTime = event.timeStamp
                         )
                         usages.add(usage)
                         sessionStartTimes.remove(key)
