@@ -13,7 +13,6 @@ import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.getDateTime
 import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
