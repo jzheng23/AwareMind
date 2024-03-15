@@ -4,14 +4,11 @@ import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -21,10 +18,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -51,12 +44,24 @@ fun ExportScreen(
     val context = LocalContext.current
     val responseExist = checkExist(context, "response")
     val inputExist = checkExist(context, "input")
+    val unlockExist = checkExist(context, "unlock")
     val usageExist = checkExist(context, "usage")
-    var responseToBeExport by remember { mutableStateOf(false) }
-    var inputToBeExport by remember { mutableStateOf(false) }
-    var usageToBeExport by remember { mutableStateOf(false) }
+    val activityExist = checkExist(context, "activity")
+//    var allToBeExport by remember {
+//        mutableStateOf(true)
+//    }
+//    var responseToBeExport by remember { mutableStateOf(responseExist) }
+//    var inputToBeExport by remember { mutableStateOf(inputExist) }
+//    var usageToBeExport by remember { mutableStateOf(usageExist) }
+//    var unlockToBeExport by remember { mutableStateOf(unlockExist) }
+//    var activityToBeExport by remember { mutableStateOf(activityExist) }
     //    val databaseNames = listOf("response_database", "input_database", "usage_database")
     val databaseNames = mutableListOf<String>()
+    if (responseExist) databaseNames.add("response_database")
+    if (inputExist) databaseNames.add("input_database")
+    if (usageExist) databaseNames.add("usage_database")
+    if (unlockExist) databaseNames.add("unlock_database")
+    if (activityExist) databaseNames.add("activity_database")
 //    "response_database", "input_database", "usage_database")
     Scaffold(
         topBar = {
@@ -90,88 +95,218 @@ fun ExportScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     ArrowCard(
-                        title = "Export",
-                        desc = "Export the ",
+                        title = "Export data",
+                        desc = "Export the following data to a zip file, and email the zip file to the researcher.",
                         onAuthClick = {
                             shareDatabases(
                                 context,
                                 databaseNames
                             )
-                        }
-                    )
-                    ChecklistItem(
-                        item = "response",
-                        checked = responseToBeExport,
-                        onCheckedChange = { isChecked ->
-                            // Update the external variable
-                            responseToBeExport = isChecked
-                            if (isChecked) {
-                                databaseNames.add("response_database")
-                            } else {
-                                databaseNames.remove("response_database")
-                            }
                         },
-                        enabled = responseExist
+                        buttonEnabled = responseExist || inputExist || usageExist || unlockExist || activityExist,
                     )
-                    ChecklistItem(
-                        item = "input",
-                        checked = inputToBeExport,
-                        onCheckedChange = { isChecked ->
-                            // Update the external variable
-                            inputToBeExport = isChecked
-                            if (isChecked) {
-                                databaseNames.add("input_database")
-                            } else {
-                                databaseNames.remove("input_database")
-                            }
-                        },
-                        enabled = inputExist
-                    )
-                    ChecklistItem(
-                        item = "usage",
-                        checked = usageToBeExport,
-                        onCheckedChange = { isChecked ->
-                            // Update the external variable
-                            usageToBeExport = isChecked
-                            if (isChecked) {
-                                databaseNames.add("usage_database")
-                            } else {
-                                databaseNames.remove("usage_database")
-                            }
-                        },
-                        enabled = usageExist
-                    )
+//                    Card(
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .wrapContentHeight()
+//                            .clickable {
+//                                shareDatabases(
+//                                    context,
+//                                    databaseNames
+//                                )
+//                            }
+//                            .padding(vertical = 4.dp),
+////        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
+//
+//                    ) {
+//                        Column(
+//                            horizontalAlignment = Alignment.Start,
+//                            modifier = Modifier
+//                                .fillMaxWidth()
+//                                .padding(horizontal = mediumPadding, vertical = mediumPadding / 3)
+//                        ) {
+//                            Row(
+//                                verticalAlignment = Alignment.CenterVertically,
+//                                horizontalArrangement = Arrangement.SpaceBetween
+//                            ) {
+//                                Text(
+//                                    text = "Export data",
+//                                    style = MaterialTheme.typography.titleLarge,
+//                                    fontWeight = FontWeight.Bold
+//                                )
+//                                Spacer(modifier = Modifier.weight(1f))
+//                                IconButton(
+//                                    onClick = {
+//                                        shareDatabases(
+//                                            context,
+//                                            databaseNames
+//                                        )
+//                                    },
+//                                    enabled = responseExist || inputExist || usageExist || unlockExist || activityExist,
+//                                ) {
+//                                    Icon(
+//                                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+//                                        contentDescription = "open"
+//                                    )
+//                                }
+//                            }
+//                            Spacer(modifier = Modifier.height(2.dp))
+//                            Text(
+//                                text = "Export the following data to a zip file, and email the zip file to the researcher.",
+//                                fontSize = 14.sp
+//                            )
+//                            Spacer(modifier = Modifier.height(12.dp))
+//                            ChecklistItem(
+//                                item = "All",
+//                                checked = allToBeExport,
+//                                onCheckedChange = { isChecked ->
+//                                    // Update the external variable
+//                                    allToBeExport = isChecked
+//                                    if (isChecked) {
+//                                        if (responseExist) {
+//                                            responseToBeExport = true
+//                                            databaseNames.add("response_database")
+//                                        }
+//                                        if (inputExist) {
+//                                            inputToBeExport = true
+//                                            databaseNames.add("input_database")
+//                                        }
+//                                        if (usageExist) {
+//                                            usageToBeExport = true
+//                                            databaseNames.add("usage_database")
+//                                        }
+//                                        if (unlockExist) {
+//                                            unlockToBeExport = true
+//                                            databaseNames.add("unlock_database")
+//                                        }
+//                                        if (activityExist) {
+//                                            activityToBeExport = true
+//                                            databaseNames.add("activity_database")
+//                                        }
+//                                    } else {
+//                                        responseToBeExport = false
+//                                        databaseNames.remove("response_database")
+//
+//                                        inputToBeExport = false
+//                                        databaseNames.remove("input_database")
+//
+//                                        usageToBeExport = false
+//                                        databaseNames.remove("usage_database")
+//
+//                                        unlockToBeExport = false
+//                                        databaseNames.remove("unlock_database")
+//
+//                                        activityToBeExport = false
+//                                        databaseNames.remove("activity_database")
+//                                    }
+//
+//                                },
+//                                enabled = responseExist
+//                            )
+//                            ChecklistItem(
+//                                item = "Response",
+//                                checked = responseToBeExport,
+//                                onCheckedChange = { isChecked ->
+//                                    // Update the external variable
+//                                    responseToBeExport = isChecked
+//                                    if (isChecked) {
+//                                        databaseNames.add("response_database")
+//                                    } else {
+//                                        databaseNames.remove("response_database")
+//                                    }
+//                                },
+//                                enabled = responseExist
+//                            )
+//                            ChecklistItem(
+//                                item = "Input",
+//                                checked = inputToBeExport,
+//                                onCheckedChange = { isChecked ->
+//                                    // Update the external variable
+//                                    inputToBeExport = isChecked
+//                                    if (isChecked) {
+//                                        databaseNames.add("input_database")
+//                                    } else {
+//                                        databaseNames.remove("input_database")
+//                                    }
+//                                },
+//                                enabled = inputExist
+//                            )
+//                            ChecklistItem(
+//                                item = "App usage",
+//                                checked = usageToBeExport,
+//                                onCheckedChange = { isChecked ->
+//                                    // Update the external variable
+//                                    usageToBeExport = isChecked
+//                                    if (isChecked) {
+//                                        databaseNames.add("usage_database")
+//                                    } else {
+//                                        databaseNames.remove("usage_database")
+//                                    }
+//                                },
+//                                enabled = usageExist
+//                            )
+//                            ChecklistItem(
+//                                item = "Lock/unlock",
+//                                checked = unlockToBeExport,
+//                                onCheckedChange = { isChecked ->
+//                                    // Update the external variable
+//                                    unlockToBeExport = isChecked
+//                                    if (isChecked) {
+//                                        databaseNames.add("unlock_database")
+//                                    } else {
+//                                        databaseNames.remove("unlock_database")
+//                                    }
+//                                },
+//                                enabled = unlockExist
+//                            )
+//                            ChecklistItem(
+//                                item = "Physical activity",
+//                                checked = activityToBeExport,
+//                                onCheckedChange = { isChecked ->
+//                                    // Update the external variable
+//                                    activityToBeExport = isChecked
+//                                    if (isChecked) {
+//                                        databaseNames.add("activity_database")
+//                                    } else {
+//                                        databaseNames.remove("activity_database")
+//                                    }
+//                                },
+//                                enabled = activityExist
+//                            )
                 }
             }
+
+
         }
     )
 }
+
 
 fun checkExist(context: Context, s: String): Boolean {
     return context.getDatabasePath(s + "_database").exists()
 }
 
-
-@Composable
-fun ChecklistItem(
-    item: String,
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
-    enabled: Boolean
-) {
-//    val isChecked = remember { mutableStateOf(checked) }
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Checkbox(
-            checked = checked,
-            onCheckedChange = onCheckedChange,
-            enabled = enabled
-        )
-        Text(text = item)
-    }
-}
+//
+//@Composable
+//fun ChecklistItem(
+//    item: String,
+//    checked: Boolean,
+//    onCheckedChange: (Boolean) -> Unit,
+//    enabled: Boolean
+//) {
+////    val isChecked = remember { mutableStateOf(checked) }
+//    Row(
+//        verticalAlignment = Alignment.CenterVertically,
+//        modifier = Modifier.fillMaxWidth()
+//    ) {
+//        Checkbox(
+//            checked = checked,
+//            onCheckedChange = onCheckedChange,
+//            enabled = enabled
+//        )
+//        Text(text = item)
+//    }
+//}
 
 fun shareDatabases(context: Context, databaseNames: List<String>) {
     val authority = "com.jianzheng.studyzero.provider"
