@@ -1,7 +1,5 @@
 package com.jianzheng.studyzero.data.response
 
-import com.jianzheng.studyzero.tool.getDateTime
-
 data class EsmUiState(
     val answer: List<Int> = mutableListOf<Int>(),
     val isAnswerValid: Boolean
@@ -12,6 +10,6 @@ fun EsmUiState.toResponse(delay: Long, startingTime: Long): Response = Response(
     delay = delay,
     answer1 = answer[0],
     answer2 = answer[1],
-    startingTime = getDateTime(startingTime),
-    submittingTime = getDateTime(System.currentTimeMillis())
+    startingTime = startingTime,
+    submittingTime = System.currentTimeMillis()
 )

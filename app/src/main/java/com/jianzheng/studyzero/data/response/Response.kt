@@ -10,6 +10,6 @@ data class Response(
     val delay: Long,
     val answer1: Int,
     val answer2: Int,
-    val startingTime: String,
-    val submittingTime: String
+    val startingTime: Long,
+    val submittingTime: Long
 )

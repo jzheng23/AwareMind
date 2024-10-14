@@ -7,8 +7,8 @@ import androidx.room.PrimaryKey
 data class Input(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
-    val startTime: String,
-    val inputType: String,
+    val startTime: Long,
+    val inputType: Int,
     val extraX: Int,
     val extraY: Int
 )

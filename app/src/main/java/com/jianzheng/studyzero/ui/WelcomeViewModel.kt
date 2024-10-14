@@ -21,16 +21,16 @@ class WelcomeViewModel(application: Application) : AndroidViewModel(application)
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                "today_count" -> _todayCount.value = sharedPreferences.getInt("today_count", 0)
-                "total_count" -> _totalCount.value = sharedPreferences.getInt("total_count", 0)
-                "day_count" -> _dayCount.value = sharedPreferences.getInt("day_count", 0)
+                "count_today" -> _todayCount.value = sharedPreferences.getInt("count_today", 0)
+                "count_total" -> _totalCount.value = sharedPreferences.getInt("count_total", 0)
+                "count_day" -> _dayCount.value = sharedPreferences.getInt("count_day", 0)
             }
         }
 
     init {
-        _todayCount.value = sharedPreferences.getInt("today_count", 0)
-        _totalCount.value = sharedPreferences.getInt("total_count", 0)
-        _dayCount.value = sharedPreferences.getInt("day_count", 0)
+        _todayCount.value = sharedPreferences.getInt("count_today", 0)
+        _totalCount.value = sharedPreferences.getInt("count_total", 0)
+        _dayCount.value = sharedPreferences.getInt("count_day", 0)
         // Set up a listener for changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }

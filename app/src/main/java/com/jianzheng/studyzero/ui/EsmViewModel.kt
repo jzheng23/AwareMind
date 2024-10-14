@@ -2,13 +2,11 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.response.EsmUiState
 import com.jianzheng.studyzero.data.response.Response
 import com.jianzheng.studyzero.data.response.ResponseDatabase
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.time.LocalDate
 
 class EsmViewModel(
     val context: Context
@@ -51,21 +50,26 @@ class EsmViewModel(
         val newResponse = uiState.value.toResponse(delay, startingTime)
         responseDao.insert(newResponse)
         uploadToFirebase(responseDao.getLastResponse())
-        Log.d("data", responseDao.getLastResponse().startingTime)
-        MyPreferenceManager.setLong(context, "lastSubmit", System.currentTimeMillis())
-        Handler(Looper.getMainLooper()).post {
-            val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
-            toast.show()
-        }
-
+        MyPreferenceManager.setLong(
+            context,
+            context.getString(R.string.last_submit),
+            System.currentTimeMillis()
+        )
+//        Handler(Looper.getMainLooper()).post {
+//            val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
+//            toast.show()
+//        }
+//        Log.d("data", "answer saved at ${responseDao.getLastResponse().startingTime}")
     }
 
     private fun uploadToFirebase(newResponse: Response) {
-        if (sharedPreferences.getBoolean("UID_valid", false)) {
-            val uid = sharedPreferences.getString("UID", "null")
-            myRef.child(uid.toString()).child(newResponse.id.toString())
+        val uid = sharedPreferences.getString("user_ID", "")
+        val todayDate = LocalDate.now().toString()
+        if (validateUid(uid)) {
+            myRef.child(uid.toString()).child(todayDate).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
-        } else Log.d("userId", "invalid user id")
+//            Log.d("data", "uploaded to user id ${uid.toString()}")
+        } else Log.d("data", "invalid user id ${uid.toString()}")
     }
 
 

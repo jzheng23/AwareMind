@@ -4,23 +4,24 @@ import android.app.usage.UsageEvents
 import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.Context.USAGE_STATS_SERVICE
-import android.content.SharedPreferences
-import android.util.Log
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.usage.Usage
 import com.jianzheng.studyzero.data.usage.UsageDatabase
 import com.jianzheng.studyzero.data.usage.toFirebaseUsage
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class MyUsageManager {
     fun getUsageEvents(context: Context, currentTime: Long, test: Boolean = true) {
 
-        val currentTimeString = getDateTime(currentTime)
-        Log.d("usageManager", "get usage events called @ $currentTimeString")
+//        val currentTimeString = getDateTime(currentTime)
+//        Log.d("usageManager", "get usage events called @ $currentTimeString")
         val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as UsageStatsManager
         val dayInMillis: Long = 24 * 60 * 60 * 1000L
         val dayInMillisTest: Long = 60 * 1000L
@@ -29,9 +30,9 @@ class MyUsageManager {
         val database = Firebase.database
         val myRef = database.getReference("Usage")
         //use MyPrefsManager
-        val sharedPreferences: SharedPreferences =
-            context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val uid = sharedPreferences.getString("UID", "null")
+//        val sharedPreferences: SharedPreferences =
+//            context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
         val db =
             Room.databaseBuilder(context, UsageDatabase::class.java, "usage_database")
                 .fallbackToDestructiveMigration()
@@ -39,6 +40,7 @@ class MyUsageManager {
         val usageDao = db.usageDao()
         val usages = mutableListOf<Usage>()
         val sessionStartTimes = mutableMapOf<Pair<String, String>, Long>()
+        val yesterdayDate = LocalDate.now().minusDays(1).toString()
 
         while (usageEvents?.hasNextEvent() == true) {
             val event = UsageEvents.Event()
@@ -54,8 +56,8 @@ class MyUsageManager {
                         val usage = Usage(
                             packageName = event.packageName,
                             className = event.className,
-                            startTime = getDateTime(startTime),
-                            endTime = getDateTime(event.timeStamp)
+                            startTime = startTime,
+                            endTime = event.timeStamp
                         )
                         usages.add(usage)
                         sessionStartTimes.remove(key)
@@ -68,11 +70,12 @@ class MyUsageManager {
         CoroutineScope(Dispatchers.IO).launch {
             usages.forEach { usage ->
                 val generatedId = usageDao.insert(usage)
-                if (sharedPreferences.getBoolean("UID_valid", false)) myRef.child(uid.toString())
+                if (validateUid(uid)) myRef
+                    .child(uid)
+                    .child(yesterdayDate)
                     .child(generatedId.toString())
                     .setValue(usage.copy(id = generatedId).toFirebaseUsage())
-//                Log.d("usageManager","${getEventTypeString(event.eventType)} ${event.className}, ${getDateTime(event.timeStamp)}")
-                Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
+//                Log.d("usageManager", usage.className + usage.startTime + usage.endTime)
             }
         }
 

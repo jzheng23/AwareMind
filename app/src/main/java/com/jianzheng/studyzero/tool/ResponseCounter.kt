@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
-import android.util.Log
 
 class ResponseCounter(context: Context) {
     private val sharedPreferences =
@@ -13,44 +12,44 @@ class ResponseCounter(context: Context) {
 
     fun responsePlusOne(tag: String) {
         val retrievedValue = sharedPreferences.getInt(tag, 0)
-        val todayCount = sharedPreferences.getInt("today_count", 0)
-        val totalCount = sharedPreferences.getInt("total_count", 0)
+        val todayCount = sharedPreferences.getInt("count_today", 0)
+        val totalCount = sharedPreferences.getInt("count_total", 0)
         editor.putInt(tag, retrievedValue + 1)
-            .putInt("today_count", todayCount + 1)
-            .putInt("total_count", totalCount + 1)
+            .putInt("count_today", todayCount + 1)
+            .putInt("count_total", totalCount + 1)
             .apply()
-        if (tag == "onceMet") {
+        if (tag == "count_once_met") {
             editor.putBoolean("tutorial_finished", true)
                 .putBoolean("using_once_triggers", false)
                 .apply()
         }
-        Log.d("liveCounter", "Response counter: today is $todayCount, total is $totalCount")
+//        Log.d("liveCounter", "Response counter: today is $todayCount, total is $totalCount")
     }
 
     fun check20Complete(): Boolean {
-        return sharedPreferences.getInt("20Met", 0) >= 1
+        return sharedPreferences.getInt("count_20_met", 0) >= 1
     }
 
     fun check30Complete(): Boolean {
-        return sharedPreferences.getInt("30Met", 0) >= 2
+        return sharedPreferences.getInt("count_30_met", 0) >= 2
     }
 
     fun checkRandomComplete(): Boolean {
-        Log.d("testing", "length of random trigger: $lengthOfTriggerList")
-        return sharedPreferences.getInt("randomMet", 0) >= lengthOfTriggerList
+//        Log.d("testing", "length of random trigger: $lengthOfTriggerList")
+        return sharedPreferences.getInt("count_random_met", 0) >= lengthOfTriggerList
     }
 
-    fun checkComplete(): Boolean {
-        return (checkRandomComplete() and check20Complete() and check30Complete())
-    }
+//    fun checkComplete(): Boolean {
+//        return (checkRandomComplete() and check20Complete() and check30Complete())
+//    }
 
     fun resetCounter() {
-        editor.putInt("20Met", 0)
-            .putInt("30Met", 0)
-            .putInt("randomMet", 0)
-            .putInt("testMet", 0)
-            .putInt("today_count", 0)
+        editor.putInt("count_20_Met", 0)
+            .putInt("count_30_met", 0)
+            .putInt("count_random_met", 0)
+            .putInt("count_once_met", 0)
+            .putInt("count_today", 0)
             .apply()
-        Log.d("unlock", "counter of responses is reset")
+//        Log.d("unlock", "counter of responses is reset")
     }
 }

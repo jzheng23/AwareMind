@@ -36,6 +36,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -69,6 +70,7 @@ fun HomeScreen(
         factory = SharedPrefsViewModelFactory(context2)
     )
     val userId by sharedPrefsViewModel.userId.observeAsState("")
+//    val isUserIdValid by sharedPrefsViewModel.isUserIdValid.observeAsState(false)
     val userAlias by sharedPrefsViewModel.userAlias.observeAsState("")
     val isTester by sharedPrefsViewModel.isTester.observeAsState(false)
     val isTutorialFinished by sharedPrefsViewModel.isTutorialFinished.observeAsState(false)
@@ -80,7 +82,8 @@ fun HomeScreen(
             CenterAlignedTopAppBar(
                 title = {
                     Text(
-                        text = "Hi, " + (if (userAlias == "") userId else userAlias) + "!",
+                        text = if (validateUid(userId)) ("Hi, " + (if (userAlias == "") userId else userAlias) + "!") else "Invalid UID",
+                        color = if (validateUid(userId)) MaterialTheme.colorScheme.onSurface else Color.Red,
                         modifier = Modifier.clickable {
                             clickOnUIDCount++
                             if (clickOnUIDCount > 2) navController.navigate(AppRoutes.LOGIN)
@@ -117,7 +120,11 @@ fun HomeScreen(
                             onAuthClick = {
                                 if (!showPermissionCard) {
                                     navController.navigate(AppRoutes.TUTORIAL)
-                                    MyPreferenceManager.setInt(context, "randomMet", 0)
+                                    MyPreferenceManager.setInt(
+                                        context,
+                                        context.getString(R.string.count_random_met),
+                                        0
+                                    )
                                 }
                             },
                             buttonEnabled = !showPermissionCard
@@ -138,13 +145,13 @@ fun HomeScreen(
                     if (isDataCollecting) {
                         WelcomeInfo {
                             navController.navigate(AppRoutes.EXPORT)
-                            Log.d("navigate", "to export")
+//                            Log.d("navigate", "to export")
                         }
                     }
                     if (isTester) {
                         DebugCard(
-                            userId = userId,
-                            )
+//                            userId = userId,
+                        )
                     }
                 }
             }
@@ -215,11 +222,11 @@ fun LogoAndContact() {
         ) {
             val versionName = getVersionName(context)
             Text(
-                text = stringResource(id = R.string.app_name)+ " " + versionName,
+                text = stringResource(id = R.string.app_name) + " " + versionName,
                 style = MaterialTheme.typography.bodyMedium
             )
-            Row{
-                Text("By",style = MaterialTheme.typography.bodyMedium)
+            Row {
+                Text("By", style = MaterialTheme.typography.bodyMedium)
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
                     text = "Jian Zheng",
@@ -239,7 +246,7 @@ fun LogoAndContact() {
                                         "Choose an email client"
                                     )
                                 )
-                                Log.d("email", "can do")
+//                                Log.d("email", "can do")
                             } else {
                                 Log.d("email", "cannot do")
                             }
@@ -253,7 +260,7 @@ fun LogoAndContact() {
                 style = TextStyle(textDecoration = TextDecoration.Underline),
                 textAlign = TextAlign.End,
                 modifier = Modifier
-                    .clickable{
+                    .clickable {
                         try {
                             val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                             context.startActivity(intent)

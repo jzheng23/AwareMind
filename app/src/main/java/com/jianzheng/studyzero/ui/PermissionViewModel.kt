@@ -17,12 +17,12 @@ class PermissionViewModel(application: Application) : AndroidViewModel(applicati
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
-                "today_count" -> _todayCount.value = sharedPreferences.getInt("today_count", 0)
+                "count_today" -> _todayCount.value = sharedPreferences.getInt("count_today", 0)
             }
         }
 
     init {
-        _todayCount.value = sharedPreferences.getInt("today_count", 0)
+        _todayCount.value = sharedPreferences.getInt("count_today", 0)
         // Set up a listener for changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }

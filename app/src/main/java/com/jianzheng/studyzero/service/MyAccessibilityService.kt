@@ -4,20 +4,21 @@ import android.accessibilityservice.AccessibilityService
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
-import android.util.Log
 import android.view.accessibility.AccessibilityEvent
 import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.input.Input
 import com.jianzheng.studyzero.data.input.InputDao
 import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.toFirebaseInput
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.getDateTime
+import com.jianzheng.studyzero.ui.validateUid
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 class MyAccessibilityService : AccessibilityService() {
     private val listenerInterval = 300L
@@ -31,7 +32,8 @@ class MyAccessibilityService : AccessibilityService() {
     private var scrollStartTime: Long = 0
     private var lastScrollEventTime: Long = 0
     private var textInputStartTime: Long = 0
-    private var lastWindowsChangeTime: Long = 0
+
+    //    private var lastWindowsChangeTime: Long = 0
     private var inputToBeRecord = false
     private var uid = ""
     private lateinit var sharedPrefs: SharedPreferences
@@ -48,26 +50,27 @@ class MyAccessibilityService : AccessibilityService() {
         sharedPrefs = getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
 //        inputToBeRecord = sharedPrefs.getBoolean("input_record", false)
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
-            if (key == "input_record") {
+            if (key == "recording_input") {
                 inputToBeRecord = prefs.getBoolean(key, false)
             }
         }
         sharedPrefs.registerOnSharedPreferenceChangeListener(prefsListener)
-        uid = MyPreferenceManager.getString(this, "UID")
+        uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
 
         db = Room.databaseBuilder(this, InputDatabase::class.java, "input_database")
             .fallbackToDestructiveMigration()
             .build()
         inputDao = db.inputDao()
-        Log.d("inputLogging", "connected")
+//        Log.d("inputLogging", "connected")
     }
 
-
     private fun writeData(input: Input) {
+        val todayDate = LocalDate.now().toString()
         CoroutineScope(Dispatchers.IO).launch {
             val generatedId = inputDao.insert(input)
-            if (sharedPrefs.getBoolean("UID_valid", false)) {
+            if (validateUid(uid)) {
                 myRef.child(uid)
+                    .child(todayDate)
                     .child(generatedId.toString())
                     .setValue(input.copy(id = generatedId).toFirebaseInput())
             }
@@ -79,13 +82,13 @@ class MyAccessibilityService : AccessibilityService() {
 
 
         if ((currentTime - lastScrollEventTime > listenerInterval) and isScrolling) {
-            Log.d(
-                "inputLogging",
-                "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
-            )
+//            Log.d(
+//                "inputLogging",
+//                "${getDateTime(scrollStartTime)} scroll $totalDeltaX $totalDeltaY"
+//            )
             val input1 = Input(
-                startTime = getDateTime(currentTime),
-                inputType = "scroll",
+                startTime = currentTime,
+                inputType = 1,
                 extraX = totalDeltaX,
                 extraY = totalDeltaY
             )
@@ -107,22 +110,22 @@ class MyAccessibilityService : AccessibilityService() {
             }
 
             AccessibilityEvent.TYPE_VIEW_CLICKED -> {
-                Log.d("inputLogging", "${getDateTime(currentTime)} click")
+//                Log.d("inputLogging", "${getDateTime(currentTime)} click")
                 val input2 = Input(
-                    startTime = getDateTime(currentTime),
-                    inputType = "click",
+                    startTime = currentTime,
+                    inputType = 2,
                     extraX = 0,
                     extraY = 0
                 )
                 writeData(input2)
                 if (isTextInputActive) {
-                    Log.d(
-                        "inputLogging",
-                        "${getDateTime(currentTime)} textChanged $textChangeCount"
-                    )
+//                    Log.d(
+//                        "inputLogging",
+//                        "${getDateTime(currentTime)} textChanged $textChangeCount"
+//                    )
                     val input3 = Input(
-                        startTime = getDateTime(currentTime),
-                        inputType = "text",
+                        startTime = currentTime,
+                        inputType = 3,
                         extraX = textChangeCount,
                         extraY = 0
                     )
@@ -133,13 +136,13 @@ class MyAccessibilityService : AccessibilityService() {
 
             AccessibilityEvent.TYPE_VIEW_SCROLLED -> {
                 if (isTextInputActive) {
-                    Log.d(
-                        "inputLogging",
-                        "${getDateTime(currentTime)} textChanged $textChangeCount"
-                    )
+//                    Log.d(
+//                        "inputLogging",
+//                        "${getDateTime(currentTime)} textChanged $textChangeCount"
+//                    )
                     val input4 = Input(
-                        startTime = getDateTime(currentTime),
-                        inputType = "text",
+                        startTime = currentTime,
+                        inputType = 3,
                         extraX = textChangeCount,
                         extraY = 0
                     )
@@ -180,20 +183,6 @@ class MyAccessibilityService : AccessibilityService() {
                 lastScrollEventTime = currentTime
             }
 
-//            AccessibilityEvent.TYPE_WINDOWS_CHANGED -> {
-//                if (currentTime - lastWindowsChangeTime > listenerInterval) {
-//                    Log.d("inputLogging", "${getDateTime(currentTime)} windows changed")
-//                    val input5 = Input(
-//                        startTime = getDateTime(currentTime),
-//                        inputType = "window",
-//                        extraX = 0,
-//                        extraY = 0
-//                    )
-//                    writeData(input5)
-//                }
-//                lastWindowsChangeTime = currentTime
-//
-//            }
 
             else -> {}
         }
@@ -201,12 +190,12 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onInterrupt() {
         // Handle the service being interrupted
-        Log.d("inputLogging", "interrupted")
+//        Log.d("inputLogging", "interrupted")
     }
 
     override fun onDestroy() {
         sharedPrefs.unregisterOnSharedPreferenceChangeListener(prefsListener)
-        Log.d("inputLogging", "destroyed")
+//        Log.d("inputLogging", "destroyed")
         super.onDestroy()
     }
 }

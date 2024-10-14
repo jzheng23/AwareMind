@@ -19,6 +19,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
+        android:name=".StudyZeroApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -73,7 +74,7 @@
         <service
             android:name=".service.RebootService"
             android:enabled="true" />
-        <service android:name=".service.MyForegroundServiceATK"
+        <service android:name=".service.MyForegroundService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location"

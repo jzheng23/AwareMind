@@ -1,9 +1,8 @@
 package com.jianzheng.studyzero.ui
 
-import android.content.Intent
+//import com.jianzheng.studyzero.service.MyForegroundService
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -51,13 +50,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import com.jianzheng.studyzero.R
-import com.jianzheng.studyzero.service.MyForegroundService
-import com.jianzheng.studyzero.service.MyForegroundServiceATK
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
+import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -89,8 +86,8 @@ fun ShowOverlay(
             if (autoDismiss.value) {
                 autoDismiss.value = false
                 onClick()
-                if (tag == "randomMet") MyDelayManager.recycleTrigger()
-                Log.d("unlock", "unanswered")
+                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
+//                Log.d("unlock", "unanswered")
             }
         }, displayTimeMillis) // 10 seconds delay
     }
@@ -149,7 +146,7 @@ fun ShowOverlay(
 
 @Composable
 fun SubmitButton(
-    tag: String = "",
+    tag: String = "count_random_met",
     unlockTime: Long = 0L,
     myViewModel: EsmViewModelInterface,
     isShowing: MutableState<Boolean> = mutableStateOf(false),
@@ -157,7 +154,7 @@ fun SubmitButton(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val startingTime = System.currentTimeMillis()
-    Log.d("delayTime", "displaying: ${System.currentTimeMillis()}")
+//    Log.d("delayTime", "displaying: ${System.currentTimeMillis()}")
     val delay = startingTime - unlockTime
     val context = LocalContext.current
     val responseCounter = ResponseCounter(context)
@@ -174,12 +171,16 @@ fun SubmitButton(
         onClick = {
             coroutineScope.launch(Dispatchers.IO) {
                 myViewModel.saveAnswer(delay, startingTime)
-                val myForegroundServiceIntent = Intent(context, MyForegroundServiceATK::class.java)
-                ContextCompat.startForegroundService(context, myForegroundServiceIntent)
+//                val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
+//                ContextCompat.startForegroundService(context, myForegroundServiceIntent)
+            }
+            responseCounter.responsePlusOne(tag)
+            if (tag != "count_test_met") {
+                startMyForegroundService(context)
             }
             isShowing.value = false
-            responseCounter.responsePlusOne(tag)
             onClick()
+//            Log.d("data", "submit clicked")
         },
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -354,7 +355,7 @@ fun ChoiceWithLabel(
                 selectedValue.value = item
 //                autoDismiss.value = false
                 myViewModel.setAnswer(item, index)
-                Log.d("viewModel", "$item selected for q$index!")
+//                Log.d("viewModel", "$item selected for q$index!")
             },
             modifier = Modifier
                 .height(22.dp)

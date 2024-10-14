@@ -10,7 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -45,7 +45,7 @@ fun SettingsScreen(
                         navController.navigate(AppRoutes.HOME)
                     }) {
                         Icon(
-                            Icons.Filled.KeyboardArrowLeft,
+                            Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                             contentDescription = "back",
                         )
                     }
@@ -121,15 +121,7 @@ fun ScrollSettingContent(it: PaddingValues) {
 
             }
 
-            if (!usageStatAllowed) {
-                ArrowCard(
-                    title = "App usage",
-                    desc = stringResource(id = R.string.app_usage),
-                    onAuthClick = {
-                        MyPermissionManager.grantUserStatPermission(context)
-                    },
-                )
-            }
+
 
             if (!activityAllowed) {
                 ArrowCard(
@@ -161,6 +153,15 @@ fun ScrollSettingContent(it: PaddingValues) {
 //                    }
 //                )
 //            }
+            if (!usageStatAllowed) {
+                ArrowCard(
+                    title = "App usage",
+                    desc = stringResource(id = R.string.app_usage),
+                    onAuthClick = {
+                        MyPermissionManager.grantUserStatPermission(context)
+                    },
+                )
+            }
 
             if (!accessibilityAllowed) {
                 ArrowCard(
@@ -186,7 +187,7 @@ fun ScrollSettingContent(it: PaddingValues) {
 fun showAccessibilityConsentDialog(context: Context, onConsentGiven: () -> Unit) {
     AlertDialog.Builder(context)
         .setTitle("Accessibility Permission Required")
-        .setMessage("To understand how you use your phone, this app needs to access accessibility services. This includes recording taps, scrolls, and the number of characters typed. No personal or sensitive data will be collected.")
+        .setMessage(context.getString(R.string.accessibility_dialogue))
         .setPositiveButton("Agree") { _, _ ->
             onConsentGiven()
         }
