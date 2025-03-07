@@ -4,7 +4,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
-    id("com.google.devtools.ksp") version "1.8.21-1.0.11"
+    id("com.google.devtools.ksp") version "1.9.22-1.0.17"
 }
 
 android {
@@ -44,7 +44,7 @@ android {
         compose = true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion = "1.4.7"
+        kotlinCompilerExtensionVersion = "1.5.8"
     }
     packaging {
         resources {
@@ -70,7 +70,7 @@ dependencies {
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.runtime:runtime-livedata:1.7.3")
     implementation("androidx.navigation:navigation-runtime-ktx:2.8.2")
-    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.22-1.0.17")
+//    implementation("com.google.devtools.ksp:com.google.devtools.ksp.gradle.plugin:1.9.22-1.0.17")
     //Room
     implementation("androidx.room:room-runtime:${rootProject.extra["room_version"]}")
     implementation("com.google.android.gms:play-services-location:21.3.0")
