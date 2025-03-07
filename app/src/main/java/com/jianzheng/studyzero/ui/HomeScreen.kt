@@ -350,9 +350,8 @@ fun InfoPreview() {
 fun getVersionName(context: Context): String {
     return try {
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        packageInfo.versionName
+        packageInfo.versionName ?: "Not Found"
     } catch (e: PackageManager.NameNotFoundException) {
-        // Handle the exception if the package name is not found
         "Not Found"
     }
 }

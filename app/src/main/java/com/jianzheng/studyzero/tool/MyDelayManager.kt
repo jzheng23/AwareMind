@@ -176,7 +176,7 @@ object MyDelayManager {
 
     private fun checkAndCancelRandomTrigger() {
         if (::randomRequestID.isInitialized) {
-            if (myWorkManager.getWorkInfoById(randomRequestID).get().state
+            if (myWorkManager.getWorkInfoById(randomRequestID).get()?.state
                 != WorkInfo.State.SUCCEEDED
             ) {
                 myWorkManager.cancelWorkById(randomRequestID)
@@ -187,7 +187,7 @@ object MyDelayManager {
     }
 
     private fun checkAndCancelFixedTrigger(requestID: UUID) {
-        if (myWorkManager.getWorkInfoById(requestID).get().state
+        if (myWorkManager.getWorkInfoById(requestID).get()?.state
             != WorkInfo.State.SUCCEEDED
         ) {
             myWorkManager.cancelWorkById(requestID)
