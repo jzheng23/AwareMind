@@ -123,15 +123,15 @@ class MyForegroundService : Service() {
         ) {
             val task = ActivityRecognition.getClient(this)
                 .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
-//            Log.d("ATR", "task created")
+            Log.d("ATR", "task created")
 
             task.addOnSuccessListener {
 //                startForegroundServiceWithNotification()
-//                Log.d("ATR", "success lister")
+                Log.d("ATR", "success lister")
             }
 
             task.addOnFailureListener { _ ->
-//                Log.d("ATR", "failure $e")
+                Log.d("ATR", "failure listener")
             }
         } else {
             Log.d("ATR", "activity recognition permission not allowed")
@@ -220,13 +220,14 @@ class MyForegroundService : Service() {
 
 
         override fun onReceive(context: Context, intent: Intent) {
-//            Log.d("ATR", "on receive")
+            Log.d("ATR", "on receive")
             if (ActivityTransitionResult.hasResult(intent)) {
                 val result = ActivityTransitionResult.extractResult(intent)
                 result?.transitionEvents?.forEach { event ->
                     // Update notification with the current activity
                     val currentActivity =
                         toActivityString(event.activityType)
+                    Log.d("ATR", "current activity: $currentActivity")
                     if (event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         MyPreferenceManager.setString(context, "current_activity", currentActivity)
                         logActivity(context, event.activityType)
