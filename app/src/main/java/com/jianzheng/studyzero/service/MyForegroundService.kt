@@ -41,8 +41,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class MyForegroundService : Service() {
-    //    private lateinit var db: ActivityDatabase
-//    private lateinit var activityDao: ActivityDao
     private lateinit var uid: String
     private val myRefActivity = Firebase.database.getReference("Activity")
     private var mActivityTransitionsPendingIntent: PendingIntent? = null
@@ -263,7 +261,7 @@ class MyForegroundService : Service() {
         val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
         val activityDao =
             Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
                 .activityDao()
 

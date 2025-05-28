@@ -26,11 +26,13 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -199,7 +201,7 @@ fun ShowInstruction(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
-            text = stringResource(id = R.string.instruction),
+            text = stringResource(id = R.string.question2),
             style = MaterialTheme.typography.bodyLarge,
 //            fontSize = 15.sp,
             textAlign = TextAlign.Center,
@@ -237,13 +239,13 @@ fun ShowEsm(
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
         //show question 1
-        ShowQuestion(
-            questionString = R.string.question1,
-            index = 0,
-            myViewModel = myViewModel,
-            labelSet = 1
-//            autoDismiss = autoDismiss
-        )
+//        ShowQuestion(
+//            questionString = R.string.question1,
+//            index = 0,
+//            myViewModel = myViewModel,
+//            labelSet = 1
+////            autoDismiss = autoDismiss
+//        )
         ShowQuestion(
             questionString = R.string.question2,
             index = 1,
@@ -262,13 +264,12 @@ fun ShowQuestion(
     index: Int,
     myViewModel: EsmViewModelInterface,
     labelSet: Int,
-//    autoDismiss: MutableState<Boolean>
 ) {
-    val options: List<Int> = listOf(1, 2, 3, 4)
-    val labels1: List<String> = listOf("passively", "", "", "actively")
-    val labels2: List<String> = listOf("stop", "", "", "continue")
+    val labels1: List<String> = listOf("passively", "actively")
+    val labels2: List<String> = listOf("stop", "continue")
     val labels = if (labelSet == 1) labels1 else labels2
-    val selectedValue = remember { mutableIntStateOf(0) }
+    val sliderPosition = remember { mutableFloatStateOf(0f) }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -278,7 +279,6 @@ fun ShowQuestion(
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = dimensionResource(id = R.dimen.elevation)),
         shape = RoundedCornerShape(8.dp),
-//        border = BorderStroke(2.dp, MaterialTheme.colorScheme.outline),
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -289,42 +289,61 @@ fun ShowQuestion(
                     vertical = mediumPadding / 2
                 )
         ) {
-            Text(
-                stringResource(questionString),
-                textAlign = TextAlign.Center,
-                fontSize = 15.sp,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                style = LocalTextStyle.current.merge(
-                    TextStyle(
-                        lineHeight = 1.0.em,
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        ),
-                        lineHeightStyle = LineHeightStyle(
-                            alignment = LineHeightStyle.Alignment.Center,
-                            trim = LineHeightStyle.Trim.None
-                        )
-                    )
-                ),
-                modifier = Modifier.padding(bottom = 4.dp)
-            )
-            Row(
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = modifier
-                    //.height(28.dp)
+//            Text(
+//                stringResource(questionString),
+//                textAlign = TextAlign.Center,
+//                fontSize = 15.sp,
+//                color = MaterialTheme.colorScheme.onSurfaceVariant,
+//                style = LocalTextStyle.current.merge(
+//                    TextStyle(
+//                        lineHeight = 1.0.em,
+//                        platformStyle = PlatformTextStyle(
+//                            includeFontPadding = false
+//                        ),
+//                        lineHeightStyle = LineHeightStyle(
+//                            alignment = LineHeightStyle.Alignment.Center,
+//                            trim = LineHeightStyle.Trim.None
+//                        )
+//                    )
+//                ),
+//                modifier = Modifier.padding(bottom = 4.dp)
+//            )
+
+            // Slider with labels
+            Box(
+                modifier = Modifier
                     .fillMaxWidth()
-//                    .padding(top = dimensionResource(id = R.dimen.padding_medium))
+                    .padding(horizontal = 16.dp)
             ) {
-                options.forEach { item ->
-                    ChoiceWithLabel(
-                        item = item,
-                        label = labels[item - 1],
-                        index = index,
-                        myViewModel = myViewModel,
-//                        autoDismiss = autoDismiss,
-                        selectedValue = selectedValue,
-                        modifier = Modifier.weight(1f),
+                Slider(
+                    value = sliderPosition.floatValue,
+                    onValueChange = {
+                        sliderPosition.floatValue = it
+                        // Convert slider position to 1-4 scale
+                        val answer = (it * 9).toInt() + 1
+                        myViewModel.setAnswer(answer, index)
+                    },
+                    valueRange = 0f..1f,
+                    steps = 8, // Creates 4 positions (0, 0.33, 0.66, 1)
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+
+                // Labels at start and end
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 40.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = labels[0],
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.Start
+                    )
+                    Text(
+                        text = labels[1],
+                        fontSize = 12.sp,
+                        textAlign = TextAlign.End
                     )
                 }
             }
