@@ -86,10 +86,18 @@ class MyForegroundService : Service() {
             .setActivityTransition(transitionType).build()
     }
 
+    private fun testPendingIntent() {
+        Log.d("ATR", "Testing broadcast receiver manually")
+        val testIntent = Intent(transitionsReceiverAction)
+        testIntent.setPackage(packageName)
+        testIntent.putExtra("test", "manual_trigger")
+        sendBroadcast(testIntent)
+    }
 
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate() {
         super.onCreate()
+        Log.d("ATR", "MyForegroundService onCreate() called")
         uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
 //        activityDao = Room.databaseBuilder(this, ActivityDatabase::class.java, "activity_database")
         initializeActivityTransition()
@@ -141,10 +149,14 @@ class MyForegroundService : Service() {
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        Log.d("ATR", "MyForegroundService onStartCommand() called")
         val notification =
             createNotification() // Implement this method to create a notification
         startForeground(1, notification)
         MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
+
+        testPendingIntent()
+
         return START_STICKY
     }
 
@@ -221,6 +233,12 @@ class MyForegroundService : Service() {
 
         override fun onReceive(context: Context, intent: Intent) {
             Log.d("ATR", "on receive")
+
+            if (intent.hasExtra("test")) {
+                Log.d("ATR", "Test broadcast received: ${intent.getStringExtra("test")}")
+                return
+            }
+
             if (ActivityTransitionResult.hasResult(intent)) {
                 val result = ActivityTransitionResult.extractResult(intent)
                 result?.transitionEvents?.forEach { event ->
@@ -244,6 +262,8 @@ class MyForegroundService : Service() {
                         }
                     }
                 }
+            } else {
+                Log.d("ATR", "No ActivityTransitionResult in intent")
             }
         }
 

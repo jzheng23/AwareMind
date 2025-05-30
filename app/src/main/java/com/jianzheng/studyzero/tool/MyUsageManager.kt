@@ -35,7 +35,7 @@ class MyUsageManager {
         val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
         val db =
             Room.databaseBuilder(context, UsageDatabase::class.java, "usage_database")
-                .fallbackToDestructiveMigration()
+                .fallbackToDestructiveMigration(false)
                 .build()
         val usageDao = db.usageDao()
         val usages = mutableListOf<Usage>()

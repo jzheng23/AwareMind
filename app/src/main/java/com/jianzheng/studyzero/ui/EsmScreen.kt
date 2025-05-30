@@ -369,12 +369,12 @@ fun ChoiceWithLabel(
         RadioButton(
             selected = selectedValue.value == item,
             onClick =
-            {
-                selectedValue.value = item
+                {
+                    selectedValue.value = item
 //                autoDismiss.value = false
-                myViewModel.setAnswer(item, index)
+                    myViewModel.setAnswer(item, index)
 //                Log.d("viewModel", "$item selected for q$index!")
-            },
+                },
             modifier = Modifier
                 .height(22.dp)
         )

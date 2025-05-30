@@ -58,7 +58,7 @@ class MyAccessibilityService : AccessibilityService() {
         uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
 
         db = Room.databaseBuilder(this, InputDatabase::class.java, "input_database")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
         inputDao = db.inputDao()
 //        Log.d("inputLogging", "connected")

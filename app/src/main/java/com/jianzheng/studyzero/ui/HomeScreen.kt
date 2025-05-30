@@ -174,7 +174,7 @@ fun WelcomeInfo(
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
 
-    ) {
+        ) {
 
         InfoCard(
 //            dayCount = dayCount.value ?: 0,

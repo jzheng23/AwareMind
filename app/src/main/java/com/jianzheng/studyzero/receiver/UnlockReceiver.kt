@@ -59,7 +59,7 @@ class UnlockReceiver : BroadcastReceiver() {
         val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
         val unlockRecord = Unlock(startTime = currentTime, isUnlock = isUnlock)
         val unlockDao = Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
             .unlockDao()
 

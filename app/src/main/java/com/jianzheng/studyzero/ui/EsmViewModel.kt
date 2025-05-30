@@ -24,7 +24,7 @@ class EsmViewModel(
 ) : EsmViewModelInterface {
     private val db =
         Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(false)
             .build()
     private val responseDao = db.responseDao()
     private val _uiState = MutableStateFlow(EsmUiState(listOf(0, 0), false))

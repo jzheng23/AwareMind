@@ -51,7 +51,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         if (validateUid(uid)) {
             val unlockDao =
                 Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .build()
                     .unlockDao()
             val myRef = Firebase.database.getReference("Unlock")
@@ -69,7 +69,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         if (validateUid(uid)) {
             val activityDao =
                 Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .build()
                     .activityDao()
             val myRef = Firebase.database.getReference("Activity")
@@ -87,7 +87,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         if (validateUid(uid)) {
             val inputDao =
                 Room.databaseBuilder(context, InputDatabase::class.java, "input_database")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .build()
                     .inputDao()
             val myRef = Firebase.database.getReference("Input")
@@ -105,7 +105,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         if (validateUid(uid)) {
             val responseDao =
                 Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
-                    .fallbackToDestructiveMigration()
+                    .fallbackToDestructiveMigration(false)
                     .build()
                     .responseDao()
             val myRef = Firebase.database.getReference("ESM")
