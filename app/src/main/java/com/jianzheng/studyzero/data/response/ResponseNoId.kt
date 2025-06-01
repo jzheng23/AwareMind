@@ -2,8 +2,7 @@ package com.jianzheng.studyzero.data.response
 
 data class ResponseNoId(
     val delay: Long,
-    val answer1: Int,
-    val answer2: Int,
+    val answer: Int,
     val startingTime: Long,
     val submittingTime: Long
 ) {
@@ -11,8 +10,7 @@ data class ResponseNoId(
         fun fromResponse(response: Response): ResponseNoId {
             return ResponseNoId(
                 delay = response.delay,
-                answer1 = response.answer1,
-                answer2 = response.answer2,
+                answer = response.answer,
                 startingTime = response.startingTime,
                 submittingTime = response.submittingTime
             )

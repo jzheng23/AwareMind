@@ -27,7 +27,7 @@ class EsmViewModel(
             .fallbackToDestructiveMigration(false)
             .build()
     private val responseDao = db.responseDao()
-    private val _uiState = MutableStateFlow(EsmUiState(listOf(0, 0), false))
+    private val _uiState = MutableStateFlow(EsmUiState(0, false))
     override val uiState: StateFlow<EsmUiState> = _uiState.asStateFlow()
     private val database = Firebase.database
     private val myRef = database.getReference("ESM")
@@ -35,13 +35,11 @@ class EsmViewModel(
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
 
     override fun setAnswer(selection: Int, index: Int) {
-        val updatedAnswers = uiState.value.answer.toMutableList()
-        updatedAnswers[index] = selection
         //Log.d("viewModel", "$index is set to ${uiState.value.answer[index]}")
         _uiState.update { currentState ->
             currentState.copy(
-                answer = updatedAnswers,
-                isAnswerValid = (updatedAnswers[0] * updatedAnswers[1] != 0)
+                answer = selection,
+                isAnswerValid = (selection != 0)
             )
         }
     }
@@ -84,7 +82,7 @@ interface EsmViewModelInterface {
 
 
 class MockEsmViewModel : EsmViewModelInterface {
-    override val uiState = MutableStateFlow(EsmUiState(listOf(0, 0), false))
+    override val uiState = MutableStateFlow(EsmUiState(0, false))
     override fun setAnswer(selection: Int, index: Int) {
         // Mock implementation
     }
