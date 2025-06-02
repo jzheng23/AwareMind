@@ -343,10 +343,9 @@ fun ShowQuestion(
                                 detectTapGestures { offset ->
                                     // Calculate which step was tapped based on tap position
                                     val sliderWidth = size.width
-                                    val stepWidth = sliderWidth / 9f // 9 steps (0-8)
-                                    val tappedStep = (offset.x / stepWidth).roundToInt().coerceIn(0, 9
-                                    )
-                                    val newValue = tappedStep / 9f
+                                    val stepWidth = sliderWidth / 8f // 8 intervals for 9 positions
+                                    val tappedStep = (offset.x / stepWidth).roundToInt().coerceIn(0, 8)
+                                    val newValue = tappedStep / 8f
                                     // Set the slider to the tapped position
                                     sliderPosition.value = newValue
                                     val answer = (newValue * 9).toInt() + 1
@@ -354,33 +353,35 @@ fun ShowQuestion(
                                 }
                             }
                     ) {
-                        // Draw your custom track with tick marks
-                        HorizontalDivider(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .align(Alignment.Center),
-                            thickness = 4.dp
-                        )
-
-                        // Draw tick marks
+                        // Draw custom track and tick marks to match Material Design slider
                         Canvas(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.Center)
                         ) {
                             val trackWidth = size.width
-                            val stepWidth = trackWidth / 9f
+                            val trackHeight = 4.dp.toPx()
+                            val stepWidth = trackWidth / 8f // 8 intervals for 9 positions
+
+                            // Draw the track (rounded rectangle)
+                            drawRoundRect(
+                                color = androidx.compose.ui.graphics.Color.Gray.copy(alpha = 0.3f),
+                                topLeft = Offset(0f, -trackHeight / 2),
+                                size = androidx.compose.ui.geometry.Size(trackWidth, trackHeight),
+                                cornerRadius = androidx.compose.ui.geometry.CornerRadius(trackHeight / 2, trackHeight / 2)
+                            )
+
+                            // Draw circular tick marks
                             val tickColor = androidx.compose.ui.graphics.Color.Gray
-                            val tickHeight = 12f
+                            val tickRadius = 3f
 
                             // Draw 9 tick marks (positions 0-8)
-                            for (i in 0..9) {
+                            for (i in 0..8) {
                                 val x = i * stepWidth
-                                drawLine(
+                                drawCircle(
                                     color = tickColor,
-                                    start = Offset(x, -tickHeight / 2),
-                                    end = Offset(x, tickHeight / 2),
-                                    strokeWidth = 2f
+                                    radius = tickRadius,
+                                    center = Offset(x, 0f)
                                 )
                             }
                         }
