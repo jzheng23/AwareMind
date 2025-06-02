@@ -4,6 +4,8 @@ package com.jianzheng.studyzero.ui
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +23,8 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalTextStyle
@@ -38,7 +42,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
@@ -59,6 +65,7 @@ import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 @Composable
 fun ShowOverlay(
@@ -267,7 +274,7 @@ fun ShowQuestion(
     val labels1: List<String> = listOf("passively", "actively")
     val labels2: List<String> = listOf("stop", "continue")
     val labels = if (labelSet == 1) labels1 else labels2
-    val sliderPosition = remember { mutableFloatStateOf(0f) }
+    val sliderPosition = remember { mutableStateOf<Float?>(null) }
 
     Card(
         modifier = modifier
@@ -314,17 +321,71 @@ fun ShowQuestion(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp)
             ) {
-                Slider(
-                    value = sliderPosition.floatValue,
-                    onValueChange = {
-                        sliderPosition.floatValue = it
-                        val answer = (it * 9).toInt() + 1
-                        myViewModel.setAnswer(answer, index)
-                    },
-                    valueRange = 0f..1f,
-                    steps = 8,
-                    modifier = Modifier.padding(top = 8.dp)
-                )
+                if (sliderPosition.value != null) {
+                    Slider(
+                        value = sliderPosition.value!!,
+                        onValueChange = { newValue ->
+                            sliderPosition.value = newValue
+                            val answer = (newValue * 9).toInt() + 1
+                            myViewModel.setAnswer(answer, index)
+                        },
+                        valueRange = 0f..1f,
+                        steps = 8,
+                        modifier = Modifier.padding(top = 8.dp)
+                    )
+                } else {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(48.dp)
+                            .padding(top = 8.dp)
+                            .pointerInput(Unit) {
+                                detectTapGestures { offset ->
+                                    // Calculate which step was tapped based on tap position
+                                    val sliderWidth = size.width
+                                    val stepWidth = sliderWidth / 9f // 9 steps (0-8)
+                                    val tappedStep = (offset.x / stepWidth).roundToInt().coerceIn(0, 9
+                                    )
+                                    val newValue = tappedStep / 9f
+                                    // Set the slider to the tapped position
+                                    sliderPosition.value = newValue
+                                    val answer = (newValue * 9).toInt() + 1
+                                    myViewModel.setAnswer(answer, index)
+                                }
+                            }
+                    ) {
+                        // Draw your custom track with tick marks
+                        HorizontalDivider(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center),
+                            thickness = 4.dp
+                        )
+
+                        // Draw tick marks
+                        Canvas(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.Center)
+                        ) {
+                            val trackWidth = size.width
+                            val stepWidth = trackWidth / 9f
+                            val tickColor = androidx.compose.ui.graphics.Color.Gray
+                            val tickHeight = 12f
+
+                            // Draw 9 tick marks (positions 0-8)
+                            for (i in 0..9) {
+                                val x = i * stepWidth
+                                drawLine(
+                                    color = tickColor,
+                                    start = Offset(x, -tickHeight / 2),
+                                    end = Offset(x, tickHeight / 2),
+                                    strokeWidth = 2f
+                                )
+                            }
+                        }
+                    }
+                }
 
                 // Labels at start and end
                 Row(
@@ -348,6 +409,7 @@ fun ShowQuestion(
         }
     }
 }
+
 
 @Composable
 fun ChoiceWithLabel(
