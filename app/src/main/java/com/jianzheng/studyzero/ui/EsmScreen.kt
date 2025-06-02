@@ -3,8 +3,8 @@ package com.jianzheng.studyzero.ui
 //import com.jianzheng.studyzero.service.MyForegroundService
 import android.os.Handler
 import android.os.Looper
-import androidx.compose.foundation.background
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
@@ -23,20 +23,15 @@ import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -49,13 +44,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
@@ -253,7 +244,7 @@ fun ShowEsm(
 ////            autoDismiss = autoDismiss
 //        )
         ShowQuestion(
-            questionString = R.string.question2,
+//            questionString = R.string.question2,
             index = 1,
             myViewModel = myViewModel,
             labelSet = 2
@@ -265,7 +256,7 @@ fun ShowEsm(
 
 @Composable
 fun ShowQuestion(
-    questionString: Int,
+//    questionString: Int,
     modifier: Modifier = Modifier,
     index: Int,
     myViewModel: EsmViewModelInterface,
@@ -341,11 +332,21 @@ fun ShowQuestion(
                             .padding(top = 8.dp)
                             .pointerInput(Unit) {
                                 detectTapGestures { offset ->
-                                    // Calculate which step was tapped based on tap position
                                     val sliderWidth = size.width
-                                    val stepWidth = sliderWidth / 8f // 8 intervals for 9 positions
-                                    val tappedStep = (offset.x / stepWidth).roundToInt().coerceIn(0, 8)
-                                    val newValue = tappedStep / 8f
+                                    val horizontalOuterPadding = 2.dp.toPx()
+                                    val horizontalInnerPadding = 8.dp.toPx()
+                                    val availableWidth = sliderWidth - (2 * horizontalOuterPadding)
+                                    val adjustedStepWidth =
+                                        (availableWidth - 2 * horizontalInnerPadding) / 9f
+                                    val adjustedOffset =
+                                        (offset.x - horizontalOuterPadding - horizontalInnerPadding).coerceIn(
+                                            0f,
+                                            availableWidth - 2 * horizontalInnerPadding
+                                        )
+                                    val tappedStep =
+                                        (adjustedOffset / adjustedStepWidth).roundToInt()
+                                            .coerceIn(0, 9)
+                                    val newValue = tappedStep / 9f
                                     // Set the slider to the tapped position
                                     sliderPosition.value = newValue
                                     val answer = (newValue * 9).toInt() + 1
@@ -354,34 +355,51 @@ fun ShowQuestion(
                             }
                     ) {
                         // Draw custom track and tick marks to match Material Design slider
+                        // Get the colors outside the Canvas
+                        // Get the Material Design default colors for sliders
+//                        val trackColor = MaterialTheme.colorScheme.primaryContainer // For inactive track
+                        val trackColor = MaterialTheme.colorScheme.outlineVariant
+                        val tickColor = MaterialTheme.colorScheme.primary// For tick marks
+
+// Draw custom track and tick marks to match Material Design slider
                         Canvas(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .align(Alignment.Center)
                         ) {
                             val trackWidth = size.width
-                            val trackHeight = 4.dp.toPx()
-                            val stepWidth = trackWidth / 8f // 8 intervals for 9 positions
+                            val trackHeight = 16.dp.toPx()
+                            val tickRadius = 5f
 
-                            // Draw the track (rounded rectangle)
+                            // Draw 10 tick marks (positions 0-9)
+                            val horizontalInnerPadding = 8.dp.toPx()
+                            val horizontalOuterPadding = 2.dp.toPx()
+                            val availableWidth = trackWidth - (2 * horizontalOuterPadding)
+                            val adjustedStepWidth = (availableWidth - 2 * horizontalInnerPadding) / 9f
+                            val verticalOffset = 4.dp.toPx()
+
                             drawRoundRect(
-                                color = androidx.compose.ui.graphics.Color.Gray.copy(alpha = 0.3f),
-                                topLeft = Offset(0f, -trackHeight / 2),
-                                size = androidx.compose.ui.geometry.Size(trackWidth, trackHeight),
-                                cornerRadius = androidx.compose.ui.geometry.CornerRadius(trackHeight / 2, trackHeight / 2)
+                                color = trackColor, // Uses outline color for inactive track
+                                topLeft = Offset(
+                                    horizontalOuterPadding,
+                                    -trackHeight / 2 + verticalOffset
+                                ),
+                                size = androidx.compose.ui.geometry.Size(
+                                    availableWidth,
+                                    trackHeight
+                                ),
+                                cornerRadius = androidx.compose.ui.geometry.CornerRadius(
+                                    trackHeight / 2,
+                                    trackHeight / 2
+                                )
                             )
 
-                            // Draw circular tick marks
-                            val tickColor = androidx.compose.ui.graphics.Color.Gray
-                            val tickRadius = 3f
-
-                            // Draw 9 tick marks (positions 0-8)
-                            for (i in 0..8) {
-                                val x = i * stepWidth
+                            for (i in 0..9) {
+                                val x = horizontalInnerPadding + horizontalOuterPadding + (i * adjustedStepWidth)
                                 drawCircle(
-                                    color = tickColor,
+                                    color = tickColor, // Uses onSurfaceVariant for tick marks
                                     radius = tickRadius,
-                                    center = Offset(x, 0f)
+                                    center = Offset(x, verticalOffset)
                                 )
                             }
                         }
@@ -412,57 +430,57 @@ fun ShowQuestion(
 }
 
 
-@Composable
-fun ChoiceWithLabel(
-    item: Int,
-    label: String,
-    index: Int,
-    myViewModel: EsmViewModelInterface,
-    selectedValue: MutableState<Int>,
-//    autoDismiss: MutableState<Boolean>,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
-    )
-    {
-        RadioButton(
-            selected = selectedValue.value == item,
-            onClick =
-                {
-                    selectedValue.value = item
-//                autoDismiss.value = false
-                    myViewModel.setAnswer(item, index)
-//                Log.d("viewModel", "$item selected for q$index!")
-                },
-            modifier = Modifier
-                .height(22.dp)
-        )
-        if (label != "") {
-            Text(
-                text = label,//s[item - 1],
-                fontSize = 12.sp,
-                textAlign = TextAlign.Center,
-                style = LocalTextStyle.current.merge(
-                    TextStyle(
-                        lineHeight = 1.0.em,
-                        platformStyle = PlatformTextStyle(
-                            includeFontPadding = false
-                        ),
-                        lineHeightStyle = LineHeightStyle(
-                            alignment = LineHeightStyle.Alignment.Center,
-                            trim = LineHeightStyle.Trim.None
-                        )
-                    )
-                ),
-
-                )
-        }
-
-    }
-}
+//@Composable
+//fun ChoiceWithLabel(
+//    item: Int,
+//    label: String,
+//    index: Int,
+//    myViewModel: EsmViewModelInterface,
+//    selectedValue: MutableState<Int>,
+////    autoDismiss: MutableState<Boolean>,
+//    modifier: Modifier = Modifier,
+//) {
+//    Column(
+//        verticalArrangement = Arrangement.Center,
+//        horizontalAlignment = Alignment.CenterHorizontally,
+//        modifier = modifier
+//    )
+//    {
+//        RadioButton(
+//            selected = selectedValue.value == item,
+//            onClick =
+//                {
+//                    selectedValue.value = item
+////                autoDismiss.value = false
+//                    myViewModel.setAnswer(item, index)
+////                Log.d("viewModel", "$item selected for q$index!")
+//                },
+//            modifier = Modifier
+//                .height(22.dp)
+//        )
+//        if (label != "") {
+//            Text(
+//                text = label,//s[item - 1],
+//                fontSize = 12.sp,
+//                textAlign = TextAlign.Center,
+//                style = LocalTextStyle.current.merge(
+//                    TextStyle(
+//                        lineHeight = 1.0.em,
+//                        platformStyle = PlatformTextStyle(
+//                            includeFontPadding = false
+//                        ),
+//                        lineHeightStyle = LineHeightStyle(
+//                            alignment = LineHeightStyle.Alignment.Center,
+//                            trim = LineHeightStyle.Trim.None
+//                        )
+//                    )
+//                ),
+//
+//                )
+//        }
+//
+//    }
+//}
 
 
 @Preview
