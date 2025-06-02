@@ -318,12 +318,11 @@ fun ShowQuestion(
                     value = sliderPosition.floatValue,
                     onValueChange = {
                         sliderPosition.floatValue = it
-                        // Convert slider position to 1-4 scale
                         val answer = (it * 9).toInt() + 1
                         myViewModel.setAnswer(answer, index)
                     },
                     valueRange = 0f..1f,
-                    steps = 8, // Creates 4 positions (0, 0.33, 0.66, 1)
+                    steps = 8,
                     modifier = Modifier.padding(top = 8.dp)
                 )
 
