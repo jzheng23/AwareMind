@@ -1,6 +1,5 @@
 package com.jianzheng.studyzero.ui
 
-//import com.jianzheng.studyzero.service.MyForegroundService
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.foundation.Canvas
@@ -355,9 +354,6 @@ fun ShowQuestion(
                             }
                     ) {
                         // Draw custom track and tick marks to match Material Design slider
-                        // Get the colors outside the Canvas
-                        // Get the Material Design default colors for sliders
-//                        val trackColor = MaterialTheme.colorScheme.primaryContainer // For inactive track
                         val trackColor = MaterialTheme.colorScheme.outlineVariant
                         val tickColor = MaterialTheme.colorScheme.primary// For tick marks
 
