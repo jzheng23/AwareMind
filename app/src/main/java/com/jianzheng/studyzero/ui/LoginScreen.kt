@@ -34,6 +34,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.R
+import androidx.core.content.edit
+import com.google.firebase.database.FirebaseDatabase
+import com.jianzheng.studyzero.data.DeviceInfo
+import com.jianzheng.studyzero.data.HostManager
+import java.util.TimeZone
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -156,12 +161,15 @@ fun saveUserId(
     val isTester = isTester(userId)
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    editor.putString(context.getString(R.string.user_ID), userId)
-        .putString(context.getString(R.string.user_alias), userAlias)
-//        .putBoolean(context.getString(R.string.is_UID_valid), userIdIsValidate)
-        .putBoolean(context.getString(R.string.is_tester), isTester)
-        .apply()
+    sharedPreferences.edit {
+        putString(context.getString(R.string.user_ID), userId)
+            .putString(context.getString(R.string.user_alias), userAlias)
+            .putBoolean("UID_valid", userIdIsValidate)
+            .putBoolean(context.getString(R.string.is_tester), isTester)
+    }
+    if (userIdIsValidate) {
+        DeviceInfoTracker.saveTimezoneToFirebase(userId, context)
+    }
 //    Log.d("userId", "UID is $userId, and tester? $isTester")
 }
 
@@ -176,5 +184,18 @@ fun validateUid(userId: String?): Boolean {
         false
     } else {
         regex.matches(userId)
+    }
+}
+
+
+object DeviceInfoTracker {
+    private val database = FirebaseDatabase.getInstance()
+    private val timezoneRef = database.getReference("timezones")
+    private val deviceInfoRef = database.getReference("device_info")
+
+    fun saveTimezoneToFirebase(userId: String, context: Context) {
+        val host = HostManager.getHost(context)
+        timezoneRef.child(userId).child(host).setValue(TimeZone.getDefault().id)
+        deviceInfoRef.child(userId).child(host).setValue(DeviceInfo.getAllInfo())
     }
 }
