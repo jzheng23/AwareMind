@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.ui
 
-import android.os.Handler
-import android.os.Looper
+
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -29,15 +29,21 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
@@ -54,6 +60,7 @@ import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -73,22 +80,24 @@ fun ShowOverlay(
     val autoDismiss = remember { mutableStateOf(true) }
     //TODO need to tidy up
 
-    if (!LocalInspectionMode.current) {
-        val handler = Handler(Looper.myLooper()!!)
-        val displayTimeMillis = if (
-            MyPreferenceManager.getBoolean(context, "is_driving")
-        ) 0L else if (
-            MyPreferenceManager.getBoolean(context, "using_testing_triggers")
-        ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
-        handler.postDelayed({
-            if (autoDismiss.value) {
-                autoDismiss.value = false
-                onClick()
-                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
-//                Log.d("unlock", "unanswered")
-            }
-        }, displayTimeMillis) // 10 seconds delay
-    }
+//    if (!LocalInspectionMode.current) {
+//        val handler = Handler(Looper.myLooper()!!)
+
+//        handler.postDelayed({
+//            if (autoDismiss.value) {
+//                autoDismiss.value = false
+//                onClick()
+//                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
+////                Log.d("unlock", "unanswered")
+//            }
+//        }, displayTimeMillis) // 10 seconds delay
+//    }
+    val displayTimeMillis = if (
+        MyPreferenceManager.getBoolean(context, "is_driving")
+    ) 0L else if (
+        MyPreferenceManager.getBoolean(context, "using_testing_triggers")
+    ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
+
     if (
         !MyPreferenceManager.getBoolean(context, "is_driving")
     ) {
@@ -122,7 +131,12 @@ fun ShowOverlay(
                             .background(color = MaterialTheme.colorScheme.surface)
                     ) {
                         ShowInstruction(
-                            onClick = onClick
+                            autoDismissTimeMs = displayTimeMillis,
+                            onClick = {
+                                autoDismiss.value = false
+                                onClick()
+                                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
+                            }
                         )
                         ShowEsm(
                             myViewModel = myViewModel,
@@ -191,37 +205,93 @@ fun SubmitButton(
 
 @Composable
 fun ShowInstruction(
-    onClick: () -> Unit = {},
+    autoDismissTimeMs: Long = 30000L,
+    onClick: () -> Unit = {}
 ) {
+    var timeLeft by remember { mutableLongStateOf(autoDismissTimeMs) }
+    var isActive by remember { mutableStateOf(true) }
+
+    // Countdown timer
+    LaunchedEffect(key1 = autoDismissTimeMs) {
+        if (isActive && autoDismissTimeMs > 0) {
+            timeLeft = autoDismissTimeMs // Reset when autoDismissTimeMs changes
+            while (timeLeft > 0 && isActive) {
+                delay(50L) // Update every 50ms for smooth animation
+                timeLeft -= 50L
+            }
+            if (timeLeft <= 0 && isActive) {
+                // Auto dismiss
+                isActive = false
+                onClick()
+            }
+        }
+    }
+
     Box(
         modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             text = stringResource(id = R.string.question2),
             style = MaterialTheme.typography.bodyLarge,
-//            fontSize = 15.sp,
             textAlign = TextAlign.Center,
             modifier = Modifier
                 .align(Alignment.Center)
                 .padding(
                     top = mediumPadding,
-//                        start = mediumPadding,
                     end = mediumPadding * 3
                 )
         )
-        IconButton(
-            onClick = {
-                onClick()
-                MyDelayManager.recycleTrigger()
-            },
+
+        // Close button with countdown circle
+        Box(
             modifier = Modifier.align(Alignment.TopEnd)
         ) {
-            Icon(
-                imageVector = Icons.Rounded.Close,
-                contentDescription = "Dismiss",
-                Modifier.size(20.dp),
-                tint = MaterialTheme.colorScheme.onSurface,
-            )
+            // Close button
+            IconButton(
+                onClick = {
+                    isActive = false
+                    onClick()
+                },
+                modifier = Modifier.size(48.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Close,
+                    contentDescription = "Dismiss",
+                    modifier = Modifier.size(20.dp),
+                    tint = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+
+            // Countdown circle - centered over the button
+            if (autoDismissTimeMs > 0) {
+                Canvas(
+                    modifier = Modifier
+                        .size(36.dp)
+                        .align(Alignment.Center) // Center the canvas over the IconButton
+                ) {
+                    val progress = (timeLeft.toFloat() / autoDismissTimeMs.toFloat()).coerceIn(0f, 1f)
+
+
+                    // Background circle
+                    drawCircle(
+                        color = Color.LightGray.copy(alpha = 0.3f),
+                        radius = size.minDimension / 2,
+                        center = center,
+                        style = Stroke(width = 3.dp.toPx())
+                    )
+                    // Progress circle
+                    drawArc(
+                        color = Color.DarkGray.copy(alpha = 0.7f),
+                        startAngle = -90f,
+                        sweepAngle = -360f * progress,
+                        useCenter = false,
+                        style = Stroke(
+                            width = 3.dp.toPx(),
+                            cap = StrokeCap.Round
+                        )
+                    )
+                }
+            }
         }
     }
 }
@@ -285,27 +355,7 @@ fun ShowQuestion(
                     vertical = mediumPadding / 2
                 )
         ) {
-//            Text(
-//                stringResource(questionString),
-//                textAlign = TextAlign.Center,
-//                fontSize = 15.sp,
-//                color = MaterialTheme.colorScheme.onSurfaceVariant,
-//                style = LocalTextStyle.current.merge(
-//                    TextStyle(
-//                        lineHeight = 1.0.em,
-//                        platformStyle = PlatformTextStyle(
-//                            includeFontPadding = false
-//                        ),
-//                        lineHeightStyle = LineHeightStyle(
-//                            alignment = LineHeightStyle.Alignment.Center,
-//                            trim = LineHeightStyle.Trim.None
-//                        )
-//                    )
-//                ),
-//                modifier = Modifier.padding(bottom = 4.dp)
-//            )
 
-            // Slider with labels
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -412,12 +462,14 @@ fun ShowQuestion(
                     Text(
                         text = labels[0],
                         fontSize = 12.sp,
-                        textAlign = TextAlign.Start
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier.offset(x = (-4).dp)
                     )
                     Text(
                         text = labels[1],
                         fontSize = 12.sp,
-                        textAlign = TextAlign.End
+                        textAlign = TextAlign.End,
+                        modifier = Modifier.offset(x = (12).dp)
                     )
                 }
             }
