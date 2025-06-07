@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.room.Room
 import com.google.firebase.database.FirebaseDatabase
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.HostManager
 import com.jianzheng.studyzero.data.unlock.Unlock
 import com.jianzheng.studyzero.data.unlock.UnlockDatabase
 import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
@@ -77,6 +78,7 @@ class UnlockReceiver : BroadcastReceiver() {
     private
     fun uploadUnlockToFirebase(context: Context, unlock: Unlock, generatedId: Long) {
         val uid = MyPreferenceManager.getString(context, context.getString(R.string.user_ID))
+        val host = HostManager.getHost(context)
         val todayDate = LocalDate.now().toString()
         val firebaseUnlock = unlock.toFirebaseUnlock()
         // Obtain a reference to your Firebase database
@@ -88,6 +90,7 @@ class UnlockReceiver : BroadcastReceiver() {
 
         key?.let {
             databaseReference.child(uid)
+                .child(host)
                 .child(todayDate)
                 .child(generatedId.toString())
                 .setValue(firebaseUnlock)

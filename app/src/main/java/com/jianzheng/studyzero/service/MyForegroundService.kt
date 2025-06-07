@@ -27,6 +27,7 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.HostManager
 import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.activity.PhysicalActivity
 import com.jianzheng.studyzero.data.activity.toFirebaseActivity
@@ -273,12 +274,14 @@ class MyForegroundService : Service() {
             DetectedActivity.WALKING -> "WALKING"
             DetectedActivity.RUNNING -> "RUNNING"
             DetectedActivity.IN_VEHICLE -> "IN_VEHICLE"
+            DetectedActivity.ON_BICYCLE -> "ON_BICYCLE"
             else -> "UNKNOWN"
         }
     }
 
     private fun logActivity(context: Context, activityType: Int) {
         val currentTime = System.currentTimeMillis()
+        val host = HostManager.getHost(context)
         val todayDate = LocalDate.now().toString()
         val activityRecord = PhysicalActivity(startTime = currentTime, activityType = activityType)
         val activityDao =
@@ -292,6 +295,7 @@ class MyForegroundService : Service() {
             if (validateUid(uid)) {
                 myRefActivity
                     .child(uid)
+                    .child(host)
                     .child(todayDate)
                     .child(generatedId.toString())
                     .setValue(activityRecord.toFirebaseActivity())

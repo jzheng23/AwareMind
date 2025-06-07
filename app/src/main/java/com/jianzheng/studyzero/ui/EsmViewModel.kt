@@ -7,6 +7,7 @@ import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.HostManager
 import com.jianzheng.studyzero.data.response.EsmUiState
 import com.jianzheng.studyzero.data.response.Response
 import com.jianzheng.studyzero.data.response.ResponseDatabase
@@ -62,9 +63,10 @@ class EsmViewModel(
 
     private fun uploadToFirebase(newResponse: Response) {
         val uid = sharedPreferences.getString("user_ID", "")
+        val host = HostManager.getHost(context)
         val todayDate = LocalDate.now().toString()
         if (validateUid(uid)) {
-            myRef.child(uid.toString()).child(todayDate).child(newResponse.id.toString())
+            myRef.child(uid.toString()).child(host).child(todayDate).child(newResponse.id.toString())
                 .setValue(ResponseNoId.fromResponse(newResponse))
 //            Log.d("data", "uploaded to user id ${uid.toString()}")
         } else Log.d("data", "invalid user id ${uid.toString()}")

@@ -8,6 +8,7 @@ import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.HostManager
 import com.jianzheng.studyzero.data.usage.Usage
 import com.jianzheng.studyzero.data.usage.UsageDatabase
 import com.jianzheng.studyzero.data.usage.toFirebaseUsage
@@ -40,6 +41,7 @@ class MyUsageManager {
         val usageDao = db.usageDao()
         val usages = mutableListOf<Usage>()
         val sessionStartTimes = mutableMapOf<Pair<String, String>, Long>()
+        val host = HostManager.getHost(context)
         val yesterdayDate = LocalDate.now().minusDays(1).toString()
 
         while (usageEvents?.hasNextEvent() == true) {
@@ -72,6 +74,7 @@ class MyUsageManager {
                 val generatedId = usageDao.insert(usage)
                 if (validateUid(uid)) myRef
                     .child(uid)
+                    .child(host)
                     .child(yesterdayDate)
                     .child(generatedId.toString())
                     .setValue(usage.copy(id = generatedId).toFirebaseUsage())

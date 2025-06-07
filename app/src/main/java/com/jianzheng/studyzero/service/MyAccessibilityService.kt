@@ -9,6 +9,7 @@ import androidx.room.Room
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.HostManager
 import com.jianzheng.studyzero.data.input.Input
 import com.jianzheng.studyzero.data.input.InputDao
 import com.jianzheng.studyzero.data.input.InputDatabase
@@ -65,11 +66,13 @@ class MyAccessibilityService : AccessibilityService() {
     }
 
     private fun writeData(input: Input) {
+        val host = HostManager.getHost(this)
         val todayDate = LocalDate.now().toString()
         CoroutineScope(Dispatchers.IO).launch {
             val generatedId = inputDao.insert(input)
             if (validateUid(uid)) {
                 myRef.child(uid)
+                    .child(host)
                     .child(todayDate)
                     .child(generatedId.toString())
                     .setValue(input.copy(id = generatedId).toFirebaseInput())
