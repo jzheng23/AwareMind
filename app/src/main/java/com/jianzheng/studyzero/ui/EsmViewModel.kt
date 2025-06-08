@@ -8,10 +8,12 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.HostManager
+import com.jianzheng.studyzero.data.response.DismissalType
 import com.jianzheng.studyzero.data.response.EsmUiState
 import com.jianzheng.studyzero.data.response.Response
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
+import com.jianzheng.studyzero.data.response.toDismissedEsm
 import com.jianzheng.studyzero.data.response.toResponse
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,12 +75,49 @@ class EsmViewModel(
     }
 
 
+    override suspend fun saveDismissal(dismissalType: DismissalType, delay: Long, startingTime: Long) {
+        val dismissedResponse = Response(
+            answer = 0, // No answer provided
+            delay = delay,
+            startingTime = startingTime,
+            submittingTime = startingTime,
+            isSubmitted = false,
+            dismissalType = dismissalType.name
+        )
+        responseDao.insert(dismissedResponse)
+        uploadDismissalToFirebase(responseDao.getLastResponse())
+        MyPreferenceManager.setLong(
+            context,
+            context.getString(R.string.last_submit),
+            System.currentTimeMillis()
+        )
+    }
+
+    private fun uploadDismissalToFirebase(dismissedResponse: Response) {
+        val uid = sharedPreferences.getString("user_ID", "")
+        val host = HostManager.getHost(context)
+        val todayDate = LocalDate.now().toString()
+        if (validateUid(uid)) {
+            // Save to separate "ESM_dismissed" path with only necessary fields
+            val dismissedEsm = dismissedResponse.toDismissedEsm()
+            myRef.parent?.child("ESM_dismissed") // Use separate path
+                ?.child(uid.toString())
+                ?.child(host)
+                ?.child(todayDate)
+                ?.child(dismissedResponse.id.toString())
+                ?.setValue(dismissedEsm)
+        } else {
+            Log.d("data", "invalid user id ${uid.toString()}")
+        }
+    }
+
 }
 
 interface EsmViewModelInterface {
     val uiState: StateFlow<EsmUiState>
     fun setAnswer(selection: Int, index: Int)
     suspend fun saveAnswer(delay: Long, startingTime: Long)
+    suspend fun saveDismissal(dismissalType: DismissalType, delay: Long, startingTime: Long) // Add this
     // Include other methods that the composable function will use
 }
 
@@ -90,6 +129,14 @@ class MockEsmViewModel : EsmViewModelInterface {
     }
 
     override suspend fun saveAnswer(delay: Long, startingTime: Long) {
+        // Mock implementation
+    }
+
+    override suspend fun saveDismissal(
+        dismissalType: DismissalType,
+        delay: Long,
+        startingTime: Long
+    ) {
         // Mock implementation
     }
 }

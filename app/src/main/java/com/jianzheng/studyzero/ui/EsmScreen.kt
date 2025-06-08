@@ -54,6 +54,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.response.DismissalType
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.ResponseCounter
@@ -132,6 +133,7 @@ fun ShowOverlay(
                     ) {
                         ShowInstruction(
                             autoDismissTimeMs = displayTimeMillis,
+                            myViewModel = myViewModel,
                             onClick = {
                                 autoDismiss.value = false
                                 onClick()
@@ -206,10 +208,13 @@ fun SubmitButton(
 @Composable
 fun ShowInstruction(
     autoDismissTimeMs: Long = 30000L,
+    myViewModel: EsmViewModelInterface,
     onClick: () -> Unit = {}
 ) {
     var timeLeft by remember { mutableLongStateOf(autoDismissTimeMs) }
     var isActive by remember { mutableStateOf(true) }
+    val coroutineScope = rememberCoroutineScope()
+    val startingTime = remember { System.currentTimeMillis() }
 
     // Countdown timer
     LaunchedEffect(key1 = autoDismissTimeMs) {
@@ -222,6 +227,10 @@ fun ShowInstruction(
             if (timeLeft <= 0 && isActive) {
                 // Auto dismiss
                 isActive = false
+                coroutineScope.launch(Dispatchers.IO) {
+                    val delay = System.currentTimeMillis() - startingTime
+                    myViewModel.saveDismissal(DismissalType.AUTO, delay, startingTime)
+                }
                 onClick()
             }
         }
@@ -250,6 +259,10 @@ fun ShowInstruction(
             IconButton(
                 onClick = {
                     isActive = false
+                    coroutineScope.launch(Dispatchers.IO) {
+                        val delay = System.currentTimeMillis() - startingTime
+                        myViewModel.saveDismissal(DismissalType.MANUAL, delay, startingTime)
+                    }
                     onClick()
                 },
                 modifier = Modifier.size(48.dp)
