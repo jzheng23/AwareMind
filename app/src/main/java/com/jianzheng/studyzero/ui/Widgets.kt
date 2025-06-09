@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -31,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -191,6 +194,81 @@ fun ArrowCard(
             Spacer(modifier = Modifier.height(12.dp))
         }
     }
+}
+
+@Composable
+fun EnhancedArrowCard(
+    title: String = "Title",
+    desc: String = "Desc",
+    onAuthClick: () -> Unit = {},
+    buttonEnabled: Boolean = true,
+    status: CardStatus = CardStatus.PENDING
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .clickable { onAuthClick() }
+            .padding(vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
+    ) {
+        Column(
+            horizontalAlignment = Alignment.Start,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = mediumPadding, vertical = mediumPadding / 3)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                IconButton(
+                    onClick = onAuthClick,
+                    enabled = buttonEnabled,
+                ) {
+                    when (status) {
+                        CardStatus.PENDING -> {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                                contentDescription = "pending"
+                            )
+                        }
+                        CardStatus.WAITING -> {
+                            Icon(
+                                imageVector = Icons.Default.MoreVert,
+                                contentDescription = "waiting",
+                                modifier = Modifier.rotate(90f)
+                            )
+                        }
+                        CardStatus.COMPLETED -> {
+                            Icon(
+                                imageVector = Icons.Default.CheckCircle,
+                                contentDescription = "completed",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(2.dp))
+            Text(
+                text = desc, fontSize = 14.sp
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+        }
+    }
+}
+
+enum class CardStatus {
+    PENDING,    // Arrow (default state)
+    WAITING,    // Three dots
+    COMPLETED   // Check mark
 }
 
 @Preview

@@ -70,21 +70,27 @@ fun TutorialScreen(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 if (onceMetCount == 0) {
-                    ArrowCard(
+                    EnhancedArrowCard(
                         title = "Test the Survey Page",
                         desc = if (testShown.value) "You can test again if you would like to." else "Please test and see the survey page.",
                         onAuthClick = {
                             testSurvey(context)
                             testShown.value = true
-                        })
-                    ArrowCard(
-                        title = "Schedule a Survey", desc = if (unlockScheduled.value) {
+                        },
+                        status = if (testShown.value) CardStatus.COMPLETED else CardStatus.PENDING
+//                        status = CardStatus.COMPLETED
+
+                    )
+                    EnhancedArrowCard(
+                        title = "Schedule a Survey",
+                        desc = if (unlockScheduled.value) {
                             "Please lock and then unlock your phone."
                         } else if (testShown.value) {
                             "Schedule the survey page to appear after next unlock " + "of the phone. Please answer the questions. DO NOT dismiss the survey page."
                         } else {
                             "Please test the Survey Page first."
-                        }, onAuthClick = {
+                        },
+                        onAuthClick = {
                             if (testShown.value) {
                                 MyPreferenceManager.setBoolean(
                                     context, "using_once_triggers", true
@@ -95,16 +101,11 @@ fun TutorialScreen(
                                 UnlockReceiverManager.registerReceiver(context)
                                 MyDelayManager.init(context)
                                 unlockScheduled.value = true
-//                                    Handler(Looper.getMainLooper()).post {
-//                                        val toast = Toast.makeText(
-//                                            context,
-//                                            "Please lock and then unlock your phone.",
-//                                            Toast.LENGTH_SHORT
-//                                        )
-//                                        toast.show()
-//                                    }
                             }
-                        }, buttonEnabled = testShown.value
+                        },
+                        buttonEnabled = testShown.value,
+                        status = if (unlockScheduled.value) CardStatus.WAITING else CardStatus.PENDING
+//                        status = CardStatus.WAITING
                     )
                 } else Text(
                     text = "Tutorial finished!", textAlign = TextAlign.Center
@@ -113,7 +114,5 @@ fun TutorialScreen(
 
         }
     })
-
-
 }
 
