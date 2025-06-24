@@ -80,7 +80,7 @@ class EsmViewModel(
             answer = 0, // No answer provided
             delay = delay,
             startingTime = startingTime,
-            submittingTime = startingTime,
+            submittingTime = System.currentTimeMillis(),
             isSubmitted = false,
             dismissalType = dismissalType.name
         )
