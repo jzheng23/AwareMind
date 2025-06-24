@@ -8,8 +8,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.core.content.edit
 
 class SharedPrefsViewModel(application: Application) : AndroidViewModel(application) {
+
     private val sharedPreferences =
         application.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
 
@@ -27,6 +29,9 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     private val _isTester = MutableLiveData<Boolean>()
     val isTester: LiveData<Boolean> = _isTester
 
+    private val _cheatMode = MutableLiveData<Boolean>()
+    val cheatMode: LiveData<Boolean> = _cheatMode
+
     // LiveData for isTutorialFinished
     private val _isTutorialFinished = MutableLiveData<Boolean>()
     val isTutorialFinished: LiveData<Boolean> = _isTutorialFinished
@@ -41,6 +46,8 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
                 "user_ID" -> _userId.value = sharedPreferences.getString("user_ID", "")
                 "user_alias" -> _userAlias.value = sharedPreferences.getString("user_alias", "")
                 "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
+                "cheat_mode" -> _cheatMode.value = sharedPreferences.getBoolean("cheat_mode", false) // Add this line
+
 //                "is_UID_valid" -> _isUserIdValid.value =
 //                    sharedPreferences.getBoolean("is_UID_valid", false)
 
@@ -57,6 +64,7 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
         _userId.value = sharedPreferences.getString("user_ID", "")
         _userAlias.value = sharedPreferences.getString("user_alias", "")
         _isTester.value = sharedPreferences.getBoolean("is_tester", false)
+        _cheatMode.value = sharedPreferences.getBoolean("cheat_mode", false)
 //        _isUserIdValid.value = sharedPreferences.getBoolean("is_UID_valid", false)
         _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
         _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)
@@ -70,6 +78,9 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
         sharedPreferences.unregisterOnSharedPreferenceChangeListener(preferenceChangeListener)
     }
 
+    fun setCheatMode(enabled: Boolean) {
+        sharedPreferences.edit { putBoolean("cheat_mode", enabled) }
+    }
 }
 
 class SharedPrefsViewModelFactory(private val application: Application) :
