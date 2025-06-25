@@ -27,6 +27,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -61,6 +62,7 @@ import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
 import androidx.core.net.toUri
+import com.jianzheng.studyzero.tool.stopEverything
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 
 val mediumPadding = 10.dp
@@ -177,6 +179,7 @@ fun WelcomeInfo(
     )
     val todayCount = welcomeViewModel.todayCount.observeAsState()
     val totalCount = welcomeViewModel.totalCount.observeAsState()
+    val dayCount = welcomeViewModel.dayCount.observeAsState()
     var clickOnInputCount by remember { mutableIntStateOf(0) }
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -184,7 +187,7 @@ fun WelcomeInfo(
         ) {
 
         InfoCard(
-//            dayCount = dayCount.value ?: 0,
+            dayCount = dayCount.value ?: 0,
             todayCount = todayCount.value ?: 0, totalCount = totalCount.value ?: 0
         )
         Spacer(modifier = Modifier.height(12.dp))
@@ -363,8 +366,16 @@ fun LogoAndContact(sharedPrefsViewModel: SharedPrefsViewModel? = null) {
 
 @Composable
 fun InfoCard(
-    todayCount: Int, totalCount: Int
+    dayCount: Int,
+    todayCount: Int,
+    totalCount: Int
 ) {
+    val context = LocalContext.current
+    val sharedPreferences =
+        context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+    val isDataCollecting by usePollState {
+        mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -386,7 +397,23 @@ fun InfoCard(
             )
             RowOfInfo(intCount = todayCount, extraString = "Today")
             RowOfInfo(intCount = totalCount, extraString = "In total")
+
+            RowOfInfo(intCount = dayCount, extraString = "Days")
             Spacer(modifier = Modifier.height(12.dp))
+            if (dayCount > 14) {
+                SwitchCard(
+                    title = "Data collection",
+                    desc = "Start or pause data collection",
+                    onCheckedChange = {
+                        if (it) {
+                            startEverything(context)
+                        } else {
+                            stopEverything(context)
+                        }
+                    },
+                    isChecked = isDataCollecting.value
+                )
+            }
         }
     }
 

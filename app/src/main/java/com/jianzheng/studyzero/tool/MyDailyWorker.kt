@@ -1,6 +1,7 @@
 package com.jianzheng.studyzero.tool
 
 import android.content.Context
+import android.util.Log
 import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
+import androidx.core.content.edit
 
 class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
@@ -121,11 +123,11 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private fun dayCountPlusOne(context: Context) {
         val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-        val editor = sharedPreferences.edit()
-        val dayCount = sharedPreferences.getInt("count_day", 0)
-        editor.putInt("count_day", dayCount + 1)
-            .apply()
-//        Log.d("workManager", "day ${dayCount + 1}")
+        sharedPreferences.edit {
+            val dayCount = sharedPreferences.getInt("count_day", 0)
+            putInt("count_day", dayCount + 1)
+        }
+        Log.d("workManager", "day + 1")
     }
 
     private fun uploadUsageData(context: Context) {

@@ -2,6 +2,7 @@ package com.jianzheng.studyzero.ui
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -325,14 +327,20 @@ fun DebugCard(
 
 
 fun newDayFunction(context: Context) {
-    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
-        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
-        .build()
-    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "daily_maintenance_test",
-        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
-        workRequestTest
-    )
+    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+    sharedPreferences.edit {
+        val dayCount = sharedPreferences.getInt("count_day", 0)
+        putInt("count_day", dayCount + 1)
+    }
+    Log.d("workManager", "day + 1")
+//    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
+//        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+//        .build()
+//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+//        "daily_maintenance_test",
+//        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+//        workRequestTest
+//    )
 //    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
