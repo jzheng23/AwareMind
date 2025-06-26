@@ -23,10 +23,12 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import androidx.core.content.edit
+import com.jianzheng.studyzero.data.HostManager
 
 class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
     private val zoneId = ZoneId.systemDefault()
+    private val host = HostManager.getHost(ctx)
     private val todayStart = LocalDate.now().atStartOfDay(zoneId).toInstant().toEpochMilli()
     private val yesterdayStart = todayStart - ChronoUnit.DAYS.duration.toMillis()
     private val yesterdayDate = LocalDate.now().minusDays(1).toString()
@@ -39,6 +41,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             uploadInputData(context)
             uploadActivityData(context)
             uploadUnlockData(context)
+            uploadUserStats(context)
             dayCountPlusOne(context)
         }
         resetTriggerList(context)
@@ -50,6 +53,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     }
 
     private suspend fun uploadUnlockData(context: Context) {
+
         if (validateUid(uid)) {
             val unlockDao =
                 Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
@@ -60,6 +64,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             unlockDao.getAllYesterday(yesterdayStart, todayStart)
                 .forEach { entry ->
                     myRef.child(uid)
+                        .child(host)
                         .child(yesterdayDate)
                         .child(entry.id.toString())
                         .setValue(entry.toFirebaseUnlock())
@@ -78,6 +83,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             activityDao.getAllYesterday(yesterdayStart, todayStart)
                 .forEach { entry ->
                     myRef.child(uid)
+                        .child(host)
                         .child(yesterdayDate)
                         .child(entry.id.toString())
                         .setValue(entry)
@@ -96,6 +102,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             inputDao.getAllYesterday(yesterdayStart, todayStart)
                 .forEach { entry ->
                     myRef.child(uid)
+                        .child(host)
                         .child(yesterdayDate)
                         .child(entry.id.toString())
                         .setValue(InputNoId.fromInput(entry))
@@ -114,10 +121,33 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             responseDao.getAllYesterday(yesterdayStart, todayStart)
                 .forEach { entry ->
                     myRef.child(uid)
+                        .child(host)
                         .child(yesterdayDate)
                         .child(entry.id.toString())
                         .setValue(ResponseNoId.fromResponse(entry))
                 }
+        }
+    }
+
+    private fun uploadUserStats(context: Context) {
+        if (validateUid(uid)) {
+            val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+            val todayCount = sharedPreferences.getInt("count_today", 0)
+            val totalCount = sharedPreferences.getInt("count_total", 0)
+            val dayCount = sharedPreferences.getInt("count_day", 0)
+            val todayDate = LocalDate.now().toString()
+
+            val userStats = mapOf(
+                "todayCount" to todayCount,
+                "totalCount" to totalCount,
+                "dayCount" to dayCount
+            )
+
+            val myRef = Firebase.database.getReference("user_stats")
+            myRef.child(uid)
+                .child(host)
+                .child(todayDate)
+                .setValue(userStats)
         }
     }
 
