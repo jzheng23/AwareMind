@@ -203,6 +203,9 @@ fun DebugCard(
 //                HorizontalDivider(
 //                    color = MaterialTheme.colorScheme.outline
 //                )
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
                 ButtonCard(
                     title = "New Day",
                     desc = "Simulating a new day starts",
@@ -215,8 +218,15 @@ fun DebugCard(
                     },
                     buttonText = "Simulate"
                 )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
+
+
+                ButtonCard(
+                    title = "Day ++",
+                    desc = "Just add a day count",
+                    onAuthClick = {
+                        dayPlus(context)
+                    },
+                    buttonText = "Add"
                 )
 //                ButtonCard(
 //                    title = "Usage",
@@ -325,22 +335,24 @@ fun DebugCard(
     }
 }
 
-
-fun newDayFunction(context: Context) {
+fun dayPlus(context: Context) {
     val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     sharedPreferences.edit {
         val dayCount = sharedPreferences.getInt("count_day", 0)
         putInt("count_day", dayCount + 1)
     }
     Log.d("workManager", "day + 1")
-//    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
-//        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
-//        .build()
-//    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-//        "daily_maintenance_test",
-//        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
-//        workRequestTest
-//    )
+}
+
+fun newDayFunction(context: Context) {
+    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
+        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+        .build()
+    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
+        "daily_maintenance_test",
+        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+        workRequestTest
+    )
 //    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
 //        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
 //        .build()
