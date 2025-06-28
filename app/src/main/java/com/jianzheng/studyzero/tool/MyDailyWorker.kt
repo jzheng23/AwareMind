@@ -136,8 +136,10 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             val totalCount = sharedPreferences.getInt("count_total", 0)
             val dayCount = sharedPreferences.getInt("count_day", 0)
             val todayDate = LocalDate.now().toString()
+            val currentTimestamp = System.currentTimeMillis()
 
             val userStats = mapOf(
+                "timestamp" to currentTimestamp,
                 "todayCount" to todayCount,
                 "totalCount" to totalCount,
                 "dayCount" to dayCount
