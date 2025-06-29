@@ -70,6 +70,9 @@ object MyDelayManager {
 //            "unlock",
 //            "TriggerIndex: $triggerIndex, triggerListSize: ${triggerList.size}, random completed: ${responseCounter.checkRandomComplete()}"
 //        )
+        if (responseCounter.checkDailyLimitReached()) {
+            return
+        }
         val currentTimeMillis = System.currentTimeMillis()
         val lastSubmit =
             MyPreferenceManager.getLong(context, context.getString(R.string.last_submit))

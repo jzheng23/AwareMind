@@ -14,7 +14,7 @@ kotlin {
 }
 android {
     namespace = "com.jianzheng.studyzero"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.jianzheng.studyzero"
