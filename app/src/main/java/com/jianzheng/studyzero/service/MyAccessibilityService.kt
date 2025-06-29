@@ -1,7 +1,6 @@
 package com.jianzheng.studyzero.service
 
 import android.accessibilityservice.AccessibilityService
-import android.content.Context
 import android.content.SharedPreferences
 import android.os.Build
 import android.view.accessibility.AccessibilityEvent

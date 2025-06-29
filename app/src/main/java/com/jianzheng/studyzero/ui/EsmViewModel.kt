@@ -32,12 +32,14 @@ class EsmViewModel(
     private val responseDao = db.responseDao()
     private val _uiState = MutableStateFlow(EsmUiState(0, false))
     override val uiState: StateFlow<EsmUiState> = _uiState.asStateFlow()
+
+
     private val database = Firebase.database
     private val myRef = database.getReference("ESM")
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
 
-    override fun setAnswer(selection: Int, index: Int) {
+    override fun setAnswer(selection: Int) {
         //Log.d("viewModel", "$index is set to ${uiState.value.answer[index]}")
         _uiState.update { currentState ->
             currentState.copy(
@@ -115,7 +117,7 @@ class EsmViewModel(
 
 interface EsmViewModelInterface {
     val uiState: StateFlow<EsmUiState>
-    fun setAnswer(selection: Int, index: Int)
+    fun setAnswer(selection: Int)
     suspend fun saveAnswer(delay: Long, startingTime: Long)
     suspend fun saveDismissal(dismissalType: DismissalType, delay: Long, startingTime: Long) // Add this
     // Include other methods that the composable function will use
@@ -124,8 +126,7 @@ interface EsmViewModelInterface {
 
 class MockEsmViewModel : EsmViewModelInterface {
     override val uiState = MutableStateFlow(EsmUiState(0, false))
-    override fun setAnswer(selection: Int, index: Int) {
-        // Mock implementation
+    override fun setAnswer(selection: Int) {
     }
 
     override suspend fun saveAnswer(delay: Long, startingTime: Long) {

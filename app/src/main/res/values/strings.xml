@@ -1,9 +1,6 @@
 <resources>
     <string name="app_name">AwareMind</string>
-    <string name="question1">Right now, I am using my phone (&#160;&#160;&#160;). </string>
     <string name="question2">Reflecting on my phone usage,\nI should [&#160;&#160;&#160;] using my phone now.</string>
-    <string name="instruction_backup">Please answer the questions reflecting on your current phone usage</string>
-    <string name="instruction">Reflecting on my phone usage …</string>
     <string name="submit">Submit</string>
     <string name="accessibility_service_description">To record the number of taps, scrolls, and text edits performed on the phone.</string>
     <string name="url_privacy_policy">https://sites.google.com/umd.edu/awarefocus/privacy-policy</string>
@@ -32,8 +29,6 @@
     <string name="is_tester">is_tester</string>
     <string name="showing_notification">showing_notification</string>
     <string name="last_submit">last_submit</string>
-    <string name="is_driving">is_driving</string>
-    <string name="current_activity">current_activity</string>
     <string name="unlock_registered">unlock_registered</string>
     <string name="accessibility_dialogue"><![CDATA[Go to Accessibility settings -> Installed apps -> AwareMind, and allow the permission.]]></string>
 </resources>

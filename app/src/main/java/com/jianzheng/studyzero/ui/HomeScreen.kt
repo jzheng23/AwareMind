@@ -355,7 +355,7 @@ fun LogoAndContact(sharedPrefsViewModel: SharedPrefsViewModel? = null) {
                         try {
                             val intent = Intent(Intent.ACTION_VIEW, url.toUri())
                             context.startActivity(intent)
-                        } catch (e: Exception) {
+                        } catch (_: Exception) {
                             // Handle the exception when no Activity can handle the Intent
                         }
                     })
@@ -461,7 +461,7 @@ fun getVersionName(context: Context): String {
     return try {
         val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
         packageInfo.versionName ?: "Not Found"
-    } catch (e: PackageManager.NameNotFoundException) {
+    } catch (_: PackageManager.NameNotFoundException) {
         "Not Found"
     }
 }

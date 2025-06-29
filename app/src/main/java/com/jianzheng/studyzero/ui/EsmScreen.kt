@@ -380,7 +380,7 @@ fun ShowQuestion(
                         onValueChange = { newValue ->
                             sliderPosition.value = newValue
                             val answer = (newValue * 9).toInt() + 1
-                            myViewModel.setAnswer(answer, index)
+                            myViewModel.setAnswer(answer)
                         },
                         valueRange = 0f..1f,
                         steps = 8,
@@ -412,7 +412,7 @@ fun ShowQuestion(
                                     // Set the slider to the tapped position
                                     sliderPosition.value = newValue
                                     val answer = (newValue * 9).toInt() + 1
-                                    myViewModel.setAnswer(answer, index)
+                                    myViewModel.setAnswer(answer)
                                 }
                             }
                     ) {
