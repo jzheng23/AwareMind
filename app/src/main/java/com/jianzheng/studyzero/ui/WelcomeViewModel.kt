@@ -23,14 +23,14 @@ class WelcomeViewModel(application: Application) : AndroidViewModel(application)
             when (key) {
                 "count_today" -> _todayCount.value = sharedPreferences.getInt("count_today", 0)
                 "count_total" -> _totalCount.value = sharedPreferences.getInt("count_total", 0)
-                "count_day" -> _dayCount.value = sharedPreferences.getInt("count_day", 0)
+                "count_day" -> _dayCount.value = sharedPreferences.getInt("count_day", 1)
             }
         }
 
     init {
         _todayCount.value = sharedPreferences.getInt("count_today", 0)
         _totalCount.value = sharedPreferences.getInt("count_total", 0)
-        _dayCount.value = sharedPreferences.getInt("count_day", 0)
+        _dayCount.value = sharedPreferences.getInt("count_day", 1)
         // Set up a listener for changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
     }

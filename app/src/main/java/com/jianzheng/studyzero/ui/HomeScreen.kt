@@ -144,6 +144,7 @@ fun HomeScreen(
                         onAuthClick = {
                             if (isTutorialFinished) {
                                 startEverything(context)
+                                sharedPrefsViewModel.startCounting()
                             }
                         },
                         buttonEnabled = isTutorialFinished

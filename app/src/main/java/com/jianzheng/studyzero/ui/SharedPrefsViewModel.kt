@@ -40,6 +40,13 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     private val _isDataCollecting = MutableLiveData<Boolean>()
     val isDataCollecting: LiveData<Boolean> = _isDataCollecting
 
+    private val _todayCount = MutableLiveData<Int>()
+    val todayCount: LiveData<Int> = _todayCount
+
+    private val _totalCount = MutableLiveData<Int>()
+    val totalCount: LiveData<Int> = _totalCount
+
+
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
@@ -56,6 +63,8 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
 
                 "collecting_data" -> _isDataCollecting.value =
                     sharedPreferences.getBoolean("collecting_data", false)
+                "today_count" -> _todayCount.value = sharedPreferences.getInt("count_today", 0)
+                "total_count" -> _totalCount.value = sharedPreferences.getInt("count_total", 0)
             }
         }
 
@@ -68,6 +77,8 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
 //        _isUserIdValid.value = sharedPreferences.getBoolean("is_UID_valid", false)
         _isTutorialFinished.value = sharedPreferences.getBoolean("tutorial_finished", false)
         _isDataCollecting.value = sharedPreferences.getBoolean("collecting_data", false)
+        _todayCount.value = sharedPreferences.getInt("count_today", 0)
+        _totalCount.value = sharedPreferences.getInt("count_total", 0)
 
         // Register the listener for changes
         sharedPreferences.registerOnSharedPreferenceChangeListener(preferenceChangeListener)
@@ -81,6 +92,14 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     fun setCheatMode(enabled: Boolean) {
         sharedPreferences.edit { putBoolean("cheat_mode", enabled) }
     }
+
+    fun startCounting() {
+        sharedPreferences.edit {
+            putInt("count_today", 0)
+            putInt("count_total", 0)
+        }
+    }
+
 }
 
 class SharedPrefsViewModelFactory(private val application: Application) :

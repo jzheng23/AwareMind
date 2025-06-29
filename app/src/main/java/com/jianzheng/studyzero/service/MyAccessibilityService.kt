@@ -48,7 +48,7 @@ class MyAccessibilityService : AccessibilityService() {
 
     override fun onServiceConnected() {
         super.onServiceConnected()
-        sharedPrefs = getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
+        sharedPrefs = getSharedPreferences("MySharedPrefs", MODE_PRIVATE)
 //        inputToBeRecord = sharedPrefs.getBoolean("input_record", false)
         prefsListener = SharedPreferences.OnSharedPreferenceChangeListener { prefs, key ->
             if (key == "recording_input") {

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.content.edit
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
@@ -115,24 +116,24 @@ fun getInitialDelay(): Long {
 
 fun initializeSharedPreference(context: Context) {
     val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    editor.putInt(context.getString(R.string.count_today), 0)
-        .putInt(context.getString(R.string.count_total), 0)
-        .putInt(context.getString(R.string.count_day), 0)
-        .putBoolean(context.getString(R.string.using_once_triggers), false)
-        .putBoolean(context.getString(R.string.using_testing_triggers), false)
-        .putBoolean(context.getString(R.string.is_first_run), false)
-        .putString(context.getString(R.string.user_ID), "")
+    sharedPreferences.edit {
+        putInt(context.getString(R.string.count_today), 0)
+            .putInt(context.getString(R.string.count_total), 0)
+            .putInt(context.getString(R.string.count_day), 0)
+            .putBoolean(context.getString(R.string.using_once_triggers), false)
+            .putBoolean(context.getString(R.string.using_testing_triggers), false)
+            .putBoolean(context.getString(R.string.is_first_run), false)
+            .putString(context.getString(R.string.user_ID), "")
 //        .putBoolean(context.getString(R.string.is_UID_valid), false)
-        .putInt(context.getString(R.string.count_20_met), 0)
-        .putInt(context.getString(R.string.count_30_met), 0)
-        .putInt(context.getString(R.string.count_once_met), 0)
-        .putInt(context.getString(R.string.count_random_met), 0)
-        .putBoolean(context.getString(R.string.recording_input), false)
-        .putBoolean(context.getString(R.string.tutorial_finished), false)
-        .putBoolean(context.getString(R.string.collecting_data), false)
-        .putBoolean(context.getString(R.string.is_tester), false)
-        .putBoolean(context.getString(R.string.showing_notification), false)
-        .apply()
+            .putInt(context.getString(R.string.count_20_met), 0)
+            .putInt(context.getString(R.string.count_30_met), 0)
+            .putInt(context.getString(R.string.count_once_met), 0)
+            .putInt(context.getString(R.string.count_random_met), 0)
+            .putBoolean(context.getString(R.string.recording_input), false)
+            .putBoolean(context.getString(R.string.tutorial_finished), false)
+            .putBoolean(context.getString(R.string.collecting_data), false)
+            .putBoolean(context.getString(R.string.is_tester), false)
+            .putBoolean(context.getString(R.string.showing_notification), false)
+    }
 }
 
