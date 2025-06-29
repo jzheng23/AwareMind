@@ -58,11 +58,6 @@ class EsmViewModel(
             context.getString(R.string.last_submit),
             System.currentTimeMillis()
         )
-//        Handler(Looper.getMainLooper()).post {
-//            val toast = Toast.makeText(context, "Submitted successfully!", Toast.LENGTH_SHORT)
-//            toast.show()
-//        }
-//        Log.d("data", "answer saved at ${responseDao.getLastResponse().startingTime}")
     }
 
     private fun uploadToFirebase(newResponse: Response) {
