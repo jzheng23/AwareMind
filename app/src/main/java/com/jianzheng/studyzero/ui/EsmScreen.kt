@@ -327,7 +327,6 @@ fun ShowEsm(
 //        )
         ShowQuestion(
 //            questionString = R.string.question2,
-            index = 1,
             myViewModel = myViewModel,
             labelSet = 2
 //            autoDismiss = autoDismiss
@@ -340,7 +339,6 @@ fun ShowEsm(
 fun ShowQuestion(
 //    questionString: Int,
     modifier: Modifier = Modifier,
-    index: Int,
     myViewModel: EsmViewModelInterface,
     labelSet: Int,
 ) {

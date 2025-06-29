@@ -187,7 +187,7 @@ fun WelcomeInfo(
         ) {
 
         InfoCard(
-            dayCount = dayCount.value ?: 0,
+            dayCount = dayCount.value ?: 1,
             todayCount = todayCount.value ?: 0, totalCount = totalCount.value ?: 0
         )
         Spacer(modifier = Modifier.height(12.dp))
