@@ -32,6 +32,7 @@ import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.activity.PhysicalActivity
 import com.jianzheng.studyzero.data.activity.toFirebaseActivity
 import com.jianzheng.studyzero.tool.MyDelayManager
+import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.UnlockReceiverManager
 import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
@@ -100,12 +101,19 @@ class MyForegroundService : Service() {
         super.onCreate()
         Log.d("ATR", "MyForegroundService onCreate() called")
         uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
-//        activityDao = Room.databaseBuilder(this, ActivityDatabase::class.java, "activity_database")
-        initializeActivityTransition()
-        mTransitionsReceiver = TransitionsReceiver().also {
-            val filter = IntentFilter(transitionsReceiverAction)
-            registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
+
+        // Only initialize activity tracking if permission is granted
+        if (checkAndRequestPermissions()) {
+            initializeActivityTransition()
+            mTransitionsReceiver = TransitionsReceiver().also {
+                val filter = IntentFilter(transitionsReceiverAction)
+                registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
+            }
+        } else {
+            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking setup")
         }
+
+        // These can run regardless of activity permission
         scheduleDailyMaintenance(this)
         MyDelayManager.init(this)
         UnlockReceiverManager.registerReceiver(this)
@@ -152,18 +160,33 @@ class MyForegroundService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         Log.d("ATR", "MyForegroundService onStartCommand() called")
-        val notification =
-            createNotification() // Implement this method to create a notification
+
+        // Call startForeground() IMMEDIATELY - before any other work
+        val notification = createNotification()
         startForeground(1, notification)
         MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
 
-        testPendingIntent()
+        // Only initialize activity tracking if permission is granted
+        if (checkAndRequestPermissions()) {
+            testPendingIntent()
+            // Activity tracking will be initialized in onCreate()
+        } else {
+            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking")
+        }
 
         return START_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder? {
         return null
+    }
+
+    private fun checkAndRequestPermissions(): Boolean {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            MyPermissionManager.checkActivityPermission(this)
+        } else {
+            true
+        }
     }
 
     private fun createNotificationChannel() {
