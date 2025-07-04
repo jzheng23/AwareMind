@@ -32,8 +32,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.ExistingWorkPolicy
+import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
@@ -45,7 +45,6 @@ import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything
 import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.tool.stopEverything
-import java.util.concurrent.TimeUnit
 
 @Composable
 fun DebugCard(
@@ -345,19 +344,14 @@ fun dayPlus(context: Context) {
 }
 
 fun newDayFunction(context: Context) {
-    val workRequestTest = PeriodicWorkRequestBuilder<MyDailyWorker>(1, TimeUnit.DAYS)
-        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
+    val workRequestTest = OneTimeWorkRequestBuilder<MyDailyWorker>()
         .build()
-    WorkManager.getInstance(context).enqueueUniquePeriodicWork(
-        "daily_maintenance_test",
-        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or REPLACE
+
+    WorkManager.getInstance(context).enqueueUniqueWork(
+        "daily_maintenance_immediate",
+        ExistingWorkPolicy.KEEP,
         workRequestTest
     )
-//    val workRequestOneTime = OneTimeWorkRequestBuilder<MyDailyWorker>()
-//        .setInitialDelay(1000, TimeUnit.MILLISECONDS)
-//        .build()
-//    WorkManager.getInstance(context).enqueue(workRequestOneTime)
-//    Log.d("dayCount", "new day reset")
 }
 
 fun resetTriggerFunction(context: Context) {

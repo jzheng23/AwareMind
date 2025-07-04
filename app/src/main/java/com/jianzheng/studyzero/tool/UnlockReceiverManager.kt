@@ -8,35 +8,39 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.receiver.UnlockReceiver
 
 object UnlockReceiverManager {
-    private var unlockReceiver = UnlockReceiver()
+    private var unlockReceiver: UnlockReceiver? = null
+    // REMOVED: registeredContext field entirely
 
     fun registerReceiver(context: Context) {
+        if (unlockReceiver != null) {
+            Log.w("UnlockReceiver", "Receiver already registered")
+            return
+        }
+
+        unlockReceiver = UnlockReceiver()
+
         val filter = IntentFilter().apply {
             addAction(Intent.ACTION_USER_PRESENT)
             addAction(Intent.ACTION_SCREEN_OFF)
         }
+
         context.registerReceiver(unlockReceiver, filter)
-//        Log.d("unlock", "unlock receiver registered")
         MyPreferenceManager.setBoolean(context, context.getString(R.string.unlock_registered), true)
     }
 
     fun unregisterReceiver(context: Context) {
-        if (MyPreferenceManager.getBoolean(
-                context,
-                context.getString(R.string.unlock_registered)
-            )
-        ) {
+        unlockReceiver?.let { receiver ->
             try {
-                context.unregisterReceiver(unlockReceiver)
+                context.unregisterReceiver(receiver)
+                unlockReceiver = null
+                MyPreferenceManager.setBoolean(
+                    context,
+                    context.getString(R.string.unlock_registered),
+                    false
+                )
             } catch (e: IllegalArgumentException) {
-                Log.e("Receiver Error", "Error unregistering receiver: ${e.message}")
+                Log.e("UnlockReceiver", "Error unregistering receiver: ${e.message}")
             }
-//            Log.d("unlock", "unlock receiver unregistered")
-            MyPreferenceManager.setBoolean(
-                context,
-                context.getString(R.string.unlock_registered),
-                false
-            )
-        } else Log.d("unlock", "unlock receiver is not registered")
+        }
     }
 }

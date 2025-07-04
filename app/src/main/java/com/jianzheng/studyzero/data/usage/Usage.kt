@@ -8,7 +8,7 @@ data class Usage(
     @PrimaryKey(autoGenerate = true)
     val id: Long = 0L,
     val packageName: String,
-    val className: String,
+//    val className: String,
     val startTime: Long,
     val endTime: Long
 )
