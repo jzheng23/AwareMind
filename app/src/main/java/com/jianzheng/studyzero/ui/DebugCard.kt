@@ -38,10 +38,8 @@ import androidx.work.WorkManager
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyDailyWorker
-import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.resetEverything
 import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.tool.stopEverything
@@ -76,10 +74,7 @@ fun DebugCard(
     val isDataCollecting by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
-    val isTestTriggers by usePollState {
-        mutableStateOf(sharedPreferences.getBoolean("using_testing_triggers", false))
-    }
-//    val isNotificationShowing by usePollState {
+    //    val isNotificationShowing by usePollState {
 //        mutableStateOf(sharedPreferences.getBoolean("showing_notification", false))
 //    }
 //    val isUnlockReceiverRegistered by usePollState {
@@ -128,68 +123,25 @@ fun DebugCard(
             }
             Spacer(modifier = Modifier.height(2.dp))
             if (isVisible) {
-//                Text("User ID is $userId, upload is ${validateUid(userId)}")
-//                HorizontalDivider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
                 Text("Current activity: ${currentActivity.value}")
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
                 Text("Synced at: $lastMaintenance")
-//                HorizontalDivider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
-//                SwitchCard(
-//                    title = "Notification",
-//                    desc = "Show a persistent notification",
-//                    onCheckedChange = {
-//                        if (it) {
-//                            startMyForegroundService(context)
-//                        } else {
-//                            context.stopService(Intent(context, MyForegroundService::class.java))
-//                        }
-//                    },
-//                    isEnabled = MyPermissionManager.checkNotificationPermission(context),
-//                    isChecked = isNotificationShowing.value
-//                )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
 //                SwitchCard(
-//                    title = "ESM",
-//                    desc = "Schedule ESM after unlock",
+//                    title = "",
+//                    desc = "Use testing triggers?",
 //                    onCheckedChange = {
-//                        if (it) {
-//                            MyDelayManager.init(context)
-//                        } else {
-//                            MyReceiverManager.unregisterReceiver(context)
-//                            Log.d("unlock", "unlock unregistered")
-//                        }
+//                        MyPreferenceManager.setBoolean(context, "using_testing_triggers", it)
+//                        MyDelayManager.init(context)
+//                        resetTriggerFunction(context)
 //                    },
 //                    isEnabled = isOverlayAllowed,
-//                    isChecked = isUnlockReceiverRegistered.value
+//                    isChecked = isTestTriggers.value
 //                )
-                SwitchCard(
-                    title = "",
-                    desc = "Use testing triggers?",
-                    onCheckedChange = {
-                        MyPreferenceManager.setBoolean(context, "using_testing_triggers", it)
-                        MyDelayManager.init(context)
-                        resetTriggerFunction(context)
-//                        val triggerType = if (it) "testing" else "real"
-//                        val toast =
-//                            Toast.makeText(
-//                                context,
-//                                "Using $triggerType triggers",
-//                                Toast.LENGTH_SHORT
-//                            )
-//                        Handler(Looper.getMainLooper()).post { toast.show() }
-//                        Handler(Looper.getMainLooper()).postDelayed({ toast.cancel() }, 1500)
-                    },
-                    isEnabled = isOverlayAllowed,
-                    isChecked = isTestTriggers.value
-                )
                 ButtonCard(
                     title = "",
                     desc = "Test the ESM page",
@@ -199,9 +151,6 @@ fun DebugCard(
                     buttonText = "Test",
                     buttonEnabled = isOverlayAllowed
                 )
-//                HorizontalDivider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -210,15 +159,9 @@ fun DebugCard(
                     desc = "Simulating a new day starts",
                     onAuthClick = {
                         newDayFunction(context)
-//                        Handler(Looper.getMainLooper()).post {
-//                            val toast = Toast.makeText(context, "Good morning!", Toast.LENGTH_SHORT)
-//                            toast.show()
-//                        }
                     },
                     buttonText = "Simulate"
                 )
-
-
                 ButtonCard(
                     title = "Day ++",
                     desc = "Just add a day count",
@@ -242,29 +185,7 @@ fun DebugCard(
 //                    buttonText = "Get",
 //                    buttonEnabled = isUsageAllowed
 //                )
-//                Divider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
-//                SwitchCard(
-//                    title = "Input",
-//                    desc = "Record input interaction",
-//                    onCheckedChange = {
-//                        MyPreferenceManager.setBoolean(context, "input_record", it)
-//                    },
-//                    isEnabled = isA11yAllowed,
-//                    isChecked = isInputRecording
-//                )
 
-//                HorizontalDivider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
-//                SwitchCard(
-//                    title = "Driving",
-//                    desc = "I am driving",
-//                    onCheckedChange = {
-//                        MyPreferenceManager.setBoolean(context, "is_driving", it)
-//                    }
-//                )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -300,17 +221,6 @@ fun DebugCard(
                     },
                     isChecked = isDataCollecting.value
                 )
-//                Divider(
-//                    color = MaterialTheme.colorScheme.outline
-//                )
-//                ButtonCard(
-//                    title = "User ID",
-//                    desc = "Change user ID",
-//                    onAuthClick = {
-//                        navController.navigate(AppRoutes.LOGIN)
-//                    },
-//                    buttonText = "Change"
-//                )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
                 )
@@ -319,11 +229,6 @@ fun DebugCard(
                     desc = "Reset to default",
                     onAuthClick = {
                         resetEverything(context)
-//                        Handler(Looper.getMainLooper()).post {
-//                            val toast =
-//                                Toast.makeText(context, "Reset to default!", Toast.LENGTH_SHORT)
-//                            toast.show()
-//                        }
                     },
                     buttonText = "Reset"
                 )
@@ -352,12 +257,6 @@ fun newDayFunction(context: Context) {
         ExistingWorkPolicy.KEEP,
         workRequestTest
     )
-}
-
-fun resetTriggerFunction(context: Context) {
-    val responseCounter = ResponseCounter(context)
-    responseCounter.resetCounter()
-    MyDelayManager.resetTriggerList()
 }
 
 fun testSurvey(context: Context) {

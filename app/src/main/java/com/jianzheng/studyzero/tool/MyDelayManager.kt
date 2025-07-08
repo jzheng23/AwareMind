@@ -16,11 +16,10 @@ import java.util.concurrent.TimeUnit
 object MyDelayManager {
     private val longTriggerList =
         mutableListOf(5, 8, 12, 18, 27, 41, 62, 95, 144, 220, 335, 510, 776)
-    private val shortTriggerList = mutableListOf(1, 5, 8)
     private lateinit var originalTriggerList: MutableList<Int>
     private lateinit var triggerList: MutableList<Int>
-    private var extraTriggerThirty = 30L //30 minutes for real 30 seconds for testing
-    private var extraTriggerTwenty = 20L
+    private var extraTriggerThirty = 30L * 60 // 30 minutes
+    private var extraTriggerTwenty = 20L * 60 // 20 minutes
     private var triggerIndex: Int = 0
     private lateinit var myWorkManager: WorkManager
     private lateinit var randomRequestID: UUID
@@ -39,22 +38,9 @@ object MyDelayManager {
             )
         ) {
             originalTriggerList = mutableListOf(1)
-            extraTriggerThirty = 30L * 60 //30 minutes for real 30 seconds for testing
-            extraTriggerTwenty = 20L * 60
             tempTag = "count_once_met"
-        } else if (
-            MyPreferenceManager.getBoolean(
-                context,
-                context.getString(R.string.using_testing_triggers)
-            )
-        ) {//testing
-            originalTriggerList = shortTriggerList
-            extraTriggerThirty = 30L //30 minutes for real 30 seconds for testing
-            extraTriggerTwenty = 20L
-        } else {//not testing
+        } else {
             originalTriggerList = longTriggerList
-            extraTriggerThirty = 30L * 60 //30 minutes for real 30 seconds for testing
-            extraTriggerTwenty = 20L * 60
         }
         triggerList = originalTriggerList.shuffled().toMutableList()
 
@@ -80,10 +66,6 @@ object MyDelayManager {
         if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
             if (
                 (tempTag == "count_once_met") or
-                MyPreferenceManager.getBoolean(
-                    context,
-                    context.getString(R.string.using_testing_triggers)
-                ) or
                 ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + 900_000L))
             ) {
                 val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
@@ -99,7 +81,7 @@ object MyDelayManager {
                 randomRequestID = triggerRequest.id
                 Log.d(
                     "unlock",
-                    "random trigger $triggerIndex is scheduled in ${triggerList[triggerIndex]} "
+                    "random trigger $triggerIndex is scheduled in ${triggerList[triggerIndex]} seconds"
                 )
                 triggerIndex++
             } else {
@@ -116,8 +98,7 @@ object MyDelayManager {
         }
         if (!responseCounter.check20Complete()) {
             val twentyTriggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
-//                .setInitialDelay(extraTriggerTwenty, TimeUnit.MINUTES)
-                .setInitialDelay(extraTriggerTwenty, TimeUnit.SECONDS)
+                .setInitialDelay(extraTriggerTwenty, TimeUnit.MINUTES)
                 .setInputData(
                     workDataOf(
                         "tag" to context.getString(R.string.count_20_met),
@@ -129,16 +110,11 @@ object MyDelayManager {
             twentyRequestID = twentyTriggerRequest.id
             Log.d(
                 "unlock",
-                "a fixed trigger is scheduled in 20 " + if (MyPreferenceManager.getBoolean(
-                        context,
-                        context.getString(R.string.using_testing_triggers)
-                    )
-                ) "sec" else "min"
+                "a fixed trigger is scheduled in 20 minutes"
             )
         } else if (!responseCounter.check30Complete()) {
             val thirtyTriggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
-//                .setInitialDelay(extraTriggerThirty, TimeUnit.MINUTES)
-                .setInitialDelay(extraTriggerThirty, TimeUnit.SECONDS)
+                .setInitialDelay(extraTriggerThirty, TimeUnit.MINUTES)
                 .setInputData(
                     workDataOf(
                         "tag" to context.getString(R.string.count_30_met),
@@ -150,11 +126,7 @@ object MyDelayManager {
             thirtyRequestID = thirtyTriggerRequest.id
             Log.d(
                 "unlock",
-                "a fixed trigger is scheduled in 30 " + if (MyPreferenceManager.getBoolean(
-                        context,
-                        context.getString(R.string.using_testing_triggers)
-                    )
-                ) "sec" else "min"
+                "a fixed trigger is scheduled in 30 minutes"
             )
         } else {
             Log.d("unlock", "fixed triggers completed.")

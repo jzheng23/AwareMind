@@ -13,7 +13,7 @@ import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.IBinder
-import android.util.Log
+//import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -89,7 +89,7 @@ class MyForegroundService : Service() {
     }
 
     private fun testPendingIntent() {
-        Log.d("ATR", "Testing broadcast receiver manually")
+//        Log.d("ATR", "Testing broadcast receiver manually")
         val testIntent = Intent(transitionsReceiverAction)
         testIntent.setPackage(packageName)
         testIntent.putExtra("test", "manual_trigger")
@@ -99,7 +99,7 @@ class MyForegroundService : Service() {
     @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate() {
         super.onCreate()
-        Log.d("ATR", "MyForegroundService onCreate() called")
+//        Log.d("ATR", "MyForegroundService onCreate() called")
         uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
 
         // Only initialize activity tracking if permission is granted
@@ -110,7 +110,7 @@ class MyForegroundService : Service() {
                 registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
             }
         } else {
-            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking setup")
+//            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking setup")
         }
 
         // These can run regardless of activity permission
@@ -141,25 +141,25 @@ class MyForegroundService : Service() {
         ) {
             val task = ActivityRecognition.getClient(this)
                 .requestActivityTransitionUpdates(request, mActivityTransitionsPendingIntent!!)
-            Log.d("ATR", "task created")
+//            Log.d("ATR", "task created")
 
             task.addOnSuccessListener {
 //                startForegroundServiceWithNotification()
-                Log.d("ATR", "success lister")
+//                Log.d("ATR", "success lister")
             }
 
             task.addOnFailureListener { _ ->
-                Log.d("ATR", "failure listener")
+//                Log.d("ATR", "failure listener")
             }
         } else {
-            Log.d("ATR", "activity recognition permission not allowed")
+//            Log.d("ATR", "activity recognition permission not allowed")
         }
 
     }
 
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        Log.d("ATR", "MyForegroundService onStartCommand() called")
+//        Log.d("ATR", "MyForegroundService onStartCommand() called")
 
         // Call startForeground() IMMEDIATELY - before any other work
         val notification = createNotification()
@@ -171,7 +171,7 @@ class MyForegroundService : Service() {
             testPendingIntent()
             // Activity tracking will be initialized in onCreate()
         } else {
-            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking")
+//            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking")
         }
 
         return START_STICKY
@@ -257,10 +257,10 @@ class MyForegroundService : Service() {
 
 
         override fun onReceive(context: Context, intent: Intent) {
-            Log.d("ATR", "on receive")
+//            Log.d("ATR", "on receive")
 
             if (intent.hasExtra("test")) {
-                Log.d("ATR", "Test broadcast received: ${intent.getStringExtra("test")}")
+//                Log.d("ATR", "Test broadcast received: ${intent.getStringExtra("test")}")
                 return
             }
 
@@ -270,7 +270,7 @@ class MyForegroundService : Service() {
                     // Update notification with the current activity
                     val currentActivity =
                         toActivityString(event.activityType)
-                    Log.d("ATR", "current activity: $currentActivity")
+//                    Log.d("ATR", "current activity: $currentActivity")
                     if (event.transitionType == ActivityTransition.ACTIVITY_TRANSITION_ENTER) {
                         MyPreferenceManager.setString(context, "current_activity", currentActivity)
                         logActivity(context, event.activityType)
@@ -288,7 +288,7 @@ class MyForegroundService : Service() {
                     }
                 }
             } else {
-                Log.d("ATR", "No ActivityTransitionResult in intent")
+//                Log.d("ATR", "No ActivityTransitionResult in intent")
             }
         }
 
