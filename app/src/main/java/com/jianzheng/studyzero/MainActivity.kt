@@ -5,8 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.tool.startMyForegroundService
@@ -26,7 +24,7 @@ class MainActivity : ComponentActivity() {
                 AppNavigation()
             }
         }
-        auth = Firebase.auth
+        auth = FirebaseAuth.getInstance()
         if (MyPreferenceManager.getBoolean(this, this.getString(R.string.collecting_data))) {
             startEverything(this)
         }

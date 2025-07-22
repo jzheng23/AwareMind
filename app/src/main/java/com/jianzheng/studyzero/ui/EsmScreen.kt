@@ -57,6 +57,7 @@ import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.response.DismissalType
 import com.jianzheng.studyzero.tool.MyDelayManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
+import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
@@ -94,7 +95,7 @@ fun ShowOverlay(
 //        }, displayTimeMillis) // 10 seconds delay
 //    }
     val displayTimeMillis = if (
-        MyPreferenceManager.getBoolean(context, "is_driving")
+        MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)
     ) 0L else if (
         MyPreferenceManager.getBoolean(context, "using_testing_triggers")
     ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection

@@ -23,6 +23,49 @@ class MyUsageManager {
         private const val TAG = "MyUsageManager"
         private const val BATCH_SIZE = 50
         private const val MIN_SESSION_DURATION_MS = 1000L // 1 second minimum
+
+        fun isNavigationAppCurrentlyInUse(context: Context): Boolean {
+            val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as? UsageStatsManager
+            if (usageStatsManager == null) {
+                Log.e(TAG, "Failed to get UsageStatsManager")
+                return false
+            }
+
+            val navigationApps = setOf(
+                "com.google.android.apps.maps",  // Google Maps
+                "com.waze"                       // Waze
+            )
+
+            return try {
+                val currentTime = System.currentTimeMillis()
+                val oneMinuteAgo = currentTime - (60 * 1000L)
+
+                val usageEvents = usageStatsManager.queryEvents(oneMinuteAgo, currentTime)
+                var currentForegroundApp: String? = null
+
+                while (usageEvents.hasNextEvent()) {
+                    val event = UsageEvents.Event()
+                    usageEvents.getNextEvent(event)
+
+                    when (event.eventType) {
+                        UsageEvents.Event.ACTIVITY_RESUMED -> {
+                            currentForegroundApp = event.packageName
+                        }
+                        UsageEvents.Event.ACTIVITY_PAUSED -> {
+                            if (event.packageName == currentForegroundApp) {
+                                currentForegroundApp = null
+                            }
+                        }
+                    }
+                }
+
+                navigationApps.contains(currentForegroundApp)
+
+            } catch (e: Exception) {
+                Log.e(TAG, "Error checking navigation app usage: ${e.message}")
+                false
+            }
+        }
     }
 
     suspend fun getUsageEvents(context: Context, currentTime: Long, test: Boolean = true) {
@@ -184,4 +227,5 @@ class MyUsageManager {
             Log.e(TAG, "Error processing usage batch: ${e.message}")
         }
     }
+
 }
