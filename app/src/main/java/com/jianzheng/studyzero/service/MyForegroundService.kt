@@ -103,7 +103,7 @@ class MyForegroundService : Service() {
         uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
 
         // Only initialize activity tracking if permission is granted
-        if (checkAndRequestPermissions()) {
+        if (checkAndRequestPermissions() && shouldEnableActivityRecognition()) {
             initializeActivityTransition()
             mTransitionsReceiver = TransitionsReceiver().also {
                 val filter = IntentFilter(transitionsReceiverAction)
@@ -167,7 +167,7 @@ class MyForegroundService : Service() {
         MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
 
         // Only initialize activity tracking if permission is granted
-        if (checkAndRequestPermissions()) {
+        if (checkAndRequestPermissions() && shouldEnableActivityRecognition()) {
             testPendingIntent()
             // Activity tracking will be initialized in onCreate()
         } else {
@@ -247,6 +247,19 @@ class MyForegroundService : Service() {
         }
     }
 
+    private fun isActivityTrackingEnabled(): Boolean {
+        return MyPreferenceManager.getBoolean(this, "activity_enabled")
+    }
+
+    private fun isLocationTrackingEnabled(): Boolean {
+        return MyPreferenceManager.getBoolean(this, "location_enabled")
+    }
+
+    private fun shouldEnableActivityRecognition(): Boolean {
+        // Activity recognition needs both activity tracking enabled AND location enabled
+        return isActivityTrackingEnabled() && isLocationTrackingEnabled()
+    }
+
     companion object {
         const val CHANNEL_ID = "AwareMindServiceChannel"
         const val NOTIFICATION_INTENT_CODE = 1
@@ -258,6 +271,12 @@ class MyForegroundService : Service() {
 
         override fun onReceive(context: Context, intent: Intent) {
             Log.d("ATR", "on receive")
+
+            if (!shouldEnableActivityRecognition()) {
+                Log.d("ATR", "Activity or location tracking disabled, skipping activity logging")
+                return
+            }
+
 
             if (intent.hasExtra("test")) {
                 Log.d("ATR", "Test broadcast received: ${intent.getStringExtra("test")}")
@@ -303,6 +322,11 @@ class MyForegroundService : Service() {
     }
 
     private fun logActivity(context: Context, activityType: Int) {
+        if (!shouldEnableActivityRecognition()) {
+            Log.d("ATR", "Activity or location tracking disabled, skipping activity logging")
+            return
+        }
+
         val currentTime = System.currentTimeMillis()
         val host = HostManager.getHost(context)
         val todayDate = LocalDate.now().toString()

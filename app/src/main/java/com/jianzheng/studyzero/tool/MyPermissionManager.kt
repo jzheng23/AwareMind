@@ -39,12 +39,21 @@ object MyPermissionManager {
     fun checkUserStatPermission(context: Context): Boolean {
         val appOpsManager = context.getSystemService(APP_OPS_SERVICE) as AppOpsManager
 
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            // For API 34+ use the new method
+            appOpsManager.checkOpNoThrow(
+                AppOpsManager.OPSTR_GET_USAGE_STATS,
+                android.os.Process.myUid(), context.packageName
+            )
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            // For API 29-33 use the deprecated method (still needed for compatibility)
+            @Suppress("DEPRECATION")
             appOpsManager.unsafeCheckOpNoThrow(
                 AppOpsManager.OPSTR_GET_USAGE_STATS,
                 android.os.Process.myUid(), context.packageName
             )
         } else {
+            // For API < 29 use the original method
             appOpsManager.checkOpNoThrow(
                 AppOpsManager.OPSTR_GET_USAGE_STATS,
                 android.os.Process.myUid(), context.packageName
@@ -97,6 +106,8 @@ object MyPermissionManager {
                 context as Activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
                 48
             )
+
+            MyPreferenceManager.setBoolean(context, "activity_enabled", true)
         }
     }
 
@@ -119,21 +130,9 @@ object MyPermissionManager {
             ),
             51
         )
+        MyPreferenceManager.setBoolean(context, "location_enabled", true)
     }
-//    fun checkBatteryPermission(context: Context): Boolean {
-//        val powerManager = context.getSystemService(Context.POWER_SERVICE) as PowerManager
-//        val packageName = context.packageName
-//        return powerManager.isIgnoringBatteryOptimizations(packageName)
-//    }
-//
-//    fun grantBatteryPermission(context: Context) {
-//        val packageName = context.packageName
-//        val intent = Intent().apply {
-//            action = Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS
-//            data = Uri.parse("package:$packageName")
-//        }
-//        context.startActivity(intent)
-//    }
+
 
     fun checkAllPermissions(context: Context): Boolean =
         (checkNotificationPermission(context)
