@@ -96,7 +96,7 @@ fun ShowOverlay(
 //    }
     val displayTimeMillis = if (
         MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)
-    ) 0L else if (
+    ) 100L else if (
         MyPreferenceManager.getBoolean(context, "using_testing_triggers")
     ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
 
@@ -156,7 +156,6 @@ fun ShowOverlay(
             }
         }
     }
-
 }
 
 @Composable

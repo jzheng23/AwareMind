@@ -58,7 +58,7 @@ class MyUsageManager {
                         }
                     }
                 }
-
+                Log.d(TAG, "currentForegroundApp: $currentForegroundApp")
                 navigationApps.contains(currentForegroundApp)
 
             } catch (e: Exception) {
