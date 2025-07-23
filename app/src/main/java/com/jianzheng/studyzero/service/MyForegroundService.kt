@@ -273,7 +273,7 @@ class MyForegroundService : Service() {
 //            Log.d("ATR", "on receive")
 
             if (!shouldEnableActivityRecognition()) {
-                Log.d("ATR", "Activity or location tracking disabled, skipping activity logging")
+//                Log.d("ATR", "Activity or location tracking disabled, skipping activity logging")
                 return
             }
 
@@ -323,7 +323,7 @@ class MyForegroundService : Service() {
 
     private fun logActivity(context: Context, activityType: Int) {
         if (!shouldEnableActivityRecognition()) {
-            Log.d("ATR", "Activity or location tracking disabled, skipping activity logging")
+//            Log.d("ATR", "Activity or location tracking disabled, skipping activity logging")
             return
         }
 
