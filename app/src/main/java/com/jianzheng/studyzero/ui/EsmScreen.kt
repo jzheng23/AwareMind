@@ -97,7 +97,7 @@ fun ShowOverlay(
     val displayTimeMillis = 30000L //10 seconds for testing, 30 seconds for real data collection
 
     if (
-        MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)
+        (MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)) and (tag == "count_random_met")
     ) {
         MyDelayManager.recycleTrigger()
     } else {
