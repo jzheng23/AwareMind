@@ -94,15 +94,13 @@ fun ShowOverlay(
 //            }
 //        }, displayTimeMillis) // 10 seconds delay
 //    }
-    val displayTimeMillis = if (
-        MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)
-    ) 0L else if (
-        MyPreferenceManager.getBoolean(context, "using_testing_triggers")
-    ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
+    val displayTimeMillis = 30000L //10 seconds for testing, 30 seconds for real data collection
 
     if (
-        !MyPreferenceManager.getBoolean(context, "is_driving")
+        MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)
     ) {
+        MyDelayManager.recycleTrigger()
+    } else {
         StudyZeroEsmTheme(darkTheme = darkTheme) {
             Surface(
                 modifier = Modifier
@@ -156,7 +154,6 @@ fun ShowOverlay(
             }
         }
     }
-
 }
 
 @Composable
