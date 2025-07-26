@@ -32,7 +32,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyPermissionManager
-import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.resetEverything
 import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.tool.stopEverything
@@ -66,20 +65,6 @@ fun DebugCard(
 
     val currentActivity by usePollState {
         mutableStateOf(sharedPreferences.getString("current_activity", "unknown"))
-    }
-
-    // Add after the existing state variables
-    val isLocationAllowed by usePollState {
-        MyPermissionManager.checkLocationPermission(context)
-    }
-    val isActivityAllowed by usePollState {
-        MyPermissionManager.checkActivityPermission(context)
-    }
-    val isLocationEnabled by usePollState {
-        sharedPreferences.getBoolean("location_enabled", false)
-    }
-    val isActivityEnabled by usePollState {
-        sharedPreferences.getBoolean("activity_enabled", false)
     }
 
     Card(
@@ -143,30 +128,6 @@ fun DebugCard(
                     title = "", desc = "Test the ESM page", onAuthClick = {
                         testSurvey(context)
                     }, buttonText = "Test", buttonEnabled = isOverlayAllowed
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                SwitchCard(
-                    title = "Location",
-                    desc = "Enable/disable location tracking",
-                    onCheckedChange = { enabled ->
-                        MyPreferenceManager.setBoolean(context, "location_enabled", enabled)
-                    },
-                    isEnabled = isLocationAllowed,
-                    isChecked = isLocationEnabled
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
-                SwitchCard(
-                    title = "Physical Activity",
-                    desc = "Enable/disable physical activity tracking",
-                    onCheckedChange = { enabled ->
-                        MyPreferenceManager.setBoolean(context, "activity_enabled", enabled)
-                    },
-                    isEnabled = isActivityAllowed,
-                    isChecked = isActivityEnabled
                 )
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
