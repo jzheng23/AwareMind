@@ -33,10 +33,18 @@ class OverlayService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         return if (intent != null) {
             if (!isShowing) {
+
+                // Add safety cleanup
+                try {
+                    if (::composeView.isInitialized && composeView.isAttachedToWindow) {
+                        windowManager.removeView(composeView)
+                    }
+                } catch (_: Exception) {
+                    // View wasn't attached, that's fine
+                }
+
                 unlockTime = intent.getLongExtra("unlock", System.currentTimeMillis())
-//                Log.d("delayTime", "received: $unlockTime")
-                var tag = intent.getStringExtra("tag")
-                if (tag == null) tag = "count_random_met"
+                val tag = intent.getStringExtra("tag") ?: "count_random_met"
                 callOverlay(tag)
                 isShowing = true
             }

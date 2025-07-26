@@ -80,29 +80,15 @@ fun ShowOverlay(
         MockEsmViewModel()
     }
     val autoDismiss = remember { mutableStateOf(true) }
-    //TODO need to tidy up
 
-//    if (!LocalInspectionMode.current) {
-//        val handler = Handler(Looper.myLooper()!!)
-
-//        handler.postDelayed({
-//            if (autoDismiss.value) {
-//                autoDismiss.value = false
-//                onClick()
-//                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
-////                Log.d("unlock", "unanswered")
-//            }
-//        }, displayTimeMillis) // 10 seconds delay
-//    }
-    val displayTimeMillis = if (
-        MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)
-    ) 100L else if (
-        MyPreferenceManager.getBoolean(context, "using_testing_triggers")
-    ) 10000L else 30000L //10 seconds for testing, 30 seconds for real data collection
+    val displayTimeMillis = 30000L //10 seconds for testing, 30 seconds for real data collection
 
     if (
-        !MyPreferenceManager.getBoolean(context, "is_driving")
+        (MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)) and (tag == "count_random_met")
     ) {
+        MyDelayManager.recycleTrigger()
+        onClick()
+    } else {
         StudyZeroEsmTheme(darkTheme = darkTheme) {
             Surface(
                 modifier = Modifier
@@ -317,19 +303,12 @@ fun ShowEsm(
         modifier = Modifier
             .background(color = MaterialTheme.colorScheme.surface)
     ) {
-        //show question 1
-//        ShowQuestion(
-//            questionString = R.string.question1,
-//            index = 0,
-//            myViewModel = myViewModel,
-//            labelSet = 1
-////            autoDismiss = autoDismiss
-//        )
+
         ShowQuestion(
-//            questionString = R.string.question2,
+
             myViewModel = myViewModel,
             labelSet = 2
-//            autoDismiss = autoDismiss
+
         )
     }
 }
@@ -487,59 +466,6 @@ fun ShowQuestion(
         }
     }
 }
-
-
-//@Composable
-//fun ChoiceWithLabel(
-//    item: Int,
-//    label: String,
-//    index: Int,
-//    myViewModel: EsmViewModelInterface,
-//    selectedValue: MutableState<Int>,
-////    autoDismiss: MutableState<Boolean>,
-//    modifier: Modifier = Modifier,
-//) {
-//    Column(
-//        verticalArrangement = Arrangement.Center,
-//        horizontalAlignment = Alignment.CenterHorizontally,
-//        modifier = modifier
-//    )
-//    {
-//        RadioButton(
-//            selected = selectedValue.value == item,
-//            onClick =
-//                {
-//                    selectedValue.value = item
-////                autoDismiss.value = false
-//                    myViewModel.setAnswer(item, index)
-////                Log.d("viewModel", "$item selected for q$index!")
-//                },
-//            modifier = Modifier
-//                .height(22.dp)
-//        )
-//        if (label != "") {
-//            Text(
-//                text = label,//s[item - 1],
-//                fontSize = 12.sp,
-//                textAlign = TextAlign.Center,
-//                style = LocalTextStyle.current.merge(
-//                    TextStyle(
-//                        lineHeight = 1.0.em,
-//                        platformStyle = PlatformTextStyle(
-//                            includeFontPadding = false
-//                        ),
-//                        lineHeightStyle = LineHeightStyle(
-//                            alignment = LineHeightStyle.Alignment.Center,
-//                            trim = LineHeightStyle.Trim.None
-//                        )
-//                    )
-//                ),
-//
-//                )
-//        }
-//
-//    }
-//}
 
 
 @Preview

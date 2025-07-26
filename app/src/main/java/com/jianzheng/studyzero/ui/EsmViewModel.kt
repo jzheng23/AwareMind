@@ -50,61 +50,99 @@ class EsmViewModel(
     }
 
     override suspend fun saveAnswer(delay: Long, startingTime: Long) {
-        val newResponse = uiState.value.toResponse(delay, startingTime)
-        responseDao.insert(newResponse)
-        uploadToFirebase(responseDao.getLastResponse())
-        MyPreferenceManager.setLong(
-            context,
-            context.getString(R.string.last_submit),
-            System.currentTimeMillis()
-        )
+        try {
+            val newResponse = uiState.value.toResponse(delay, startingTime)
+            responseDao.insert(newResponse)
+
+            // Get the response with error handling
+            val lastResponse = responseDao.getLastResponse()
+            uploadToFirebase(lastResponse)
+
+
+            MyPreferenceManager.setLong(
+                context,
+                context.getString(R.string.last_submit),
+                System.currentTimeMillis()
+            )
+        } catch (e: Exception) {
+            Log.e("EsmViewModel", "Error saving answer", e)
+            // Still update preference even if upload fails
+            MyPreferenceManager.setLong(
+                context,
+                context.getString(R.string.last_submit),
+                System.currentTimeMillis()
+            )
+        }
     }
 
     private fun uploadToFirebase(newResponse: Response) {
-        val uid = sharedPreferences.getString("user_ID", "")
-        val host = HostManager.getHost(context)
-        val todayDate = LocalDate.now().toString()
-        if (validateUid(uid)) {
-            myRef.child(uid.toString()).child(host).child(todayDate).child(newResponse.id.toString())
-                .setValue(ResponseNoId.fromResponse(newResponse))
-//            Log.d("data", "uploaded to user id ${uid.toString()}")
-        } else Log.d("data", "invalid user id ${uid.toString()}")
+        try {
+            val uid = sharedPreferences.getString("user_ID", "")
+            val host = HostManager.getHost(context)
+            val todayDate = LocalDate.now().toString()
+            if (validateUid(uid)) {
+                myRef.child(uid.toString()).child(host).child(todayDate).child(newResponse.id.toString())
+                    .setValue(ResponseNoId.fromResponse(newResponse))
+                    .addOnFailureListener { exception ->
+                        Log.e("EsmViewModel", "Firebase upload failed", exception)
+                    }
+            }
+        } catch (e: Exception) {
+            Log.e("EsmViewModel", "Error uploading to Firebase", e)
+        }
     }
 
 
     override suspend fun saveDismissal(dismissalType: DismissalType, delay: Long, startingTime: Long) {
-        val dismissedResponse = Response(
-            answer = 0, // No answer provided
-            delay = delay,
-            startingTime = startingTime,
-            submittingTime = System.currentTimeMillis(),
-            isSubmitted = false,
-            dismissalType = dismissalType.name
-        )
-        responseDao.insert(dismissedResponse)
-        uploadDismissalToFirebase(responseDao.getLastResponse())
-        MyPreferenceManager.setLong(
-            context,
-            context.getString(R.string.last_submit),
-            System.currentTimeMillis()
-        )
+        try {
+            val dismissedResponse = Response(
+                answer = 0, // No answer provided
+                delay = delay,
+                startingTime = startingTime,
+                submittingTime = System.currentTimeMillis(),
+                isSubmitted = false,
+                dismissalType = dismissalType.name
+            )
+            responseDao.insert(dismissedResponse)
+
+            val lastResponse = responseDao.getLastResponse()
+            uploadDismissalToFirebase(lastResponse)
+
+            MyPreferenceManager.setLong(
+                context,
+                context.getString(R.string.last_submit),
+                System.currentTimeMillis()
+            )
+        } catch (e: Exception) {
+            Log.e("EsmViewModel", "Error saving dismissal", e)
+            // Still update preference even if database/upload fails
+            MyPreferenceManager.setLong(
+                context,
+                context.getString(R.string.last_submit),
+                System.currentTimeMillis()
+            )
+        }
     }
 
     private fun uploadDismissalToFirebase(dismissedResponse: Response) {
-        val uid = sharedPreferences.getString("user_ID", "")
-        val host = HostManager.getHost(context)
-        val todayDate = LocalDate.now().toString()
-        if (validateUid(uid)) {
-            // Save to separate "ESM_dismissed" path with only necessary fields
-            val dismissedEsm = dismissedResponse.toDismissedEsm()
-            myRef.parent?.child("ESM_dismissed") // Use separate path
-                ?.child(uid.toString())
-                ?.child(host)
-                ?.child(todayDate)
-                ?.child(dismissedResponse.id.toString())
-                ?.setValue(dismissedEsm)
-        } else {
-            Log.d("data", "invalid user id ${uid.toString()}")
+        try {
+            val uid = sharedPreferences.getString("user_ID", "")
+            val host = HostManager.getHost(context)
+            val todayDate = LocalDate.now().toString()
+            if (validateUid(uid)) {
+                val dismissedEsm = dismissedResponse.toDismissedEsm()
+                myRef.parent?.child("ESM_dismissed")
+                    ?.child(uid.toString())
+                    ?.child(host)
+                    ?.child(todayDate)
+                    ?.child(dismissedResponse.id.toString())
+                    ?.setValue(dismissedEsm)
+                    ?.addOnFailureListener { exception ->
+                        Log.e("EsmViewModel", "Firebase dismissal upload failed", exception)
+                    }
+            }
+        } catch (e: Exception) {
+            Log.e("EsmViewModel", "Error uploading dismissal to Firebase", e)
         }
     }
 

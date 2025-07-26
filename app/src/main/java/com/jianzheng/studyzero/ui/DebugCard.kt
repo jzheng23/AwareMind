@@ -124,14 +124,6 @@ fun DebugCard(
                     color = MaterialTheme.colorScheme.outline
                 )
 
-                ButtonCard(
-                    title = "", desc = "Test the ESM page", onAuthClick = {
-                        testSurvey(context)
-                    }, buttonText = "Test", buttonEnabled = isOverlayAllowed
-                )
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
 
                 SwitchCard(
                     title = "Data collection",
