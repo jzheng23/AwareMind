@@ -21,6 +21,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import androidx.core.content.edit
 import com.jianzheng.studyzero.data.HostManager
+import com.jianzheng.studyzero.data.response.toDismissedEsm
 // **NEW IMPORTS**
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -48,7 +49,11 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     private val host = HostManager.getHost(ctx)
     private val todayStart = LocalDate.now().atStartOfDay(zoneId).toInstant().toEpochMilli()
     private val yesterdayStart = todayStart - ChronoUnit.DAYS.duration.toMillis()
+    private val twoDaysAgoStart = todayStart - ChronoUnit.DAYS.duration.toMillis() * 2
+    private val threeDaysAgoStart = todayStart - ChronoUnit.DAYS.duration.toMillis() * 3
     private val yesterdayDate = LocalDate.now().minusDays(1).toString()
+    private val twoDaysAgoDate = LocalDate.now().minusDays(2).toString()
+    private val threeDaysAgoDate = LocalDate.now().minusDays(3).toString()
     private val uid = MyPreferenceManager.getString(ctx, ctx.getString(R.string.user_ID))
 
     override fun doWork(): Result {
@@ -113,6 +118,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             collectActivityData(context, updates)
             collectInputData(context, updates)
             collectResponseData(context, updates)
+            collectAllDismissedResponseData(context, updates)
 
             // **SINGLE FIREBASE WRITE** for all data
             if (updates.isNotEmpty()) {
@@ -133,12 +139,21 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
                 .build()
                 .unlockDao()
 
-            val entries = unlockDao.getAllYesterday(yesterdayStart, todayStart)
-            entries.forEach { entry ->
+            // Get yesterday's data
+            val yesterdayEntries = unlockDao.getAllYesterday(yesterdayStart, todayStart)
+            yesterdayEntries.forEach { entry ->
                 val path = "$FIREBASE_UNLOCK_REF/$uid/$host/$yesterdayDate/${entry.id}"
                 updates[path] = entry.toFirebaseUnlock()
             }
-            Log.d(TAG, "Collected ${entries.size} unlock entries")
+
+            // Get day before yesterday's data
+            val twoDaysAgoEntries = unlockDao.getAllYesterday(twoDaysAgoStart, yesterdayStart)
+            twoDaysAgoEntries.forEach { entry ->
+                val path = "$FIREBASE_UNLOCK_REF/$uid/$host/$twoDaysAgoDate/${entry.id}"
+                updates[path] = entry.toFirebaseUnlock()
+            }
+
+            Log.d(TAG, "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size} unlock entries")
         } catch (e: Exception) {
             Log.e(TAG, "Error collecting unlock data", e)
             throw e
@@ -152,14 +167,86 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
                 .build()
                 .activityDao()
 
-            val entries = activityDao.getAllYesterday(yesterdayStart, todayStart)
-            entries.forEach { entry ->
+            // Get yesterday's data
+            val yesterdayEntries = activityDao.getAllYesterday(yesterdayStart, todayStart)
+            yesterdayEntries.forEach { entry ->
                 val path = "$FIREBASE_ACTIVITY_REF/$uid/$host/$yesterdayDate/${entry.id}"
                 updates[path] = entry
             }
-            Log.d(TAG, "Collected ${entries.size} activity entries")
+
+            // Get day before yesterday's data
+            val twoDaysAgoEntries = activityDao.getAllYesterday(twoDaysAgoStart, yesterdayStart)
+            twoDaysAgoEntries.forEach { entry ->
+                val path = "$FIREBASE_ACTIVITY_REF/$uid/$host/$twoDaysAgoDate/${entry.id}"
+                updates[path] = entry
+            }
+
+            Log.d(TAG, "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size} activity entries")
         } catch (e: Exception) {
             Log.e(TAG, "Error collecting activity data", e)
+            throw e
+        }
+    }
+
+    private suspend fun collectResponseData(context: Context, updates: MutableMap<String, Any>) {
+        try {
+            val responseDao = Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
+                .fallbackToDestructiveMigration(false)
+                .build()
+                .responseDao()
+
+            // Get yesterday's data
+            val yesterdayEntries = responseDao.getAllYesterday(yesterdayStart, todayStart)
+            yesterdayEntries.forEach { entry ->
+                val path = "$FIREBASE_ESM_REF/$uid/$host/$yesterdayDate/${entry.id}"
+                updates[path] = ResponseNoId.fromResponse(entry)
+            }
+
+            // Get day before yesterday's data
+            val twoDaysAgoEntries = responseDao.getAllYesterday(twoDaysAgoStart, yesterdayStart)
+            twoDaysAgoEntries.forEach { entry ->
+                val path = "$FIREBASE_ESM_REF/$uid/$host/$twoDaysAgoDate/${entry.id}"
+                updates[path] = ResponseNoId.fromResponse(entry)
+            }
+
+            // Get three days ago data
+            val threeDaysAgoEntries = responseDao.getAllYesterday(threeDaysAgoStart, twoDaysAgoStart)
+            threeDaysAgoEntries.forEach { entry ->
+                val path = "$FIREBASE_ESM_REF/$uid/$host/$threeDaysAgoDate/${entry.id}"
+                updates[path] = ResponseNoId.fromResponse(entry)
+            }
+
+            Log.d(TAG, "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size + threeDaysAgoEntries.size} response entries")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error collecting response data", e)
+            throw e
+        }
+    }
+
+    private suspend fun collectAllDismissedResponseData(context: Context, updates: MutableMap<String, Any>) {
+        try {
+            val responseDao = Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
+                .fallbackToDestructiveMigration(false)
+                .build()
+                .responseDao()
+
+            // Get ALL dismissed responses from the entire table
+            val allDismissedResponses = responseDao.getAllOnce()
+                .filter { !it.isSubmitted && it.dismissalType != null }
+
+            allDismissedResponses.forEach { entry ->
+                // Convert timestamp to date string
+                val responseDate = java.time.Instant.ofEpochMilli(entry.submittingTime)
+                    .atZone(zoneId)
+                    .toLocalDate()
+                    .toString()
+                val path = "ESM_dismissed/$uid/$host/$responseDate/${entry.id}"
+                updates[path] = entry.toDismissedEsm()
+            }
+
+            Log.d(TAG, "Collected ${allDismissedResponses.size} dismissed response entries")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error collecting all dismissed response data", e)
             throw e
         }
     }
@@ -183,24 +270,6 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         }
     }
 
-    private suspend fun collectResponseData(context: Context, updates: MutableMap<String, Any>) {
-        try {
-            val responseDao = Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
-                .fallbackToDestructiveMigration(false)
-                .build()
-                .responseDao()
-
-            val entries = responseDao.getAllYesterday(yesterdayStart, todayStart)
-            entries.forEach { entry ->
-                val path = "$FIREBASE_ESM_REF/$uid/$host/$yesterdayDate/${entry.id}"
-                updates[path] = ResponseNoId.fromResponse(entry)
-            }
-            Log.d(TAG, "Collected ${entries.size} response entries")
-        } catch (e: Exception) {
-            Log.e(TAG, "Error collecting response data", e)
-            throw e
-        }
-    }
 
     // **SAFER WRAPPER METHODS**
     private fun uploadUserStatsSafely(context: Context) {
