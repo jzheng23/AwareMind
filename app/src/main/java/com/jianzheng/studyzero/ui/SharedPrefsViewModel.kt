@@ -3,12 +3,12 @@ package com.jianzheng.studyzero.ui
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import androidx.core.content.edit
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import androidx.core.content.edit
 
 class SharedPrefsViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -41,15 +41,14 @@ class SharedPrefsViewModel(application: Application) : AndroidViewModel(applicat
     val isDataCollecting: LiveData<Boolean> = _isDataCollecting
 
 
-
-
     private val preferenceChangeListener =
         SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
             when (key) {
                 "user_ID" -> _userId.value = sharedPreferences.getString("user_ID", "")
                 "user_alias" -> _userAlias.value = sharedPreferences.getString("user_alias", "")
                 "is_tester" -> _isTester.value = sharedPreferences.getBoolean("is_tester", false)
-                "cheat_mode" -> _cheatMode.value = sharedPreferences.getBoolean("cheat_mode", false) // Add this line
+                "cheat_mode" -> _cheatMode.value =
+                    sharedPreferences.getBoolean("cheat_mode", false) // Add this line
 
 //                "is_UID_valid" -> _isUserIdValid.value =
 //                    sharedPreferences.getBoolean("is_UID_valid", false)

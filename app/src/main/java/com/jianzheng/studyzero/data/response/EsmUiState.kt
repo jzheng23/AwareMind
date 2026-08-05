@@ -10,6 +10,7 @@ enum class DismissalType {
     MANUAL,
     AUTO
 }
+
 fun EsmUiState.toResponse(delay: Long, startingTime: Long): Response = Response(
     id = 0,
     delay = delay,

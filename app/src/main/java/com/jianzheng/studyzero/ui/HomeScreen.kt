@@ -54,13 +54,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.startEverything
-import androidx.core.net.toUri
 import com.jianzheng.studyzero.tool.stopEverything
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 
@@ -242,15 +242,15 @@ fun LogoAndContact(sharedPrefsViewModel: SharedPrefsViewModel? = null) {
                     }, title = {
                         Text(
                             text = "Enter Password",
-                                color = MaterialTheme.colorScheme.primary  // or secondary, error, etc.
+                            color = MaterialTheme.colorScheme.primary  // or secondary, error, etc.
                         )
                     }, text = {
                         OutlinedTextField(
                             value = password, onValueChange = { password = it },
-                                colors = OutlinedTextFieldDefaults.colors(
-                                    focusedTextColor = MaterialTheme.colorScheme.onPrimary,        // Text color when focused
-                                    unfocusedTextColor = MaterialTheme.colorScheme.primary      // Text color when not focused
-                                ),
+                            colors = OutlinedTextFieldDefaults.colors(
+                                focusedTextColor = MaterialTheme.colorScheme.onPrimary,        // Text color when focused
+                                unfocusedTextColor = MaterialTheme.colorScheme.primary      // Text color when not focused
+                            ),
                             keyboardOptions = KeyboardOptions(
                                 imeAction = ImeAction.Done
                             ), keyboardActions = KeyboardActions(
@@ -258,7 +258,8 @@ fun LogoAndContact(sharedPrefsViewModel: SharedPrefsViewModel? = null) {
                                     if (password == PASSWORD) sharedPrefsViewModel?.setCheatMode(
                                         true
                                     )
-                                }))
+                                })
+                        )
                     }, confirmButton = {
                         Button(onClick = {
                             if (password == PASSWORD) {
@@ -352,13 +353,13 @@ fun LogoAndContact(sharedPrefsViewModel: SharedPrefsViewModel? = null) {
                 style = TextStyle(textDecoration = TextDecoration.Underline),
                 textAlign = TextAlign.End,
                 modifier = Modifier.clickable {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, url.toUri())
-                            context.startActivity(intent)
-                        } catch (_: Exception) {
-                            // Handle the exception when no Activity can handle the Intent
-                        }
-                    })
+                    try {
+                        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
+                        context.startActivity(intent)
+                    } catch (_: Exception) {
+                        // Handle the exception when no Activity can handle the Intent
+                    }
+                })
         }
     }
 }

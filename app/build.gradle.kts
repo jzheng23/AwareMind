@@ -2,27 +2,22 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.google.services)
     alias(libs.plugins.ksp)
     alias(libs.plugins.compose.compiler)
 }
-kotlin {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.JVM_17)
-    }
-}
+
 android {
     namespace = "com.jianzheng.studyzero"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.jianzheng.studyzero"
         minSdk = 26
         //noinspection EditedTargetSdkVersion
-        targetSdk = 36
-        versionCode = 66
-        versionName = "3.19"
+        targetSdk = 37
+        versionCode = 67
+        versionName = "3.20"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -46,16 +41,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+
     buildFeatures {
         compose = true
     }
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = libs.versions.compose.compiler.get()
-//    }
+
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget.set(JvmTarget.JVM_17)
     }
 }
 
@@ -73,6 +73,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.bundles.compose)
+    implementation(libs.androidx.compose.icons)
     implementation(libs.androidx.compose.runtime.livedata)
 
     // Room

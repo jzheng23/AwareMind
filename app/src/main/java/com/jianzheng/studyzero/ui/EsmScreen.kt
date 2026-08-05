@@ -84,7 +84,10 @@ fun ShowOverlay(
     val displayTimeMillis = 30000L //10 seconds for testing, 30 seconds for real data collection
 
     if (
-        (MyPreferenceManager.getBoolean(context, "is_driving") or MyUsageManager.isNavigationAppCurrentlyInUse(context)) and (tag == "count_random_met")
+        (MyPreferenceManager.getBoolean(
+            context,
+            "is_driving"
+        ) or MyUsageManager.isNavigationAppCurrentlyInUse(context)) and (tag == "count_random_met")
     ) {
         MyDelayManager.recycleTrigger()
         onClick()
@@ -268,7 +271,8 @@ fun ShowInstruction(
                         .size(36.dp)
                         .align(Alignment.Center) // Center the canvas over the IconButton
                 ) {
-                    val progress = (timeLeft.toFloat() / autoDismissTimeMs.toFloat()).coerceIn(0f, 1f)
+                    val progress =
+                        (timeLeft.toFloat() / autoDismissTimeMs.toFloat()).coerceIn(0f, 1f)
 
 
                     // Background circle
@@ -411,7 +415,8 @@ fun ShowQuestion(
                             val horizontalInnerPadding = 8.dp.toPx()
                             val horizontalOuterPadding = 2.dp.toPx()
                             val availableWidth = trackWidth - (2 * horizontalOuterPadding)
-                            val adjustedStepWidth = (availableWidth - 2 * horizontalInnerPadding) / 9f
+                            val adjustedStepWidth =
+                                (availableWidth - 2 * horizontalInnerPadding) / 9f
                             val verticalOffset = 4.dp.toPx()
 
                             drawRoundRect(
@@ -431,7 +436,8 @@ fun ShowQuestion(
                             )
 
                             for (i in 0..9) {
-                                val x = horizontalInnerPadding + horizontalOuterPadding + (i * adjustedStepWidth)
+                                val x =
+                                    horizontalInnerPadding + horizontalOuterPadding + (i * adjustedStepWidth)
                                 drawCircle(
                                     color = tickColor, // Uses onSurfaceVariant for tick marks
                                     radius = tickRadius,

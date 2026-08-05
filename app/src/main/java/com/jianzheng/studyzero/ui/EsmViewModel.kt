@@ -81,7 +81,8 @@ class EsmViewModel(
             val host = HostManager.getHost(context)
             val todayDate = LocalDate.now().toString()
             if (validateUid(uid)) {
-                myRef.child(uid.toString()).child(host).child(todayDate).child(newResponse.id.toString())
+                myRef.child(uid.toString()).child(host).child(todayDate)
+                    .child(newResponse.id.toString())
                     .setValue(ResponseNoId.fromResponse(newResponse))
                     .addOnFailureListener { exception ->
                         Log.e("EsmViewModel", "Firebase upload failed", exception)
@@ -93,7 +94,11 @@ class EsmViewModel(
     }
 
 
-    override suspend fun saveDismissal(dismissalType: DismissalType, delay: Long, startingTime: Long) {
+    override suspend fun saveDismissal(
+        dismissalType: DismissalType,
+        delay: Long,
+        startingTime: Long
+    ) {
         try {
             val dismissedResponse = Response(
                 answer = 0, // No answer provided
@@ -152,7 +157,11 @@ interface EsmViewModelInterface {
     val uiState: StateFlow<EsmUiState>
     fun setAnswer(selection: Int)
     suspend fun saveAnswer(delay: Long, startingTime: Long)
-    suspend fun saveDismissal(dismissalType: DismissalType, delay: Long, startingTime: Long) // Add this
+    suspend fun saveDismissal(
+        dismissalType: DismissalType,
+        delay: Long,
+        startingTime: Long
+    ) // Add this
     // Include other methods that the composable function will use
 }
 

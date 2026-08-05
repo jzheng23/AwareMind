@@ -25,7 +25,8 @@ class MyUsageManager {
         private const val MIN_SESSION_DURATION_MS = 1000L // 1 second minimum
 
         fun isNavigationAppCurrentlyInUse(context: Context): Boolean {
-            val usageStatsManager = context.getSystemService(USAGE_STATS_SERVICE) as? UsageStatsManager
+            val usageStatsManager =
+                context.getSystemService(USAGE_STATS_SERVICE) as? UsageStatsManager
             if (usageStatsManager == null) {
                 Log.e(TAG, "Failed to get UsageStatsManager")
                 return false
@@ -51,6 +52,7 @@ class MyUsageManager {
                         UsageEvents.Event.ACTIVITY_RESUMED -> {
                             currentForegroundApp = event.packageName
                         }
+
                         UsageEvents.Event.ACTIVITY_PAUSED -> {
                             if (event.packageName == currentForegroundApp) {
                                 currentForegroundApp = null
@@ -211,10 +213,16 @@ class MyUsageManager {
                             .child(generatedId.toString())
                             .setValue(firebaseUsage)
                             .addOnSuccessListener {
-                                Log.d(TAG, "Successfully synced usage data to Firebase: $generatedId")
+                                Log.d(
+                                    TAG,
+                                    "Successfully synced usage data to Firebase: $generatedId"
+                                )
                             }
                             .addOnFailureListener { exception ->
-                                Log.e(TAG, "Failed to sync usage data to Firebase: ${exception.message}")
+                                Log.e(
+                                    TAG,
+                                    "Failed to sync usage data to Firebase: ${exception.message}"
+                                )
                             }
                     } else {
                         Log.w(TAG, "Skipping Firebase sync - invalid or null uid")

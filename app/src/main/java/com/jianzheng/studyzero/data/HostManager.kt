@@ -1,8 +1,8 @@
 package com.jianzheng.studyzero.data
 
 import android.content.Context
-import kotlin.random.Random
 import androidx.core.content.edit
+import kotlin.random.Random
 
 object HostManager {
     private const val PREF_NAME = "host_prefs"

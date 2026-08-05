@@ -239,6 +239,7 @@ fun EnhancedArrowCard(
                                 contentDescription = "pending"
                             )
                         }
+
                         CardStatus.WAITING -> {
                             Icon(
                                 imageVector = Icons.Default.MoreVert,
@@ -246,6 +247,7 @@ fun EnhancedArrowCard(
                                 modifier = Modifier.rotate(90f)
                             )
                         }
+
                         CardStatus.COMPLETED -> {
                             Icon(
                                 imageVector = Icons.Default.CheckCircle,

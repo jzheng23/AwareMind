@@ -1,31 +1,31 @@
 package com.jianzheng.studyzero.tool
 
+// **NEW IMPORTS**
 import android.content.Context
 import android.util.Log
+import androidx.core.content.edit
 import androidx.room.Room
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
+import com.jianzheng.studyzero.data.HostManager
 import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.InputNoId
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
+import com.jianzheng.studyzero.data.response.toDismissedEsm
 import com.jianzheng.studyzero.data.unlock.UnlockDatabase
 import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
 import com.jianzheng.studyzero.ui.validateUid
-import java.time.LocalDate
-import java.time.ZoneId
-import java.time.temporal.ChronoUnit
-import androidx.core.content.edit
-import com.jianzheng.studyzero.data.HostManager
-import com.jianzheng.studyzero.data.response.toDismissedEsm
-// **NEW IMPORTS**
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 
 class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params) {
 
@@ -134,10 +134,11 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     // **REFACTORED DATA COLLECTION METHODS**
     private suspend fun collectUnlockData(context: Context, updates: MutableMap<String, Any>) {
         try {
-            val unlockDao = Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
-                .fallbackToDestructiveMigration(false)
-                .build()
-                .unlockDao()
+            val unlockDao =
+                Room.databaseBuilder(context, UnlockDatabase::class.java, "unlock_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .unlockDao()
 
             // Get yesterday's data
             val yesterdayEntries = unlockDao.getAllYesterday(yesterdayStart, todayStart)
@@ -162,10 +163,11 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private suspend fun collectActivityData(context: Context, updates: MutableMap<String, Any>) {
         try {
-            val activityDao = Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
-                .fallbackToDestructiveMigration(false)
-                .build()
-                .activityDao()
+            val activityDao =
+                Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .activityDao()
 
             // Get yesterday's data
             val yesterdayEntries = activityDao.getAllYesterday(yesterdayStart, todayStart)
@@ -181,7 +183,10 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
                 updates[path] = entry
             }
 
-            Log.d(TAG, "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size} activity entries")
+            Log.d(
+                TAG,
+                "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size} activity entries"
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error collecting activity data", e)
             throw e
@@ -190,10 +195,11 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private suspend fun collectResponseData(context: Context, updates: MutableMap<String, Any>) {
         try {
-            val responseDao = Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
-                .fallbackToDestructiveMigration(false)
-                .build()
-                .responseDao()
+            val responseDao =
+                Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .responseDao()
 
             // Get yesterday's data
             val yesterdayEntries = responseDao.getAllYesterday(yesterdayStart, todayStart)
@@ -210,25 +216,33 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             }
 
             // Get three days ago data
-            val threeDaysAgoEntries = responseDao.getAllYesterday(threeDaysAgoStart, twoDaysAgoStart)
+            val threeDaysAgoEntries =
+                responseDao.getAllYesterday(threeDaysAgoStart, twoDaysAgoStart)
             threeDaysAgoEntries.forEach { entry ->
                 val path = "$FIREBASE_ESM_REF/$uid/$host/$threeDaysAgoDate/${entry.id}"
                 updates[path] = ResponseNoId.fromResponse(entry)
             }
 
-            Log.d(TAG, "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size + threeDaysAgoEntries.size} response entries")
+            Log.d(
+                TAG,
+                "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size + threeDaysAgoEntries.size} response entries"
+            )
         } catch (e: Exception) {
             Log.e(TAG, "Error collecting response data", e)
             throw e
         }
     }
 
-    private suspend fun collectAllDismissedResponseData(context: Context, updates: MutableMap<String, Any>) {
+    private suspend fun collectAllDismissedResponseData(
+        context: Context,
+        updates: MutableMap<String, Any>
+    ) {
         try {
-            val responseDao = Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
-                .fallbackToDestructiveMigration(false)
-                .build()
-                .responseDao()
+            val responseDao =
+                Room.databaseBuilder(context, ResponseDatabase::class.java, "response_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .responseDao()
 
             // Get ALL dismissed responses from the entire table
             val allDismissedResponses = responseDao.getAllOnce()
@@ -253,10 +267,11 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private suspend fun collectInputData(context: Context, updates: MutableMap<String, Any>) {
         try {
-            val inputDao = Room.databaseBuilder(context, InputDatabase::class.java, "input_database")
-                .fallbackToDestructiveMigration(false)
-                .build()
-                .inputDao()
+            val inputDao =
+                Room.databaseBuilder(context, InputDatabase::class.java, "input_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .inputDao()
 
             val entries = inputDao.getAllYesterday(yesterdayStart, todayStart)
             entries.forEach { entry ->
@@ -296,7 +311,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
     // **UPDATED EXISTING METHODS WITH BETTER ERROR HANDLING**
     private fun uploadUserStats(context: Context) {
         try {
-            val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+            val sharedPreferences =
+                context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
             val todayCount = sharedPreferences.getInt(PREF_COUNT_TODAY, 0)
             val totalCount = sharedPreferences.getInt(PREF_COUNT_TOTAL, 0)
             val dayCount = sharedPreferences.getInt(PREF_COUNT_DAY, 0)
@@ -326,7 +342,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
 
     private fun dayCountPlusOne(context: Context) {
         try {
-            val sharedPreferences = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
+            val sharedPreferences =
+                context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
             sharedPreferences.edit {
                 val dayCount = sharedPreferences.getInt(PREF_COUNT_DAY, 0)
                 putInt(PREF_COUNT_DAY, dayCount + 1)
