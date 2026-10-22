@@ -1,6 +1,6 @@
 [versions]
 # Plugin versions
-agp = "9.1.1"
+agp = "9.4.1"
 kotlin = "2.4.10"
 ksp = "2.3.11"
 google-services = "4.5.0"

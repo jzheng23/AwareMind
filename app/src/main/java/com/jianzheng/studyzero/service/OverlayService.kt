@@ -14,7 +14,7 @@ import androidx.lifecycle.setViewTreeViewModelStoreOwner
 import androidx.savedstate.setViewTreeSavedStateRegistryOwner
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.cycle.MyLifecycleOwner
-import com.jianzheng.studyzero.ui.ShowOverlay
+import com.jianzheng.studyzero.ui.ShowStressOverlay
 
 class OverlayService : Service() {
 
@@ -72,7 +72,7 @@ class OverlayService : Service() {
         lifecycleOwner = MyLifecycleOwner()
 
         composeView.setContent {
-            ShowOverlay(
+            ShowStressOverlay(
                 tag = tag,
                 unlockTime = unlockTime,
                 onClick = {

@@ -16,6 +16,8 @@ import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.InputNoId
 import com.jianzheng.studyzero.data.response.ResponseDatabase
 import com.jianzheng.studyzero.data.response.ResponseNoId
+import com.jianzheng.studyzero.data.response.ResponseStressDatabase
+import com.jianzheng.studyzero.data.response.ResponseStressNoId
 import com.jianzheng.studyzero.data.response.toDismissedEsm
 import com.jianzheng.studyzero.data.unlock.UnlockDatabase
 import com.jianzheng.studyzero.data.unlock.toFirebaseUnlock
@@ -119,6 +121,8 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             collectInputData(context, updates)
             collectResponseData(context, updates)
             collectAllDismissedResponseData(context, updates)
+            collectResponseStressData(context, updates)
+            collectAllDismissedResponseStressData(context, updates)
 
             // **SINGLE FIREBASE WRITE** for all data
             if (updates.isNotEmpty()) {
@@ -261,6 +265,73 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
             Log.d(TAG, "Collected ${allDismissedResponses.size} dismissed response entries")
         } catch (e: Exception) {
             Log.e(TAG, "Error collecting all dismissed response data", e)
+            throw e
+        }
+    }
+
+    private suspend fun collectResponseStressData(context: Context, updates: MutableMap<String, Any>) {
+        try {
+            val responseStressDao =
+                Room.databaseBuilder(context, ResponseStressDatabase::class.java, "response_stress_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .responseStressDao()
+
+            val yesterdayEntries = responseStressDao.getAllYesterday(yesterdayStart, todayStart)
+            yesterdayEntries.forEach { entry ->
+                val path = "ESM_stress/$uid/$host/$yesterdayDate/${entry.id}"
+                updates[path] = ResponseStressNoId.fromResponseStress(entry)
+            }
+
+            val twoDaysAgoEntries = responseStressDao.getAllYesterday(twoDaysAgoStart, yesterdayStart)
+            twoDaysAgoEntries.forEach { entry ->
+                val path = "ESM_stress/$uid/$host/$twoDaysAgoDate/${entry.id}"
+                updates[path] = ResponseStressNoId.fromResponseStress(entry)
+            }
+
+            val threeDaysAgoEntries =
+                responseStressDao.getAllYesterday(threeDaysAgoStart, twoDaysAgoStart)
+            threeDaysAgoEntries.forEach { entry ->
+                val path = "ESM_stress/$uid/$host/$threeDaysAgoDate/${entry.id}"
+                updates[path] = ResponseStressNoId.fromResponseStress(entry)
+            }
+
+            Log.d(
+                TAG,
+                "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size + threeDaysAgoEntries.size} stress response entries"
+            )
+        } catch (e: Exception) {
+            Log.e(TAG, "Error collecting stress response data", e)
+            throw e
+        }
+    }
+
+    private suspend fun collectAllDismissedResponseStressData(
+        context: Context,
+        updates: MutableMap<String, Any>
+    ) {
+        try {
+            val responseStressDao =
+                Room.databaseBuilder(context, ResponseStressDatabase::class.java, "response_stress_database")
+                    .fallbackToDestructiveMigration(false)
+                    .build()
+                    .responseStressDao()
+
+            val allDismissedResponses = responseStressDao.getAllOnce()
+                .filter { !it.isSubmitted && it.dismissalType != null }
+
+            allDismissedResponses.forEach { entry ->
+                val responseDate = java.time.Instant.ofEpochMilli(entry.submittingTime)
+                    .atZone(zoneId)
+                    .toLocalDate()
+                    .toString()
+                val path = "ESM_stress_dismissed/$uid/$host/$responseDate/${entry.id}"
+                updates[path] = entry.toDismissedEsm()
+            }
+
+            Log.d(TAG, "Collected ${allDismissedResponses.size} dismissed stress response entries")
+        } catch (e: Exception) {
+            Log.e(TAG, "Error collecting all dismissed stress response data", e)
             throw e
         }
     }

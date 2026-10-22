@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">AwareMind</string>
     <string name="question2">Reflecting on my phone usage,\nI should [&#160;&#160;&#160;] using my phone now.</string>
+    <string name="stress_question_title">Right now, I am...</string>
+    <string name="stress_option_1">Feeling great</string>
+    <string name="stress_option_2">Feeling good</string>
+    <string name="stress_option_3">A little stressed</string>
+    <string name="stress_option_4">Definitely stressed</string>
+    <string name="stress_option_5">Stressed out!</string>
     <string name="submit">Submit</string>
     <string name="accessibility_service_description">To record the number of taps, scrolls, and text edits performed on the phone.</string>
     <string name="url_privacy_policy">https://sites.google.com/umd.edu/awarefocus/privacy-policy</string>

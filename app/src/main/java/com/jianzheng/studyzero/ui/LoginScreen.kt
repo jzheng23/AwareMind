@@ -178,13 +178,10 @@ fun isTester(userId: String?): Boolean {
 }
 
 fun validateUid(userId: String?): Boolean {
-    val pattern = "^[A-Za-z]{2}\\d{3}$"
+    if (userId == null) return false
+    val pattern = "^[a-zA-Z0-9]{24}$"
     val regex = pattern.toRegex()
-    return if (userId == null) {
-        false
-    } else {
-        regex.matches(userId)
-    }
+    return regex.matches(userId) || isTester(userId)
 }
 
 

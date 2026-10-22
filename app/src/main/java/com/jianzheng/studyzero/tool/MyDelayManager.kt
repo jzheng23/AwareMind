@@ -14,6 +14,7 @@ import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 object MyDelayManager {
+    private const val RANDOM_COOL_DOWN_MINUTES = 60L
     private val longTriggerList =
         mutableListOf(5, 8, 12, 18, 27, 41, 62, 95, 144, 220, 335, 510, 776)
     private lateinit var originalTriggerList: MutableList<Int>
@@ -66,7 +67,7 @@ object MyDelayManager {
         if (!responseCounter.checkRandomComplete() && triggerIndex < triggerList.size) {
             if (
                 (tempTag == "count_once_met") or
-                ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + 900_000L))
+                ((currentTimeMillis + triggerList[triggerIndex] * 1_000L) > (lastSubmit + TimeUnit.MINUTES.toMillis(RANDOM_COOL_DOWN_MINUTES)))
             ) {
                 val triggerRequest = OneTimeWorkRequestBuilder<MyTriggerWorker>()
                     .setInitialDelay(triggerList[triggerIndex].toLong(), TimeUnit.SECONDS)
@@ -87,7 +88,7 @@ object MyDelayManager {
             } else {
                 Log.d(
                     "unlock",
-                    "random trigger needs to wait for 15 minutes."
+                    "random trigger needs to wait for $RANDOM_COOL_DOWN_MINUTES minutes."
                 )
             }
         } else {

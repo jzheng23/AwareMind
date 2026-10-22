@@ -18,3 +18,20 @@ fun EsmUiState.toResponse(delay: Long, startingTime: Long): Response = Response(
     startingTime = startingTime,
     submittingTime = System.currentTimeMillis()
 )
+
+fun EsmUiState.toResponseStress(delay: Long, startingTime: Long): ResponseStress = ResponseStress(
+    id = 0,
+    delay = delay,
+    answer = answer,
+    startingTime = startingTime,
+    submittingTime = System.currentTimeMillis()
+)
+
+fun ResponseStress.toDismissedEsm(): DismissedEsm = DismissedEsm(
+    id = this.id,
+    delay = this.delay,
+    startingTime = this.startingTime,
+    submittingTime = this.submittingTime,
+    dismissalType = this.dismissalType ?: "UNKNOWN"
+)
+

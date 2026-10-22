@@ -153,17 +153,7 @@ class EsmViewModel(
 
 }
 
-interface EsmViewModelInterface {
-    val uiState: StateFlow<EsmUiState>
-    fun setAnswer(selection: Int)
-    suspend fun saveAnswer(delay: Long, startingTime: Long)
-    suspend fun saveDismissal(
-        dismissalType: DismissalType,
-        delay: Long,
-        startingTime: Long
-    ) // Add this
-    // Include other methods that the composable function will use
-}
+
 
 
 class MockEsmViewModel : EsmViewModelInterface {
