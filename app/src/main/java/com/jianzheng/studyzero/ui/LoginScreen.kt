@@ -179,9 +179,9 @@ fun isTester(userId: String?): Boolean {
 
 fun validateUid(userId: String?): Boolean {
     if (userId == null) return false
-    val pattern = "^[a-zA-Z0-9]{24}$"
-    val regex = pattern.toRegex()
-    return regex.matches(userId) || isTester(userId)
+    val prolificPattern = "^[a-zA-Z0-9]{24}$".toRegex()
+    val originalPattern = "^[A-Za-z]{2}\\d{3}$".toRegex()
+    return prolificPattern.matches(userId) || originalPattern.matches(userId) || isTester(userId)
 }
 
 
