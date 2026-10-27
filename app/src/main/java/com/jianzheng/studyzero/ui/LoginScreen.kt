@@ -104,7 +104,7 @@ fun LoginScreen(
                                         userIdInput = it
 //            MyPreferenceManager.setString(context, "user_ID", it)
                                     },
-                                    label = { Text("User ID") },
+                                    label = { Text("User or Prolific ID") },
                                     singleLine = true,
                                     keyboardOptions = KeyboardOptions(
                                         imeAction = ImeAction.Next
@@ -159,6 +159,7 @@ fun saveUserId(
 ) {
     val userIdIsValidate: Boolean = validateUid(userId)
     val isTester = isTester(userId)
+    val isProlific = isProlificId(userId)
     val sharedPreferences =
         context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
     sharedPreferences.edit {
@@ -166,6 +167,7 @@ fun saveUserId(
             .putString(context.getString(R.string.user_alias), userAlias)
             .putBoolean("UID_valid", userIdIsValidate)
             .putBoolean(context.getString(R.string.is_tester), isTester)
+            .putBoolean("is_prolific", isProlific)
     }
     if (userIdIsValidate) {
         DeviceInfoTracker.saveTimezoneToFirebase(userId, context)
@@ -177,11 +179,16 @@ fun isTester(userId: String?): Boolean {
     return userId?.startsWith("te", ignoreCase = true) ?: false
 }
 
-fun validateUid(userId: String?): Boolean {
+fun isProlificId(userId: String?): Boolean {
     if (userId == null) return false
     val prolificPattern = "^[a-zA-Z0-9]{24}$".toRegex()
+    return prolificPattern.matches(userId)
+}
+
+fun validateUid(userId: String?): Boolean {
+    if (userId == null) return false
     val originalPattern = "^[A-Za-z]{2}\\d{3}$".toRegex()
-    return prolificPattern.matches(userId) || originalPattern.matches(userId) || isTester(userId)
+    return isProlificId(userId) || originalPattern.matches(userId) || isTester(userId)
 }
 
 

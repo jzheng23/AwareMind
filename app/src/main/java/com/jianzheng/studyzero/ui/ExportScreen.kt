@@ -46,23 +46,13 @@ fun ExportScreen(
     val inputExist = checkExist(context, "input")
     val unlockExist = checkExist(context, "unlock")
     val usageExist = checkExist(context, "usage")
-    val activityExist = checkExist(context, "activity")
-//    var allToBeExport by remember {
-//        mutableStateOf(true)
-//    }
-//    var responseToBeExport by remember { mutableStateOf(responseExist) }
-//    var inputToBeExport by remember { mutableStateOf(inputExist) }
-//    var usageToBeExport by remember { mutableStateOf(usageExist) }
-//    var unlockToBeExport by remember { mutableStateOf(unlockExist) }
-//    var activityToBeExport by remember { mutableStateOf(activityExist) }
-    //    val databaseNames = listOf("response_database", "input_database", "usage_database")
+
     val databaseNames = mutableListOf<String>()
     if (responseExist) databaseNames.add("response_database")
     if (inputExist) databaseNames.add("input_database")
     if (usageExist) databaseNames.add("usage_database")
     if (unlockExist) databaseNames.add("unlock_database")
-    if (activityExist) databaseNames.add("activity_database")
-//    "response_database", "input_database", "usage_database")
+
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -103,7 +93,7 @@ fun ExportScreen(
                                 databaseNames
                             )
                         },
-                        buttonEnabled = responseExist || inputExist || usageExist || unlockExist || activityExist,
+                        buttonEnabled = responseExist || inputExist || usageExist || unlockExist,
                     )
 //                    Card(
 //                        modifier = Modifier

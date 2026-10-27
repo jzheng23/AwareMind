@@ -30,6 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.content.edit
+import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.resetEverything
@@ -47,15 +49,6 @@ fun DebugCard(
     val isOverlayAllowed by remember {
         mutableStateOf(MyPermissionManager.checkOverlayPermission(context))
     }
-//    val isUsageAllowed by remember {
-//        mutableStateOf(MyPermissionManager.checkUserStatPermission(context))
-//    }
-//    val isA11yAllowed by remember {
-//        mutableStateOf(MyPermissionManager.checkAccessibilityPermission(context))
-//    }
-//    val isInputRecording by usePollState {
-//        sharedPreferences.getBoolean("input_record", false)
-//    }
     val lastMaintenance by usePollState(interval = 3_600_000L) {
         sharedPreferences.getString("last_maintenance", "unknown")
     }
@@ -63,12 +56,7 @@ fun DebugCard(
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
 
-    val currentActivity by usePollState {
-        mutableStateOf(sharedPreferences.getString("current_activity", "unknown"))
-    }
-
     Card(
-//        modifier = Modifier.padding(16.dp),
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
@@ -104,10 +92,6 @@ fun DebugCard(
             Spacer(modifier = Modifier.height(2.dp))
             if (isVisible) {
 
-                Text("Current activity: ${currentActivity.value}")
-                HorizontalDivider(
-                    color = MaterialTheme.colorScheme.outline
-                )
                 Text("Synced at: $lastMaintenance")
 
                 HorizontalDivider(
@@ -142,6 +126,21 @@ fun DebugCard(
                     color = MaterialTheme.colorScheme.outline
                 )
                 ButtonCard(
+                    title = "Day++", desc = "Add 1 to dayCount and reset todayCount", onAuthClick = {
+                        val countDayKey = context.getString(R.string.count_day)
+                        val countTodayKey = context.getString(R.string.count_today)
+                        val currentDay = sharedPreferences.getInt(countDayKey, 0)
+                        sharedPreferences.edit {
+                            putInt(countDayKey, currentDay + 1)
+                            putInt(countTodayKey, 0)
+                        }
+                    }, buttonText = "Day++"
+                )
+
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+                ButtonCard(
                     title = "Reset", desc = "Reset to default", onAuthClick = {
                         resetEverything(context)
 
@@ -161,4 +160,3 @@ fun testSurvey(context: Context) {
     }
     context.startService(serviceIntent)
 }
-

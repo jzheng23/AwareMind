@@ -16,8 +16,8 @@ android {
         minSdk = 26
         //noinspection EditedTargetSdkVersion
         targetSdk = 37
-        versionCode = 67
-        versionName = "3.20"
+        versionCode = 69
+        versionName = "3.22S"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -81,7 +81,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
 
     // Other dependencies
-    implementation(libs.play.services.location)
     implementation(libs.kotlinx.coroutines)
     implementation(libs.androidx.work)
 

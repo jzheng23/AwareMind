@@ -8,16 +8,10 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
-    <uses-permission android:name="android.permission.ACTIVITY_RECOGNITION" />
-<!--    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />-->
     <uses-permission
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_LOCATION" />
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_HEALTH" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:name=".StudyZeroApp"
@@ -50,16 +44,6 @@
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="explanation_for_special_use" />
         </service>
-<!--        <service-->
-<!--            android:name=".service.MyForegroundService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="false"-->
-<!--            android:foregroundServiceType="location"-->
-<!--            android:permission="android.permission.BIND_FOREGROUND_SERVICE" >-->
-<!--            <property-->
-<!--                android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"-->
-<!--                android:value="explanation_for_special_use" />-->
-<!--        </service>-->
         <service
             android:name=".service.MyAccessibilityService"
             android:enabled="true"
@@ -78,7 +62,7 @@
         <service android:name=".service.MyForegroundService"
             android:enabled="true"
             android:exported="false"
-            android:foregroundServiceType="health"
+            android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_FOREGROUND_SERVICE" >
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"

@@ -75,15 +75,6 @@ fun ScrollSettingContent(it: PaddingValues) {
     val accessibilityAllowed by usePollState {
         MyPermissionManager.checkAccessibilityPermission(context)
     }
-    val activityAllowed by usePollState {
-        MyPermissionManager.checkActivityPermission(context)
-    }
-    val locationAllowed by usePollState {
-        MyPermissionManager.checkLocationPermission(context)
-    }
-//    val batteryAllowed by usePollState {
-//        MyPermissionManager.checkBatteryPermission(context)
-//    }
     val allAllowed by usePollState {
         MyPermissionManager.checkAllPermissions(context)
     }
@@ -121,38 +112,6 @@ fun ScrollSettingContent(it: PaddingValues) {
 
             }
 
-
-
-            if (!activityAllowed) {
-                ArrowCard(
-                    title = "Physical activity",
-                    desc = stringResource(id = R.string.physical_activity),
-                    onAuthClick = {
-                        MyPermissionManager.grandActivityPermission(context)
-                    }
-                )
-            }
-
-            if (!locationAllowed) {
-                ArrowCard(
-                    title = "Location",
-                    desc = stringResource(id = R.string.location),
-                    onAuthClick = {
-                        MyPermissionManager.grandLocationPermission(context)
-                    }
-                )
-            }
-
-//            if (!batteryAllowed) {
-//                ArrowCard(
-//                    title = "Optimize battery usage",
-//                    desc = "The app needs to be put into the whitelist, so" +
-//                            " it won't killed by the system battery optimization.",
-//                    onAuthClick = {
-//                        MyPermissionManager.grantBatteryPermission(context)
-//                    }
-//                )
-//            }
             if (!usageStatAllowed) {
                 ArrowCard(
                     title = "App usage",
@@ -194,4 +153,3 @@ fun showAccessibilityConsentDialog(context: Context, onConsentGiven: () -> Unit)
         .setNegativeButton("Cancel", null)
         .show()
 }
-

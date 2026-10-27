@@ -1,18 +1,13 @@
 package com.jianzheng.studyzero.tool
 
-import android.Manifest
-import android.app.Activity
 import android.app.AppOpsManager
 import android.content.ComponentName
 import android.content.Context
 import android.content.Context.APP_OPS_SERVICE
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.content.ContextCompat
 import com.jianzheng.studyzero.service.MyAccessibilityService
 
 
@@ -89,61 +84,12 @@ object MyPermissionManager {
         return enabledServices?.contains(serviceName.flattenToString()) ?: false
     }
 
-    fun checkActivityPermission(context: Context): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            PackageManager.PERMISSION_GRANTED == ActivityCompat.checkSelfPermission(
-                context,
-                Manifest.permission.ACTIVITY_RECOGNITION
-            )
-        } else {
-            true
-        }
-    }
-
-    fun grandActivityPermission(context: Context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ActivityCompat.requestPermissions(
-                context as Activity, arrayOf(Manifest.permission.ACTIVITY_RECOGNITION),
-                48
-            )
-
-            MyPreferenceManager.setBoolean(context, "activity_enabled", true)
-        }
-    }
-
-    fun checkLocationPermission(context: Context): Boolean {
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_COARSE_LOCATION
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    fun grandLocationPermission(context: Context) {
-        ActivityCompat.requestPermissions(
-            context as Activity,
-            arrayOf(
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ),
-            51
-        )
-        MyPreferenceManager.setBoolean(context, "location_enabled", true)
-    }
-
-
     fun checkAllPermissions(context: Context): Boolean =
         (checkNotificationPermission(context)
                 and checkOverlayPermission(context)
                 and checkUserStatPermission(context)
-                and checkActivityPermission(context)
 //                and checkBatteryPermission(context)
                 and checkAccessibilityPermission(context))
 
 
 }
-
-
-

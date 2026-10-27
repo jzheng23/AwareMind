@@ -11,7 +11,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.database.database
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.HostManager
-import com.jianzheng.studyzero.data.activity.ActivityDatabase
 import com.jianzheng.studyzero.data.input.InputDatabase
 import com.jianzheng.studyzero.data.input.InputNoId
 import com.jianzheng.studyzero.data.response.ResponseDatabase
@@ -41,7 +40,6 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         private const val PREF_LAST_MAINTENANCE = "last_maintenance"
 
         private const val FIREBASE_UNLOCK_REF = "Unlock"
-        private const val FIREBASE_ACTIVITY_REF = "Activity"
         private const val FIREBASE_INPUT_REF = "Input"
         private const val FIREBASE_ESM_REF = "ESM"
         private const val FIREBASE_USER_STATS_REF = "user_stats"
@@ -117,7 +115,6 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         try {
             // Collect all data into batch updates
             collectUnlockData(context, updates)
-            collectActivityData(context, updates)
             collectInputData(context, updates)
             collectResponseData(context, updates)
             collectAllDismissedResponseData(context, updates)
@@ -165,37 +162,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         }
     }
 
-    private suspend fun collectActivityData(context: Context, updates: MutableMap<String, Any>) {
-        try {
-            val activityDao =
-                Room.databaseBuilder(context, ActivityDatabase::class.java, "activity_database")
-                    .fallbackToDestructiveMigration(false)
-                    .build()
-                    .activityDao()
 
-            // Get yesterday's data
-            val yesterdayEntries = activityDao.getAllYesterday(yesterdayStart, todayStart)
-            yesterdayEntries.forEach { entry ->
-                val path = "$FIREBASE_ACTIVITY_REF/$uid/$host/$yesterdayDate/${entry.id}"
-                updates[path] = entry
-            }
-
-            // Get day before yesterday's data
-            val twoDaysAgoEntries = activityDao.getAllYesterday(twoDaysAgoStart, yesterdayStart)
-            twoDaysAgoEntries.forEach { entry ->
-                val path = "$FIREBASE_ACTIVITY_REF/$uid/$host/$twoDaysAgoDate/${entry.id}"
-                updates[path] = entry
-            }
-
-            Log.d(
-                TAG,
-                "Collected ${yesterdayEntries.size + twoDaysAgoEntries.size} activity entries"
-            )
-        } catch (e: Exception) {
-            Log.e(TAG, "Error collecting activity data", e)
-            throw e
-        }
-    }
 
     private suspend fun collectResponseData(context: Context, updates: MutableMap<String, Any>) {
         try {

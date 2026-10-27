@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.response.DismissalType
 import com.jianzheng.studyzero.tool.MyDelayManager
-import com.jianzheng.studyzero.tool.MyPreferenceManager
 import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.startMyForegroundService
@@ -84,10 +83,7 @@ fun ShowOverlay(
     val displayTimeMillis = 30000L //10 seconds for testing, 30 seconds for real data collection
 
     if (
-        (MyPreferenceManager.getBoolean(
-            context,
-            "is_driving"
-        ) or MyUsageManager.isNavigationAppCurrentlyInUse(context)) and (tag == "count_random_met")
+        MyUsageManager.isNavigationAppCurrentlyInUse(context) and (tag == "count_random_met")
     ) {
         MyDelayManager.recycleTrigger()
         onClick()
