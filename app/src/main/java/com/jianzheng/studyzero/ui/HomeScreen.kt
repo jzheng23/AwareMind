@@ -325,6 +325,7 @@ fun WelcomeInfo(
                     if (success) {
                         sharedPreferences.edit { putBoolean("has_claimed_reward", true) }
                         UnlockReceiverManager.unregisterReceiver(context)
+                        stopEverything(context)
                         showClaimDialog = false
                         android.widget.Toast.makeText(context, "Submitted!", android.widget.Toast.LENGTH_SHORT).show()
                     } else {
@@ -370,7 +371,7 @@ fun WelcomeInfo(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Reward 1",
+                            text = stringResource(id = R.string.reward_1_claim_title),
                             style = MaterialTheme.typography.titleLarge,
                             fontWeight = FontWeight.Bold,
                             modifier = Modifier.weight(1f)
@@ -387,7 +388,7 @@ fun WelcomeInfo(
                     if (isInitialRewardVisible) {
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Claim your $3 reward on Prolific \n(You will need to log in to your Prolific account)",
+                            text = stringResource(id = R.string.reward_1_title),
                             style = MaterialTheme.typography.bodyMedium,
                             textAlign = TextAlign.Center
                         )
@@ -436,7 +437,7 @@ fun WelcomeInfo(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = "Reward 2",
+                        text = stringResource(id = R.string.reward_2_claim_title),
                         style = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         textAlign = TextAlign.Left,
@@ -448,18 +449,18 @@ fun WelcomeInfo(
                     
                     if (!canClaim && !hasClaimedReward) {
                         Text(
-                            text = "Claim $7 when you have kept the app running for 7 days and made 50 or more reports",
+                            text = stringResource(id = R.string.reward_2_instruction),
                             style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Left
                         )
                         Spacer(modifier = Modifier.height(8.dp))
                     }
                     
                     if (hasClaimedReward) {
                         Text(
-                            text = "Claim submitted. You can expect to receive the gift card within 24 hours. If you have not receive it after three days, please contact me jzheng23@umd.edu",
+                            text = stringResource(id = R.string.reward_2_claimed),
                             style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Left
                         )
                     } else {
                         Button(

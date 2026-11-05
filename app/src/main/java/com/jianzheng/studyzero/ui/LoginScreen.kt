@@ -69,7 +69,7 @@ fun LoginScreen(
                 ) {
                     ArrowCard(
                         title = "Login",
-                        desc = "Please login with the assigned user ID",
+                        desc = "Please login with your Prolific ID (or the assigned user ID)",
                         onAuthClick = {
                             showDialog = true
                         }

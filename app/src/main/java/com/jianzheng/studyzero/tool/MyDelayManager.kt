@@ -19,8 +19,8 @@ object MyDelayManager {
         mutableListOf(5, 8, 12, 18, 27, 41, 62, 95, 144, 220, 335, 510, 776)
     private lateinit var originalTriggerList: MutableList<Int>
     private lateinit var triggerList: MutableList<Int>
-    private var extraTriggerThirty = 30L * 60 // 30 minutes
-    private var extraTriggerTwenty = 20L * 60 // 20 minutes
+    private var extraTriggerThirty = 30L // 30 minutes
+    private var extraTriggerTwenty = 20L // 20 minutes
     private var triggerIndex: Int = 0
     private lateinit var myWorkManager: WorkManager
     private lateinit var randomRequestID: UUID

@@ -35,4 +35,9 @@
     <string name="last_submit">last_submit</string>
     <string name="unlock_registered">unlock_registered</string>
     <string name="accessibility_dialogue"><![CDATA[Go to Accessibility settings -> Installed apps -> AwareMind, and allow the permission.]]></string>
+    <string name="reward_1_title">Claim your $3 reward on Prolific\n(You will need to log in to your Prolific account)</string>
+    <string name="reward_1_claim_title">Reward 1</string>
+    <string name="reward_2_claim_title">Reward 2</string>
+    <string name="reward_2_instruction">Claim $7 when you have kept the app running (in the background) for 7 days and made 50 or more reports. The surveys will show up randomly while you are using your phone. Feel free to use your phone normally—the app will continue running smoothly in the background as long as its notification remains active.</string>
+    <string name="reward_2_claimed">Claim submitted. You can expect to receive your gift card within 24 hours. If you haven\'t received it after three days, please contact jzheng23@umd.edu.</string>
 </resources>

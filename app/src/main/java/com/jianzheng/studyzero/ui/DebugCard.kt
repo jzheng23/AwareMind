@@ -31,6 +31,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.edit
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.ImeAction
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.service.OverlayService
 import com.jianzheng.studyzero.tool.MyPermissionManager
@@ -55,6 +60,8 @@ fun DebugCard(
     val isDataCollecting by usePollState {
         mutableStateOf(sharedPreferences.getBoolean("collecting_data", false))
     }
+    
+    var totalCountInput by remember { mutableStateOf("") }
 
     Card(
         modifier = Modifier
@@ -136,6 +143,41 @@ fun DebugCard(
                         }
                     }, buttonText = "Day++"
                 )
+
+                HorizontalDivider(
+                    color = MaterialTheme.colorScheme.outline
+                )
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    OutlinedTextField(
+                        value = totalCountInput,
+                        onValueChange = { totalCountInput = it },
+                        label = { Text("Set totalCount") },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        singleLine = true,
+                        modifier = Modifier.weight(1f).padding(end = 8.dp)
+                    )
+                    Button(
+                        onClick = {
+                            val count = totalCountInput.toIntOrNull()
+                            if (count != null) {
+                                val countTotalKey = context.getString(R.string.count_total)
+                                sharedPreferences.edit {
+                                    putInt(countTotalKey, count)
+                                }
+                                totalCountInput = ""
+                            }
+                        }
+                    ) {
+                        Text("Set")
+                    }
+                }
 
                 HorizontalDivider(
                     color = MaterialTheme.colorScheme.outline
