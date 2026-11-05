@@ -151,9 +151,8 @@ object MyDelayManager {
 
     private fun checkAndCancelRandomTrigger() {
         if (::randomRequestID.isInitialized) {
-            if (myWorkManager.getWorkInfoById(randomRequestID).get()?.state
-                != WorkInfo.State.SUCCEEDED
-            ) {
+            val state = myWorkManager.getWorkInfoById(randomRequestID).get()?.state
+            if (state != null && !state.isFinished) {
                 myWorkManager.cancelWorkById(randomRequestID)
                 Log.d("unlock", "a random trigger is canceled")
                 recycleTrigger()
@@ -162,9 +161,8 @@ object MyDelayManager {
     }
 
     private fun checkAndCancelFixedTrigger(requestID: UUID) {
-        if (myWorkManager.getWorkInfoById(requestID).get()?.state
-            != WorkInfo.State.SUCCEEDED
-        ) {
+        val state = myWorkManager.getWorkInfoById(requestID).get()?.state
+        if (state != null && !state.isFinished) {
             myWorkManager.cancelWorkById(requestID)
             Log.d("unlock", "a fixed trigger is canceled")
         }
