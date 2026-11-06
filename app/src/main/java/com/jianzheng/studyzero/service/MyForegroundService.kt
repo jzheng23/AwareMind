@@ -11,12 +11,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.PackageManager
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
-//import android.util.Log
-import androidx.annotation.RequiresApi
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
+import androidx.core.content.ContextCompat
 import androidx.room.Room
 import com.google.android.gms.location.ActivityRecognition
 import com.google.android.gms.location.ActivityTransition
@@ -96,7 +98,6 @@ class MyForegroundService : Service() {
         sendBroadcast(testIntent)
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate() {
         super.onCreate()
 //        Log.d("ATR", "MyForegroundService onCreate() called")
@@ -107,7 +108,9 @@ class MyForegroundService : Service() {
             initializeActivityTransition()
             mTransitionsReceiver = TransitionsReceiver().also {
                 val filter = IntentFilter(transitionsReceiverAction)
-                registerReceiver(it, filter, RECEIVER_NOT_EXPORTED)
+                ContextCompat.registerReceiver(
+                    this, it, filter, ContextCompat.RECEIVER_NOT_EXPORTED
+                )
             }
         } else {
 //            Log.w("ATR", "ACTIVITY_RECOGNITION permission not granted, skipping activity tracking setup")
@@ -119,7 +122,6 @@ class MyForegroundService : Service() {
         UnlockReceiverManager.registerReceiver(this)
     }
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     private fun initializeActivityTransition() {
 //        Log.d("ATR", "activity recognition initialized")
         val request = ActivityTransitionRequest(activityTransitions)
@@ -131,6 +133,7 @@ class MyForegroundService : Service() {
             this,
             TRANSITION_INTENT_CODE,
             intent,
+            // Must stay MUTABLE: Play Services adds the transition result as extras.
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
         )
 
@@ -163,7 +166,20 @@ class MyForegroundService : Service() {
 
         // Call startForeground() IMMEDIATELY - before any other work
         val notification = createNotification()
-        startForeground(1, notification)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ServiceCompat.startForeground(
+                    this, 1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_HEALTH
+                )
+            } else {
+                startForeground(1, notification)
+            }
+        } catch (e: SecurityException) {
+            // Health type requires ACTIVITY_RECOGNITION on API 34+.
+            Log.e("MyForegroundService", "Cannot start foreground", e)
+            stopSelf()
+            return START_NOT_STICKY
+        }
         MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
 
         // Only initialize activity tracking if permission is granted
@@ -202,7 +218,7 @@ class MyForegroundService : Service() {
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, NOTIFICATION_INTENT_CODE, notificationIntent, PendingIntent.FLAG_MUTABLE
+            this, NOTIFICATION_INTENT_CODE, notificationIntent, PendingIntent.FLAG_IMMUTABLE
         )
         val todayCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_today))
         val totalCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_total))

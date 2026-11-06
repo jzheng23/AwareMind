@@ -43,12 +43,12 @@ class UnlockReceiver : BroadcastReceiver() {
             }
 
             Intent.ACTION_SCREEN_OFF -> {
-                val serviceIntent = Intent(context, OverlayService::class.java).apply {
-                    putExtra("tag", "none")
-                }
-                context?.stopService(serviceIntent)
-                MyDelayManager.cancelScheduledService()
                 if (context != null) {
+                    val serviceIntent = Intent(context, OverlayService::class.java).apply {
+                        putExtra("tag", "none")
+                    }
+                    context.stopService(serviceIntent)
+                    MyDelayManager.cancelScheduledService(context)
                     logUnlockOrLock(context, false)
                 }
             }

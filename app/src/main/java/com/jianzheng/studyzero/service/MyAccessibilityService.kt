@@ -23,13 +23,13 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import java.time.LocalDate
+import java.time.Instant
+import java.time.ZoneId
 
 class MyAccessibilityService : AccessibilityService() {
     companion object {
         private const val TAG = "MyAccessibilityService"
         private const val LISTENER_INTERVAL = 300L
-        private const val DAY_IN_MILLIS = 24 * 60 * 60 * 1000L
         private const val INPUT_TYPE_SCROLL = 1
         private const val INPUT_TYPE_CLICK = 2
         private const val INPUT_TYPE_TEXT = 3
@@ -75,8 +75,6 @@ class MyAccessibilityService : AccessibilityService() {
 
     // Caching for optimization
     private var cachedHost: String? = null
-    private var cachedDate: String? = null
-    private var lastDateCheck: Long = 0
 
     // Coroutine management
     private val serviceScope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -101,7 +99,6 @@ class MyAccessibilityService : AccessibilityService() {
 
             // Cache host on startup
             cachedHost = HostManager.getHost(this)
-            updateCachedDate()
 
             // Check initial recording state
             inputToBeRecord = sharedPrefs.getBoolean("recording_input", false)
@@ -120,20 +117,16 @@ class MyAccessibilityService : AccessibilityService() {
         sharedPrefs.registerOnSharedPreferenceChangeListener(prefsListener)
     }
 
-    private fun updateCachedDate() {
-        val currentTime = System.currentTimeMillis()
-        if (cachedDate == null || currentTime - lastDateCheck > DAY_IN_MILLIS) {
-            cachedDate = LocalDate.now().toString()
-            lastDateCheck = currentTime
-        }
-    }
+    /** Date path for an event, from the event's own time (matches the daily batch upload). */
+    private fun dateOf(timeMillis: Long): String =
+        Instant.ofEpochMilli(timeMillis).atZone(ZoneId.systemDefault()).toLocalDate().toString()
 
     private fun writeData(input: Input) {
         if (!inputToBeRecord) {
             return
         }
 
-        updateCachedDate()
+        val inputDate = dateOf(input.startTime)
 
         serviceScope.launch {
             try {
@@ -141,13 +134,14 @@ class MyAccessibilityService : AccessibilityService() {
 
                 val uidValid = validateUid(uid)
 
-                if (uidValid && cachedHost != null && cachedDate != null) {
+                val host = cachedHost
+                if (uidValid && host != null) {
                     val firebaseInput = input.copy(id = generatedId).toFirebaseInput()
-                    val path = "$uid/$cachedHost/$cachedDate/$generatedId"
+                    val path = "$uid/$host/$inputDate/$generatedId"
 
                     myRef.child(uid)
-                        .child(cachedHost!!)
-                        .child(cachedDate!!)
+                        .child(host)
+                        .child(inputDate)
                         .child(generatedId.toString())
                         .setValue(firebaseInput)
                         .addOnSuccessListener {

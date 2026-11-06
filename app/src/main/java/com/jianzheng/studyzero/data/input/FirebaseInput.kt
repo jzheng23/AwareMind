@@ -1,5 +1,8 @@
 package com.jianzheng.studyzero.data.input
 
+import androidx.annotation.Keep
+
+@Keep
 data class FirebaseInput(
     val startTime: Long,
     val inputType: Int,

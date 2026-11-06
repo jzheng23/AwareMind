@@ -74,6 +74,7 @@ fun HomeScreen(
     navController: NavController,
 ) {
     val context = LocalContext.current
+    val countRandomMetKey = stringResource(R.string.count_random_met)
     val showPermissionCard by usePollState {
         !MyPermissionManager.checkAllPermissions(context)
     }
@@ -130,7 +131,7 @@ fun HomeScreen(
                             if (!showPermissionCard) {
                                 navController.navigate(AppRoutes.TUTORIAL)
                                 MyPreferenceManager.setInt(
-                                    context, context.getString(R.string.count_random_met), 0
+                                    context, countRandomMetKey, 0
                                 )
                             }
                         },
@@ -143,7 +144,7 @@ fun HomeScreen(
                         desc = if (isTutorialFinished) "Start data collection" else "Please complete tutorial first ",
                         onAuthClick = {
                             if (isTutorialFinished) {
-                                startEverything(context)
+                                startEverything(context, isUserAction = true)
                                 sharedPrefsViewModel.startCounting()
                             }
                         },
@@ -407,7 +408,7 @@ fun InfoCard(
                     desc = "Start or pause data collection",
                     onCheckedChange = {
                         if (it) {
-                            startEverything(context)
+                            startEverything(context, isUserAction = true)
                         } else {
                             stopEverything(context)
                         }

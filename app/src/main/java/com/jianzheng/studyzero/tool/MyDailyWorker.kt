@@ -37,6 +37,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         private const val PREF_COUNT_TOTAL = "count_total"
         private const val PREF_COUNT_DAY = "count_day"
         private const val PREF_LAST_MAINTENANCE = "last_maintenance"
+        private const val PREF_LAST_DAY_PROCESSED = "last_day_processed_date"
 
         private const val FIREBASE_UNLOCK_REF = "Unlock"
         private const val FIREBASE_ACTIVITY_REF = "Activity"
@@ -344,9 +345,16 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         try {
             val sharedPreferences =
                 context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE)
-            sharedPreferences.edit {
+            val today = LocalDate.now().toString()
+            // Count each calendar date at most once, even if the worker retries or runs twice.
+            if (sharedPreferences.getString(PREF_LAST_DAY_PROCESSED, null) == today) {
+                Log.d(TAG, "Day $today already counted, skipping")
+                return
+            }
+            sharedPreferences.edit(commit = true) {
                 val dayCount = sharedPreferences.getInt(PREF_COUNT_DAY, 0)
                 putInt(PREF_COUNT_DAY, dayCount + 1)
+                putString(PREF_LAST_DAY_PROCESSED, today)
             }
             Log.d(TAG, "Day count incremented successfully")
         } catch (e: Exception) {
@@ -360,7 +368,7 @@ class MyDailyWorker(ctx: Context, params: WorkerParameters) : Worker(ctx, params
         try {
             val responseCounter = ResponseCounter(context)
             responseCounter.resetCounter()
-            MyDelayManager.resetTriggerList()
+            MyDelayManager.resetTriggerList(context)
             Log.d(TAG, "Trigger list reset successfully")
         } catch (e: Exception) {
             Log.e(TAG, "Error resetting trigger list", e)

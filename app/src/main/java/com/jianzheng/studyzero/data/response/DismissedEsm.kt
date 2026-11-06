@@ -1,5 +1,8 @@
 package com.jianzheng.studyzero.data.response
 
+import androidx.annotation.Keep
+
+@Keep
 data class DismissedEsm(
     val id: Long = 0,
     val delay: Long,

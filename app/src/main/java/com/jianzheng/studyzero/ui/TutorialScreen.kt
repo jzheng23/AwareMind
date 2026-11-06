@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
 import com.jianzheng.studyzero.R
@@ -35,6 +36,7 @@ fun TutorialScreen(
     navController: NavController
 ) {
     val context = LocalContext.current
+    val countOnceMetKey = stringResource(R.string.count_once_met)
     val testShown = remember {
         mutableStateOf(false)
     }
@@ -42,7 +44,7 @@ fun TutorialScreen(
         mutableStateOf(false)
     }
     val onceMetCount by usePollState {
-        MyPreferenceManager.getInt(context, context.getString(R.string.count_once_met))
+        MyPreferenceManager.getInt(context, countOnceMetKey)
     }
     if (onceMetCount > 0) navController.navigate(AppRoutes.HOME)
     Scaffold(topBar = {
@@ -96,10 +98,10 @@ fun TutorialScreen(
                                     context, "using_once_triggers", true
                                 )
                                 MyPreferenceManager.setInt(
-                                    context, context.getString(R.string.count_once_met), 0
+                                    context, countOnceMetKey, 0
                                 )
                                 UnlockReceiverManager.registerReceiver(context)
-                                MyDelayManager.init(context)
+                                MyDelayManager.resetTriggerList(context)
                                 unlockScheduled.value = true
                             }
                         },
