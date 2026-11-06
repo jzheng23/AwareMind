@@ -105,8 +105,6 @@ fun HomeScreen(
     var clickOnUIDCount by remember { mutableIntStateOf(0) }
     val displayName = if (userAlias.isNotEmpty()) {
         userAlias
-    } else if (isProlificId(userId)) {
-        if (userId.length >= 4) userId.takeLast(4) else userId
     } else {
         userId
     }
@@ -300,42 +298,9 @@ fun WelcomeInfo(
     val dayCount = welcomeViewModel.dayCount.observeAsState()
     
     val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    val isProlific = sharedPreferences.getBoolean("is_prolific", false)
-    val hasClaimedReward = sharedPreferences.getBoolean("has_claimed_reward", false)
-    val hasClaimedInitialReward = sharedPreferences.getBoolean("has_claimed_initial_reward", false)
     
     var clickOnInputCount by remember { mutableIntStateOf(0) }
-    var showClaimDialog by remember { mutableStateOf(false) }
-
-    if (showClaimDialog) {
-        ClaimDialog(
-            onDismiss = { showClaimDialog = false },
-            onSubmit = { giftCard, email, futureStudies, comments ->
-                val response = ClaimResponse(
-                    giftCardPreference = giftCard,
-                    email = email,
-                    futureStudies = futureStudies,
-                    comments = comments,
-                    timestamp = System.currentTimeMillis()
-                )
-                
-                val currentUserId = sharedPrefsViewModel?.userId?.value ?: "unknown_user"
-                
-                ClaimManager.uploadClaim(currentUserId, response) { success ->
-                    if (success) {
-                        sharedPreferences.edit { putBoolean("has_claimed_reward", true) }
-                        UnlockReceiverManager.unregisterReceiver(context)
-                        stopEverything(context)
-                        showClaimDialog = false
-                        android.widget.Toast.makeText(context, "Submitted!", android.widget.Toast.LENGTH_SHORT).show()
-                    } else {
-                        android.widget.Toast.makeText(context, "Failed to submit. Try again.", android.widget.Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-        )
-    }
-
+    
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
 
@@ -353,129 +318,6 @@ fun WelcomeInfo(
                 clickOnInputCount++
                 if (clickOnInputCount > 2) onClickOfInput()
             })
-
-        if (isProlific) {
-            Spacer(modifier = Modifier.height(16.dp))
-            var isInitialRewardVisible by remember { mutableStateOf(!hasClaimedInitialReward) }
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.reward_1_claim_title),
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.weight(1f)
-                        )
-                        IconButton(
-                            onClick = { isInitialRewardVisible = !isInitialRewardVisible },
-                        ) {
-                            Icon(
-                                imageVector = if (isInitialRewardVisible) Icons.Filled.KeyboardArrowUp else Icons.Filled.KeyboardArrowDown,
-                                contentDescription = if (isInitialRewardVisible) "Collapse" else "Expand"
-                            )
-                        }
-                    }
-                    if (isInitialRewardVisible) {
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Text(
-                            text = stringResource(id = R.string.reward_1_title),
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Center
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                                val clip = ClipData.newPlainText("Prolific Code", "CML6DPGK")
-                                @Suppress("UsePropertyAccessSyntax")
-                                clipboard.setPrimaryClip(clip)
-                                android.widget.Toast.makeText(context, "Code copied", android.widget.Toast.LENGTH_SHORT).show()
-                                sharedPreferences.edit { putBoolean("has_claimed_initial_reward", true) }
-                            }
-                        ) {
-                            Text("Copy Code: *****GK")
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("OR", style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            onClick = {
-                                val intent = Intent(Intent.ACTION_VIEW, "https://app.prolific.com/submissions/complete?cc=CML6DPGK".toUri())
-                                try {
-                                    context.startActivity(intent)
-                                    sharedPreferences.edit { putBoolean("has_claimed_initial_reward", true) }
-                                } catch (_: Exception) {
-                                    // Handle exception
-                                }
-                            }
-                        ) {
-                            Text("Complete on Prolific")
-                        }
-                    }
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            Card(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.secondaryContainer)
-            ) {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp).fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.reward_2_claim_title),
-                        style = MaterialTheme.typography.titleLarge,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Left,
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    
-                    val canClaim = (dayCount.value ?: 0) >= 7 && (totalCount.value ?: 0) >= 50 && !hasClaimedReward
-                    
-                    if (!canClaim && !hasClaimedReward) {
-                        Text(
-                            text = stringResource(id = R.string.reward_2_instruction),
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Left
-                        )
-                        Spacer(modifier = Modifier.height(8.dp))
-                    }
-                    
-                    if (hasClaimedReward) {
-                        Text(
-                            text = stringResource(id = R.string.reward_2_claimed),
-                            style = MaterialTheme.typography.bodyMedium,
-                            textAlign = TextAlign.Left
-                        )
-                    } else {
-                        Button(
-                            modifier = Modifier.fillMaxWidth(),
-                            enabled = canClaim,
-                            onClick = {
-                                showClaimDialog = true
-                            }
-                        ) {
-                            Text("Claim $7")
-                        }
-                    }
-                }
-            }
-        }
 
         LogoAndContact(sharedPrefsViewModel = sharedPrefsViewModel)
     }
