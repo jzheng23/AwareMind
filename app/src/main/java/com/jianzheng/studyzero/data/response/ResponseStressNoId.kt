@@ -1,5 +1,8 @@
 package com.jianzheng.studyzero.data.response
 
+import androidx.annotation.Keep
+
+@Keep
 data class ResponseStressNoId(
     val delay: Long,
     val answer: Int,

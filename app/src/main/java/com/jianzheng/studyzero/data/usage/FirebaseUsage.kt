@@ -1,5 +1,8 @@
 package com.jianzheng.studyzero.data.usage
 
+import androidx.annotation.Keep
+
+@Keep
 data class FirebaseUsage(
     val packageName: String,
 //    val className: String,

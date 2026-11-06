@@ -48,7 +48,8 @@ class ResponseCounter(context: Context) {
 //    }
 
     fun resetCounter() {
-        editor.putInt("count_20_Met", 0)
+        editor.putInt("count_20_met", 0)
+            .remove("count_20_Met") // stale key written by an older version
             .putInt("count_30_met", 0)
             .putInt("count_random_met", 0)
             .putInt("count_once_met", 0)

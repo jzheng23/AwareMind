@@ -147,7 +147,7 @@ fun HomeScreen(
                         desc = if (isTutorialFinished) "Start data collection" else "Please complete tutorial first ",
                         onAuthClick = {
                             if (isTutorialFinished) {
-                                startEverything(context)
+                                startEverything(context, isUserAction = true)
                                 sharedPrefsViewModel.startCounting()
                             }
                         },
@@ -413,7 +413,7 @@ fun InfoCard(
                     desc = "Start or pause data collection",
                     onCheckedChange = {
                         if (it) {
-                            startEverything(context)
+                            startEverything(context, isUserAction = true)
                         } else {
                             stopEverything(context)
                         }

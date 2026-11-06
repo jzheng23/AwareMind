@@ -6,10 +6,12 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.os.Build
 import android.os.IBinder
-import androidx.annotation.RequiresApi
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import androidx.core.app.ServiceCompat
 import com.jianzheng.studyzero.MainActivity
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyDelayManager
@@ -20,7 +22,6 @@ import com.jianzheng.studyzero.tool.scheduleDailyMaintenance
 class MyForegroundService : Service() {
     private lateinit var uid: String
 
-    @RequiresApi(Build.VERSION_CODES.UPSIDE_DOWN_CAKE)
     override fun onCreate() {
         super.onCreate()
         uid = MyPreferenceManager.getString(this, this.getString(R.string.user_ID))
@@ -33,7 +34,20 @@ class MyForegroundService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         // Call startForeground() IMMEDIATELY - before any other work
         val notification = createNotification()
-        startForeground(1, notification)
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                ServiceCompat.startForeground(
+                    this, 1, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE
+                )
+            } else {
+                startForeground(1, notification)
+            }
+        } catch (e: Exception) {
+            // e.g. ForegroundServiceStartNotAllowedException or a type/manifest mismatch.
+            Log.e("MyForegroundService", "Cannot start foreground", e)
+            stopSelf()
+            return START_NOT_STICKY
+        }
         MyPreferenceManager.setBoolean(this, this.getString(R.string.showing_notification), true)
 
         return START_STICKY
@@ -56,7 +70,7 @@ class MyForegroundService : Service() {
 
         val notificationIntent = Intent(this, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(
-            this, NOTIFICATION_INTENT_CODE, notificationIntent, PendingIntent.FLAG_MUTABLE
+            this, NOTIFICATION_INTENT_CODE, notificationIntent, PendingIntent.FLAG_IMMUTABLE
         )
         val todayCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_today))
         val totalCount = MyPreferenceManager.getInt(this, this.getString(R.string.count_total))

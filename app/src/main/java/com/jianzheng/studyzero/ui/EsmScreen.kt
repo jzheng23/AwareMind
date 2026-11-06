@@ -56,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.response.DismissalType
 import com.jianzheng.studyzero.tool.MyDelayManager
-import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.tool.ResponseCounter
 import com.jianzheng.studyzero.tool.startMyForegroundService
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
@@ -82,61 +81,57 @@ fun ShowOverlay(
 
     val displayTimeMillis = 30000L //10 seconds for testing, 30 seconds for real data collection
 
-    if (
-        MyUsageManager.isNavigationAppCurrentlyInUse(context) and (tag == "count_random_met")
-    ) {
-        MyDelayManager.recycleTrigger()
-        onClick()
-    } else {
-        StudyZeroEsmTheme(darkTheme = darkTheme) {
-            Surface(
+    // The driving / navigation skip now happens in MyTriggerWorker before the overlay starts,
+    // for random and fixed surveys alike (no side effects during composition).
+    StudyZeroEsmTheme(darkTheme = darkTheme) {
+        Surface(
+            modifier = Modifier
+                .fillMaxSize(),
+            color = Color.White.copy(alpha = 0.5f),
+        ) {
+            Card(
                 modifier = Modifier
-                    .fillMaxSize(),
-                color = Color.White.copy(alpha = 0.5f),
-//            onClick = onClick
-            ) {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(
-                            top = 40.dp,
-                            end = mediumPadding,
-                            start = mediumPadding,
-                        ),
-                    elevation = CardDefaults.cardElevation(
-                        defaultElevation = dimensionResource(
-                            id = R.dimen.elevation
-                        )
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(
+                        top = 40.dp,
+                        end = mediumPadding,
+                        start = mediumPadding,
                     ),
-                    shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = dimensionResource(
+                        id = R.dimen.elevation
+                    )
+                ),
+                shape = RoundedCornerShape(8.dp),
+            ) {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier
+                        .background(color = MaterialTheme.colorScheme.surface)
                 ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier
-                            .background(color = MaterialTheme.colorScheme.surface)
-                    ) {
-                        ShowInstruction(
-                            autoDismissTimeMs = displayTimeMillis,
-                            myViewModel = myViewModel,
-                            onClick = {
-                                autoDismiss.value = false
-                                onClick()
-                                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
+                    ShowInstruction(
+                        autoDismissTimeMs = displayTimeMillis,
+                        myViewModel = myViewModel,
+                        onClick = {
+                            autoDismiss.value = false
+                            onClick()
+                            if (tag == "count_random_met") {
+                                MyDelayManager.recycleTrigger(context)
                             }
-                        )
-                        ShowEsm(
-                            myViewModel = myViewModel,
-                        )
-                        SubmitButton(
-                            tag = tag,
-                            unlockTime = unlockTime,
-                            myViewModel = myViewModel,
-                            isShowing = autoDismiss,
-                            onClick = onClick
-                        )
-                    }
+                        }
+                    )
+                    ShowEsm(
+                        myViewModel = myViewModel,
+                    )
+                    SubmitButton(
+                        tag = tag,
+                        unlockTime = unlockTime,
+                        myViewModel = myViewModel,
+                        isShowing = autoDismiss,
+                        onClick = onClick
+                    )
                 }
             }
         }

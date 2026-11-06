@@ -53,7 +53,6 @@ import androidx.compose.ui.unit.sp
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.data.response.DismissalType
 import com.jianzheng.studyzero.tool.MyDelayManager
-import com.jianzheng.studyzero.tool.MyUsageManager
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -90,12 +89,9 @@ fun ShowStressOverlay(
     val autoDismiss = remember { mutableStateOf(true) }
     val displayTimeMillis = 30000L
 
-    if (
-        MyUsageManager.isNavigationAppCurrentlyInUse(context) and (tag == "count_random_met")
-    ) {
-        MyDelayManager.recycleTrigger()
-        onClick()
-    } else {
+    // The driving / navigation skip happens in MyTriggerWorker before the overlay starts
+    // (no side effects during composition).
+    run {
         StudyZeroEsmTheme(darkTheme = darkTheme) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
@@ -126,7 +122,7 @@ fun ShowStressOverlay(
                             onClick = {
                                 autoDismiss.value = false
                                 onClick()
-                                if (tag == "count_random_met") MyDelayManager.recycleTrigger()
+                                if (tag == "count_random_met") MyDelayManager.recycleTrigger(context)
                             }
                         )
                         ShowStressEsm(

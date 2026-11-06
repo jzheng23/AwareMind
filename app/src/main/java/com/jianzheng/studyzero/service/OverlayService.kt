@@ -24,6 +24,13 @@ class OverlayService : Service() {
     private lateinit var composeView: ComposeView
     private lateinit var lifecycleOwner: MyLifecycleOwner
 
+    // A single store for the lifetime of this service; cleared in onDestroy.
+    private val overlayViewModelStore = ViewModelStore()
+    private val viewModelStoreOwner = object : ViewModelStoreOwner {
+        override val viewModelStore: ViewModelStore
+            get() = overlayViewModelStore
+    }
+
 
     override fun onCreate() {
         super.onCreate()
@@ -31,27 +38,26 @@ class OverlayService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return if (intent != null) {
-            if (!isShowing) {
-
-                // Add safety cleanup
-                try {
-                    if (::composeView.isInitialized && composeView.isAttachedToWindow) {
-                        windowManager.removeView(composeView)
-                    }
-                } catch (_: Exception) {
-                    // View wasn't attached, that's fine
-                }
-
-                unlockTime = intent.getLongExtra("unlock", System.currentTimeMillis())
-                val tag = intent.getStringExtra("tag") ?: "count_random_met"
-                callOverlay(tag)
-                isShowing = true
-            }
-            START_STICKY
-        } else {
-            START_REDELIVER_INTENT
+        if (intent == null) {
+            // Never restore a survey after the process was killed: it would be stale.
+            stopSelf()
+            return START_NOT_STICKY
         }
+        if (!isShowing) {
+            try {
+                if (::composeView.isInitialized && composeView.isAttachedToWindow) {
+                    windowManager.removeView(composeView)
+                }
+            } catch (_: Exception) {
+                // View wasn't attached, that's fine
+            }
+
+            unlockTime = intent.getLongExtra("unlock", System.currentTimeMillis())
+            val tag = intent.getStringExtra("tag") ?: "count_random_met"
+            callOverlay(tag)
+            isShowing = true
+        }
+        return START_NOT_STICKY
     }
 
 
@@ -81,10 +87,6 @@ class OverlayService : Service() {
             )
         }
 
-        val viewModelStoreOwner = object : ViewModelStoreOwner {
-            override val viewModelStore: ViewModelStore
-                get() = ViewModelStore()
-        }
         lifecycleOwner.performRestore(null)
         lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_CREATE)
         composeView.setViewTreeLifecycleOwner(lifecycleOwner)
@@ -104,13 +106,14 @@ class OverlayService : Service() {
 
     override fun onDestroy() {
         super.onDestroy()
-        lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-        if (composeView.isAttachedToWindow) windowManager.removeView(composeView)
+        if (::lifecycleOwner.isInitialized) {
+            lifecycleOwner.handleLifecycleEvent(Lifecycle.Event.ON_DESTROY)
+        }
+        if (::composeView.isInitialized && composeView.isAttachedToWindow) {
+            windowManager.removeView(composeView)
+        }
+        overlayViewModelStore.clear()
         isShowing = false
     }
 
 }
-
-
-
-

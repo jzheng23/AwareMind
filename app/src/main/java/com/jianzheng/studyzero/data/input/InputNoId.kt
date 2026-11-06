@@ -1,5 +1,8 @@
 package com.jianzheng.studyzero.data.input
 
+import androidx.annotation.Keep
+
+@Keep
 data class InputNoId(
     val startTime: Long,
     val inputType: Int,

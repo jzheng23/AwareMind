@@ -3,6 +3,7 @@ package com.jianzheng.studyzero.tool
 //import com.jianzheng.studyzero.service.MyForegroundService
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.work.ExistingPeriodicWorkPolicy
@@ -23,7 +24,15 @@ fun getDateTime(timeInMillis: Long): String {
     return formatter.format(date)
 }
 
-fun startEverything(context: Context) {
+/**
+ * @param isUserAction true when the participant deliberately starts collection. Only then is
+ * the daily worker rescheduled with UPDATE (it may have been pushed 30 days out by
+ * [stopEverything]); automatic calls (app launch, reboot) keep the existing schedule.
+ */
+fun startEverything(context: Context, isUserAction: Boolean = false) {
+    if (isUserAction) {
+        scheduleDailyMaintenance(context, policy = ExistingPeriodicWorkPolicy.UPDATE)
+    }
     startMyForegroundService(context)
 //    scheduleDailyMaintenance(context)
 //    MyDelayManager.init(context)
@@ -40,7 +49,7 @@ fun startEverything(context: Context) {
 fun stopEverything(context: Context) {
     context.stopService(Intent(context, MyForegroundService::class.java))
 //    MyReceiverManager.unregisterReceiver(context)
-    scheduleDailyMaintenance(context, 2592000000L)
+    scheduleDailyMaintenance(context, 2592000000L, ExistingPeriodicWorkPolicy.UPDATE)
     MyPreferenceManager.setBoolean(context, context.getString(R.string.recording_input), false)
     MyPreferenceManager.setBoolean(context, context.getString(R.string.collecting_data), false)
 }
@@ -51,10 +60,19 @@ fun resetEverything(context: Context) {
 
 fun startMyForegroundService(context: Context) {
     val myForegroundServiceIntent = Intent(context, MyForegroundService::class.java)
-    ContextCompat.startForegroundService(context, myForegroundServiceIntent)
+    try {
+        ContextCompat.startForegroundService(context, myForegroundServiceIntent)
+    } catch (e: IllegalStateException) {
+        // ForegroundServiceStartNotAllowedException (API 31+) when started from background.
+        Log.e("startFgs", "Foreground service start not allowed", e)
+    }
 }
 
-fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
+fun scheduleDailyMaintenance(
+    context: Context,
+    initialDelayInput: Long = 0L,
+    policy: ExistingPeriodicWorkPolicy = ExistingPeriodicWorkPolicy.KEEP
+) {
     val myWorkManager = WorkManager.getInstance(context)
 
     val initialDelay = if (initialDelayInput == 0L) {
@@ -67,7 +85,7 @@ fun scheduleDailyMaintenance(context: Context, initialDelayInput: Long = 0L) {
         .build()
     myWorkManager.enqueueUniquePeriodicWork(
         "daily_maintenance",
-        ExistingPeriodicWorkPolicy.UPDATE, // KEEP or UPDATE
+        policy,
         workRequest
     )
 //    val workInfo = myWorkManager.getWorkInfoById(workRequest.id)

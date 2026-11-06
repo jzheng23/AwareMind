@@ -121,7 +121,7 @@ fun DebugCard(
                     desc = "Start or pause data collection",
                     onCheckedChange = {
                         if (it) {
-                            startEverything(context)
+                            startEverything(context, isUserAction = true)
                         } else {
                             stopEverything(context)
                         }
