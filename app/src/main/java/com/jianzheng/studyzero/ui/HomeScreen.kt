@@ -34,12 +34,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.RadioButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
@@ -50,18 +44,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import android.content.ClipData
-import android.content.ClipboardManager
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import com.jianzheng.studyzero.data.ClaimManager
-import com.jianzheng.studyzero.data.ClaimResponse
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -71,11 +60,9 @@ import androidx.navigation.NavController
 import com.jianzheng.studyzero.R
 import com.jianzheng.studyzero.tool.MyPermissionManager
 import com.jianzheng.studyzero.tool.MyPreferenceManager
-import com.jianzheng.studyzero.tool.UnlockReceiverManager
 import com.jianzheng.studyzero.tool.startEverything
 import com.jianzheng.studyzero.tool.stopEverything
 import com.jianzheng.studyzero.ui.theme.StudyZeroEsmTheme
-import androidx.core.content.edit
 
 val mediumPadding = 10.dp
 const val PASSWORD = "2358"
@@ -187,104 +174,6 @@ fun HomeScreen(
 
 
 @Composable
-fun ClaimDialog(
-    onDismiss: () -> Unit,
-    onSubmit: (String, String, String, String) -> Unit
-) {
-    var selectedGiftCard by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var futureStudies by remember { mutableStateOf("") }
-    var comments by remember { mutableStateOf("") }
-
-    var emailError by remember { mutableStateOf(false) }
-
-    val isEmailValid = email.matches(Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"))
-
-    AlertDialog(
-        containerColor = MaterialTheme.colorScheme.surfaceVariant,
-        titleContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        onDismissRequest = onDismiss,
-        title = { Text("Claim Your Reward") },
-        text = {
-            Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-                Text("1. Which gift card would you prefer?", fontWeight = FontWeight.Bold)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = selectedGiftCard == "Amazon",
-                        onClick = { selectedGiftCard = "Amazon" }
-                    )
-                    Text("Amazon", modifier = Modifier.clickable { selectedGiftCard = "Amazon" })
-                    Spacer(modifier = Modifier.width(16.dp))
-                    RadioButton(
-                        selected = selectedGiftCard == "Target",
-                        onClick = { selectedGiftCard = "Target" }
-                    )
-                    Text("Target", modifier = Modifier.clickable { selectedGiftCard = "Target" })
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text("2. Enter your email to receive the gift card:", fontWeight = FontWeight.Bold)
-                OutlinedTextField(
-                    value = email,
-                    onValueChange = {
-                        email = it
-                        emailError = it.isNotEmpty() && !it.matches(Regex("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"))
-                    },
-                    isError = emailError,
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
-                    modifier = Modifier.fillMaxWidth()
-                )
-                if (emailError) {
-                    Text("Invalid email format", color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text("3. Will you be interested in future studies by our research team?", fontWeight = FontWeight.Bold)
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = futureStudies == "Yes",
-                        onClick = { futureStudies = "Yes" }
-                    )
-                    Text("Yes", modifier = Modifier.clickable { futureStudies = "Yes" })
-                    Spacer(modifier = Modifier.width(16.dp))
-                    RadioButton(
-                        selected = futureStudies == "No",
-                        onClick = { futureStudies = "No" }
-                    )
-                    Text("No", modifier = Modifier.clickable { futureStudies = "No" })
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Text("4. Other comments (optional):", fontWeight = FontWeight.Bold)
-                OutlinedTextField(
-                    value = comments,
-                    onValueChange = { comments = it },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            Button(
-                onClick = { onSubmit(selectedGiftCard, email, futureStudies, comments) },
-                enabled = selectedGiftCard.isNotEmpty() && email.isNotEmpty() && isEmailValid && futureStudies.isNotEmpty()
-            ) {
-                Text("Submit")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("Cancel")
-            }
-        }
-    )
-}
-
-
-@Composable
 fun WelcomeInfo(
     sharedPrefsViewModel: SharedPrefsViewModel? = null, onClickOfInput: () -> Unit = {}
 ) {
@@ -296,11 +185,8 @@ fun WelcomeInfo(
     val todayCount = welcomeViewModel.todayCount.observeAsState()
     val totalCount = welcomeViewModel.totalCount.observeAsState()
     val dayCount = welcomeViewModel.dayCount.observeAsState()
-    
-    val sharedPreferences = context.getSharedPreferences("MySharedPrefs", Context.MODE_PRIVATE)
-    
     var clickOnInputCount by remember { mutableIntStateOf(0) }
-    
+
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
 
